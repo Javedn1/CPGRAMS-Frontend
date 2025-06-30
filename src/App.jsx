@@ -3,6 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Auth from './pages/auth/Auth'
 import Home from './pages/home/Home'
 import GrievanceForm from './pages/GRV-form/GrivanceForm'
+import ForgotPassword from './components/auth/ForgotPassword'
+import ForgotPasswordOTP from './components/auth/ForgotPasswordOTP'
+import ChangePassword from './components/auth/ChangePassword'
+import AuthForgotPassword from './pages/auth/AuthForgotPassword'
 
 function App() {
 
@@ -12,6 +16,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/auth' element={<Auth />} />
+          <Route path='/forgotpassword' element={<AuthForgotPassword />} />
           <Route path='/grv' element={<GrievanceForm />} />
         </Routes>
       </BrowserRouter>
