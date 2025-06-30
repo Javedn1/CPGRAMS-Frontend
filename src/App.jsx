@@ -1,6 +1,8 @@
 import react from 'react'
 import { BrowserRouter, Routes,Route } from 'react-router-dom'
-import Login from './pages/auth/Login'
+import Auth from './pages/auth/Auth'
+import Home from './pages/home/Home'
+import GrievanceForm from './pages/GRV-form/GrivanceForm'
 
 function App() {
 
@@ -8,7 +10,9 @@ function App() {
     <>
     <BrowserRouter>
     <Routes>
-     <Route path='/' element={<Login/>}/>
+     <Route path='/' element={<Home/>}/>
+     <Route path='/auth' element={<Auth/>}/>
+     <Route path='/grv' element={<GrievanceForm/>}/>
     </Routes>   
     </BrowserRouter>
       
