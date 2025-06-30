@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+  const clickForgotPassword = () => {
+    navigate("/forgotpassword")
+  }
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -25,17 +32,38 @@ const Login = () => {
         <label className="block text-sm font-medium text-gray-700">
           Password
         </label>
-        <input
-          type="password"
-          className="w-full border border-gray-300 rounded px-3 py-2"
-          value={loginForm.password}
-          onChange={(e) =>
-            setLoginForm({
-              ...loginForm,
-              password: e.target.value,
-            })
-          }
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            value={loginForm.password}
+            onChange={(e) =>
+              setLoginForm({
+                ...loginForm,
+                password: e.target.value,
+              })
+            }
+          />
+          <div
+            className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-between items-center mb-6">
+        <label className="flex items-center text-sm text-gray-600">
+          <input type="checkbox" className="mr-2" />
+          Remember me
+        </label>
+        <button
+          type="button"
+          className="text-sm text-blue-600 hover:underline"
+          onClick={clickForgotPassword}
+        >
+          Forgot password?
+        </button>
       </div>
 
       <div className="space-y-3">
