@@ -7,6 +7,7 @@ import ForgotPassword from './components/auth/ForgotPassword'
 import ForgotPasswordOTP from './components/auth/ForgotPasswordOTP'
 import ChangePassword from './components/auth/ChangePassword'
 import AuthForgotPassword from './pages/auth/AuthForgotPassword'
+import TrackGrievancePage from './pages/Track-GRV/TrackGrievancePage'
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path='/auth' element={<Auth />} />
           <Route path='/forgotpassword' element={<AuthForgotPassword />} />
           <Route path='/grv' element={<GrievanceForm />} />
+          <Route path='/trk-grv' element={<TrackGrievancePage />} />
         </Routes>
       </BrowserRouter>
 
