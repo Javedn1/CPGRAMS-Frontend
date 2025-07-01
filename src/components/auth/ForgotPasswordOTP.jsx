@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ChangePassword from "./ChangePassword";
 
 const ForgotPasswordOTP = () => {
     const [showChangePassword, setShowChangePassword] = useState(false);
     const [timer, setTimer] = useState(30);
     const [canResend, setCanResend] = useState(false);
+    const inputRefs = useRef([]);
+
+
+    useEffect(() => {
+        if (inputRefs.current[0]) {
+            inputRefs.current[0].focus();
+        }
+    }, []);
 
     useEffect(() => {
         let interval = null;
@@ -49,17 +57,42 @@ const ForgotPasswordOTP = () => {
 
                         <div>
                             <form onSubmit={handleSubmit}>
+
                                 <div className="flex flex-col items-center space-y-6">
                                     <div className="flex flex-row items-center justify-around mx-auto w-full max-w-xs">
                                         {[...Array(6)].map((_, index) => (
                                             <input
                                                 key={index}
                                                 type="text"
+                                                inputMode="numeric"
+                                                pattern="[0-9]*"
                                                 maxLength="1"
+                                                ref={(el) => (inputRefs.current[index] = el)}
                                                 className="w-12 h-12 text-center text-lg font-medium border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onInput={(e) => {
+                                                    const value = e.target.value;
+                                                    const isNumber = /^\d$/.test(value);
+                                                    if (!isNumber) {
+                                                        e.target.value = "";
+                                                        return;
+                                                    }
+                                                    const nextInput = inputRefs.current[index + 1];
+                                                    if (nextInput && value) {
+                                                        nextInput.focus();
+                                                    }
+                                                }}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Backspace" && !e.target.value) {
+                                                        const prevInput = inputRefs.current[index - 1];
+                                                        if (prevInput) {
+                                                            prevInput.focus();
+                                                        }
+                                                    }
+                                                }}
                                             />
                                         ))}
                                     </div>
+
 
                                     <button
                                         type="submit"
