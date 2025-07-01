@@ -9,14 +9,14 @@ function App() {
   const [profileImage, setProfileImage] = useState(null);
   return (
     <>
-    <BrowserRouter>
-    <Routes>
+      <BrowserRouter>
+        <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/grv" element={<GrievanceForm />} />
           <Route path="/cp" element={<CitizenProfile profileImage={profileImage} setProfileImage={setProfileImage} />} />
-    </Routes>   
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
