@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Shield, Menu, X, UserCircle } from "lucide-react";
  
-export default function Header({ setTrackModalOpen, handleAuthAction, isLoggedIn }) {
+export default function Header({
+  setTrackModalOpen,
+  handleAuthAction,
+  isLoggedIn,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
@@ -10,7 +14,6 @@ export default function Header({ setTrackModalOpen, handleAuthAction, isLoggedIn
  
   const hideAuthButtons = location.pathname.includes("/auth");
  
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -22,10 +25,8 @@ export default function Header({ setTrackModalOpen, handleAuthAction, isLoggedIn
   }, []);
  
   return (
-    <header className="bg-white shadow-sm border-b border-blue-100  top-0 z-50">
+    <header className="bg-white shadow-sm border-b border-blue-100 top-0 z-50">
       <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
- 
-        {/* Left - Logo */}
         <div className="flex items-center space-x-3 flex-shrink-0">
           <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
             <Shield className="w-6 h-6 text-white" />
