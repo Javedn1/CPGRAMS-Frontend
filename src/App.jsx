@@ -28,7 +28,7 @@ function App() {
           <Route path='/myGrievance' element={<MyGrievances />} />
           <Route path='/trk-grv' element={<TrackGrievancePage />} />
           <Route
-            path="/cp"
+            path="/citizen-profile"
             element={
               <CitizenProfile/>
             }
