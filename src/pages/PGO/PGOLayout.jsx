@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar';
 import Footer from '../../components/footer/footer';
 import { Outlet } from 'react-router-dom';
 
-function PGODashboard() {
+function PGOLayout() {
     return (
         <>
             <section className='flex flex-col min-h-screen'>
@@ -12,9 +12,9 @@ function PGODashboard() {
                     <Outlet />
                 </div>
             </section>
-            <Footer />
+            {/* <Footer /> */}
         </>
     );
 }
 
-export default PGODashboard;
+export default PGOLayout;

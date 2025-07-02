@@ -1,4 +1,4 @@
-import react,{useState} from 'react'
+import react, { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Auth from './pages/auth/Auth'
 import Home from './pages/home/Home'
@@ -10,12 +10,14 @@ import AuthForgotPassword from './pages/auth/AuthForgotPassword'
 import TrackGrievancePage from './pages/Track-GRV/TrackGrievancePage'
 import MyGrievances from './pages/My-Complaints/myGrievance'
 import CitizenProfile from "./components/profile/citizen-profile";
-import PGODashboard from './pages/PGO/PGODashboard'
 import Team from './pages/PGO/Team'
+import PGOLayout from './pages/PGO/PGOLayout'
+import Dashboard from './pages/PGO/Dashboard'
+import Projects from './pages/PGO/Projects'
 
 
 function App() {
- const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   return (
     <>
       <BrowserRouter>
@@ -30,11 +32,13 @@ function App() {
           <Route
             path="/cp"
             element={
-              <CitizenProfile/>
+              <CitizenProfile />
             }
           />
-          <Route path='/PGO-Dashboard' element={<PGODashboard />}>
+          <Route path='/PGO-Dashboard' element={<PGOLayout />}>
+            <Route index element={<Dashboard />} />
             <Route path='team' element={<Team />} />
+            <Route path='projects' element={<Projects />} />
           </Route>
         </Routes>
       </BrowserRouter>

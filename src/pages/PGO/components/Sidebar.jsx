@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Home,
     Users,
@@ -8,22 +8,25 @@ import {
     BarChart3,
     Settings
 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
     const [activeNav, setActiveNav] = useState('Dashboard');
     const [isOpen, setIsOpen] = useState(false);
+    const location = useLocation();
 
     const toggleNavbar = () => setIsOpen(!isOpen);
 
-    const navItems = [
-        { icon: Home, label: 'Dashboard' },
-        { icon: Users, label: 'Team' },
-        { icon: FolderOpen, label: 'Projects' },
-        { icon: Calendar, label: 'Calendar' },
-        { icon: FileText, label: 'Documents' },
-        { icon: BarChart3, label: 'Reports' },
-    ];
 
+    useEffect(() => {
+        if (location.pathname.includes('team')) setActiveNav('Team');
+        else if (location.pathname.includes('projects')) setActiveNav('Projects');
+        else if (location.pathname.includes('calendar')) setActiveNav('Calendar');
+        else if (location.pathname.includes('documents')) setActiveNav('Documents');
+        else if (location.pathname.includes('reports')) setActiveNav('Reports');
+        else setActiveNav('Dashboard');
+    }, [location.pathname]);
+    
     return (
         <>
             {/* NAVBAR */}
@@ -31,7 +34,7 @@ const Sidebar = () => {
                 <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between">
                     <a href="#" className="flex items-center space-x-3">
                         <img
-                            src=""
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsPJ9cm0-r5p50py0yUzvM5ZtEB-xWoJRPRA&s"
                             className="h-8"
                             alt="Logo"
                         />
@@ -43,53 +46,129 @@ const Sidebar = () => {
                         aria-controls="mobile-menu"
                         aria-expanded={isOpen}
                     >
-                        <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            viewBox="0 0 17 14"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
+                        {isOpen ? (
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M1 1h15M1 7h15M1 13h15"
-                            />
-                        </svg>
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        ) : (
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
+                            </svg>
+                        )}
+
                     </button>
                 </div>
 
                 {isOpen && (
                     <div id="mobile-menu" className="px-4 pb-4">
                         <ul className="space-y-2 font-medium">
-                            {navItems.map((item, index) => {
-                                const Icon = item.icon;
-                                const isActive = activeNav === item.label;
-
-                                return (
-                                    <li key={index}>
-                                        <button
-                                            onClick={() => setActiveNav(item.label)}
-                                            className={`flex items-center w-full py-2 px-3 rounded-md ${
-                                                isActive
-                                                    ? "text-white bg-blue-700 dark:bg-blue-600"
-                                                    : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            }`}
-                                        >
-                                            <Icon className="w-5 h-5 mr-2" />
-                                            {item.label}
-                                        </button>
-                                    </li>
-                                );
-                            })}
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Dashboard')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Dashboard'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <Home className="w-5 h-5 mr-2" />
+                                    <Link to="/PGO-Dashboard">
+                                        Dashboard
+                                    </Link>
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Team')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Team'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <Users className="w-5 h-5 mr-2" />
+                                    <Link to="team">
+                                        Team
+                                    </Link>
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Projects')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Projects'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <FolderOpen className="w-5 h-5 mr-2" />
+                                    <Link to="projects">
+                                        Projects
+                                    </Link>
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Calendar')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Calendar'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <Calendar className="w-5 h-5 mr-2" />
+                                    Calendar
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Documents')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Documents'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <FileText className="w-5 h-5 mr-2" />
+                                    Documents
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => setActiveNav('Reports')}
+                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Reports'
+                                        ? "text-white bg-blue-700 dark:bg-blue-600"
+                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        }`}
+                                >
+                                    <BarChart3 className="w-5 h-5 mr-2" />
+                                    Reports
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 )}
             </nav>
 
             {/* SIDEBAR */}
-            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-screen flex-col">
+            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-screen flex-col fixed left-0 top-0">
                 <div className="p-4 border-b border-gray-100">
                     <div className="flex items-center">
                         <div className="ml-3 overflow-hidden">
@@ -102,25 +181,77 @@ const Sidebar = () => {
 
                 <div className="flex-1 px-3 py-4 overflow-y-auto">
                     <nav className="space-y-1">
-                        {navItems.map((item, index) => {
-                            const Icon = item.icon;
-                            const isActive = activeNav === item.label;
+                        <button
+                            onClick={() => setActiveNav('Dashboard')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Dashboard'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <Home className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <Link to="/PGO-Dashboard">
+                                <span className="truncate">Dashboard</span>
+                            </Link>
+                        </button>
 
-                            return (
-                                <button
-                                    key={index}
-                                    onClick={() => setActiveNav(item.label)}
-                                    className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                                        isActive
-                                            ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                            : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                    }`}
-                                >
-                                    <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                                    <span className="truncate">{item.label}</span>
-                                </button>
-                            );
-                        })}
+                        <button
+                            onClick={() => setActiveNav('Team')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Team'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <Users className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <Link to="team">
+                                <span className="truncate">Team</span>
+                            </Link>
+                        </button>
+
+                        <button
+                            onClick={() => setActiveNav('Projects')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Projects'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <FolderOpen className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <Link to="projects">
+                                <span className="truncate">Projects</span>
+                            </Link>
+                        </button>
+
+                        <button
+                            onClick={() => setActiveNav('Calendar')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Calendar'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <Calendar className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <span className="truncate">Calendar</span>
+                        </button>
+
+                        <button
+                            onClick={() => setActiveNav('Documents')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Documents'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <span className="truncate">Documents</span>
+                        </button>
+
+                        <button
+                            onClick={() => setActiveNav('Reports')}
+                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Reports'
+                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                }`}
+                        >
+                            <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
+                            <span className="truncate">Reports</span>
+                        </button>
                     </nav>
                 </div>
 
