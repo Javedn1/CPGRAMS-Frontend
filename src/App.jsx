@@ -8,6 +8,8 @@ import ForgotPasswordOTP from './components/auth/ForgotPasswordOTP'
 import ChangePassword from './components/auth/ChangePassword'
 import AuthForgotPassword from './pages/auth/AuthForgotPassword'
 import TrackGrievancePage from './pages/Track-GRV/TrackGrievancePage'
+import MyGrievances from './pages/My-Complaints/myGrievance'
+
 
 function App() {
 
@@ -20,6 +22,9 @@ function App() {
           <Route path='/forgotpassword' element={<AuthForgotPassword />} />
           <Route path='/grv' element={<GrievanceForm />} />
           <Route path='/trk-grv' element={<TrackGrievancePage />} />
+          <Route path='/myGrievance' element={<MyGrievances />} />
+          <Route path='/trk-grv' element={<TrackGrievancePage />} />
+          
         </Routes>
       </BrowserRouter>
 
