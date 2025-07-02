@@ -2,7 +2,7 @@ import React from 'react'
 
 function Team() {
     return (
-        <div>
+        <div className='m-6'>
             PGO TEAM
             <br />
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero ipsum minima, mollitia dolore quod amet necessitatibus pariatur assumenda! Corrupti reiciendis numquam maiores quam facere id consequatur quidem nesciunt porro? Praesentium commodi aliquid, necessitatibus quibusdam veritatis voluptates architecto, quasi aliquam error iusto voluptate porro voluptas fugiat! Voluptas debitis voluptate praesentium similique qui voluptatibus vitae distinctio blanditiis, iusto nisi consectetur dolor nemo architecto harum, culpa fugiat totam! Voluptatum at iusto dolorum id accusantium animi voluptate ea doloremque dignissimos vero explicabo magni sequi, unde quis quos eveniet recusandae et possimus perferendis voluptates quam rerum exercitationem. Laborum non dignissimos amet perferendis ut, odit tempora maxime beatae animi voluptatibus dolor cupiditate cumque, quia ullam in aut nihil. Voluptate non dignissimos minus officia quidem harum laboriosam.</p>

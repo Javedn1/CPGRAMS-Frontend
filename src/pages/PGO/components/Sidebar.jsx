@@ -168,7 +168,7 @@ const Sidebar = () => {
             </nav>
 
             {/* SIDEBAR */}
-            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-screen flex-col fixed left-0 top-0">
+            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-screen flex-col absolute  left-0 top-0">
                 <div className="p-4 border-b border-gray-100">
                     <div className="flex items-center">
                         <div className="ml-3 overflow-hidden">
