@@ -41,13 +41,13 @@ export default function GrievanceForm() {
             {/* Line from 1 to 2 */}
             <div
               className={`flex-1 ${
-                step > 1 ? "bg-green-500" : "bg-green-200"
+                step > 1 ? "bg-green-500" : "bg-gray-400"
               } transition-all duration-300`}
             ></div>
             {/* Line from 2 to 3 */}
             <div
               className={`flex-1 ${
-                step > 2 ? "bg-green-500" : "bg-green-200"
+                step > 2 ? "bg-green-500" : "bg-gray-400"
               } transition-all duration-300`}
             ></div>
           </div>
@@ -72,10 +72,10 @@ export default function GrievanceForm() {
         </div>
       </div>
       {/* Form Content */}
-      <div className="flex-1 p-4 md:p-8 lg:p-16 bg-white w-full">
+      <div className="flex-1 p-4 md:p-8 lg:p-16  bg-gradient-to-br from-blue-50 via-white to-slate-50 w-full">
         {step === 1 && (
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+          <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 ">
               Personal Details
             </h2>
             <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function GrievanceForm() {
           </div>
         )}
         {step === 2 && (
-          <div>
+          <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
             <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
               Grievance Details
             </h2>
@@ -165,7 +165,7 @@ export default function GrievanceForm() {
           </div>
         )}
         {step === 3 && (
-          <div>
+          <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
             <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
               Review & Submit
             </h2>

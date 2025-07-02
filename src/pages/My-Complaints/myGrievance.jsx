@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, FileText, Bell } from 'lucide-react';
+import { Plus, FileText, Bell, ArrowLeft } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import FeedbackForm from '../../components/FeedbackForm';
 import GrievanceDetails from '../../components/GrievanceDetails';
 import MainNavbar from '../../components/header/MainHeader';
-import Footer from '../../components/footer/Footer';
+import HeaderLayout from '../../components/header/Header-Layout/HeaderLayout';
+import Footer from '../../components/footer/footer';
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -58,6 +59,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
 
     const [feedbackGrievanceId, setFeedbackGrievanceId] = useState(null);
     const [selectedGrievance, setSelectedGrievance] = useState(null);
+    const [activeTab, setActiveTab] = useState("mygrievance");
 
     const openDetailsModal = (grievance) => {
         setSelectedGrievance(grievance);
@@ -114,25 +116,48 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
 
     return (
         <>
-            <MainNavbar />
-            <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <HeaderLayout/>
+            <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
+                <div className='w-full md:w-56 bg-blue-800 text-white flex flex-col items-center py-8 md:py-10 relative'>
+                    <button
+            onClick={() => window.history.back()}
+            className="absolute top-4 left-4 text-white hover:underline flex items-center"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          </button>
+          <div className="mt-12 flex flex-col gap-4 w-full px-4">
+            <button
+              className={`w-full text-left px-4 py-2 rounded ${
+                activeTab === "mygrievance"
+                  ? "bg-white text-blue-800 font-semibold "
+                  : "hover:bg-blue-700"
+              }`}
+            >
+              My Grievance
+            </button>
+            </div>
+                </div>
+            <div className="flex-1 p-4 md:p-8 bg-gradient-to-br from-blue-50 via-white to-slate-50 w-full">
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <h1 className="text-4xl font-bold text-gray-800 tracking-tight">
+                <div className="max-w-4xl  space-y-6">
+                    <h1 className="text-3xl font-bold mb-2">
                         My Grievances
                     </h1>
-                    <button
+                     <p className="text-gray-600 mb-6">
+              Track and manage your submitted grievances
+            </p>
+                    {/* <button
                         onClick={() => setShowForm(true)}
                         className="flex items-center gap-2 px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-700 transition-all duration-200 rounded-lg shadow"
                     >
                         <Plus className="w-4 h-4" />
                         Submit New Grievance
-                    </button>
+                    </button> */}
                 </div>
 
                 {/* Table Card */}
-                <div className="bg-white rounded-xl border border-gray-200 shadow-md">
-                    <div className="border-b px-6 py-4 flex items-center justify-between">
+                <div className="max-w-5xl mx-auto space-y-6">
+                    <div className="border-b-2 border-gray-300 px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center text-lg font-semibold text-gray-800 gap-2">
                             <FileText
                                 className="w-5 h-5 text-indigo-600 hover:text-indigo-800 cursor-pointer"
@@ -141,11 +166,11 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                             />
                             Grievance Records
                         </div>
-                        <span className="text-sm text-gray-500">Track and manage your submitted grievances</span>
+                        {/* <span className="text-sm text-gray-500">Track and manage your submitted grievances</span> */}
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-x-auto">
+                    <div className="bg-white shadow rounded space-y-4 overflow-x-auto">
                         <table className="min-w-full text-sm table-auto divide-y divide-gray-200">
                             <thead className="bg-gray-50 text-gray-600 font-medium">
                                 <tr>
@@ -153,9 +178,9 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                     <th className="p-4 text-left">Title</th>
                                     <th className="p-4 text-left">Category</th>
                                     <th className="p-4 text-left">Status</th>
-                                    <th className="p-4 text-left">Priority</th>
+                                    {/* <th className="p-4 text-left">Priority</th> */}
                                     <th className="p-4 text-left">Submitted</th>
-                                    <th className="p-4 text-left">Last Update</th>
+                                    {/* <th className="p-4 text-left">Last Update</th> */}
                                     <th className="p-4 text-left">View Details</th>
                                     <th className="p-4 text-left">Feedback</th>
                                     <th className="p-4 text-left">Remainder</th>
@@ -169,22 +194,22 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                             {complaint.title}
                                         </td>
                                         <td className="p-4">
-                                            <span className="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                            <span className="px-3 py-1 text-xs font-medium ">
                                                 {complaint.category}
                                             </span>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusColor(complaint.status)}`}>
+                                            <span className={`px-3 py-1 text-xs font-medium  ${getStatusColor(complaint.status)}`}>
                                                 {complaint.status}
                                             </span>
                                         </td>
-                                        <td className="p-4">
-                                            <span className={`px-3 py-1 text-xs font-medium border rounded-full ${getPriorityColor(complaint.priority)}`}>
+                                        {/* <td className="p-4">
+                                            <span className={`px-3 py-1 text-xs font-medium  ${getPriorityColor(complaint.priority)}`}>
                                                 {complaint.priority}
                                             </span>
-                                        </td>
+                                        </td> */}
                                         <td className="p-4 text-gray-600">{complaint.date}</td>
-                                        <td className="p-4 text-gray-600">{complaint.lastUpdate}</td>
+                                        {/* <td className="p-4 text-gray-600">{complaint.lastUpdate}</td> */}
                                         <td className="p-4">
                                             <button
                                                 onClick={() => openDetailsModal(complaint)}
@@ -237,6 +262,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                         onClose={() => setSelectedGrievance(null)}
                     />
                 )}
+            </div>
             </div>
             <Footer />
         </>

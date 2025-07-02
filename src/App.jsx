@@ -1,4 +1,4 @@
-import react from 'react'
+import react,{useState} from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Auth from './pages/auth/Auth'
 import Home from './pages/home/Home'
@@ -9,10 +9,11 @@ import ChangePassword from './components/auth/ChangePassword'
 import AuthForgotPassword from './pages/auth/AuthForgotPassword'
 import TrackGrievancePage from './pages/Track-GRV/TrackGrievancePage'
 import MyGrievances from './pages/My-Complaints/myGrievance'
+import CitizenProfile from "./components/profile/citizen-profile";
 
 
 function App() {
-
+ const [profileImage, setProfileImage] = useState(null);
   return (
     <>
       <BrowserRouter>
@@ -24,6 +25,12 @@ function App() {
           <Route path='/trk-grv' element={<TrackGrievancePage />} />
           <Route path='/myGrievance' element={<MyGrievances />} />
           <Route path='/trk-grv' element={<TrackGrievancePage />} />
+          <Route
+            path="/cp"
+            element={
+              <CitizenProfile/>
+            }
+          />
           
         </Routes>
       </BrowserRouter>

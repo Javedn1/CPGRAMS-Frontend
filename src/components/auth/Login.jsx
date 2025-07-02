@@ -72,7 +72,7 @@ const Login = () => {
             Login as Citizen
           </button>
         </Link>
-        <Link href="/officer/dashboard">
+        {/* <Link href="/officer/dashboard">
           <button className="w-full border border-gray-300 px-4 py-2 rounded hover:bg-gray-50">
             Login as PG Officer
           </button>
@@ -81,7 +81,7 @@ const Login = () => {
           <button className="w-full bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
             Admin Login
           </button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
