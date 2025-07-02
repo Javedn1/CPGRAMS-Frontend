@@ -10,6 +10,8 @@ import AuthForgotPassword from './pages/auth/AuthForgotPassword'
 import TrackGrievancePage from './pages/Track-GRV/TrackGrievancePage'
 import MyGrievances from './pages/My-Complaints/myGrievance'
 import CitizenProfile from "./components/profile/citizen-profile";
+import PGODashboard from './pages/PGO/PGODashboard'
+import Team from './pages/PGO/Team'
 
 
 function App() {
@@ -31,7 +33,9 @@ function App() {
               <CitizenProfile/>
             }
           />
-          
+          <Route path='/PGO-Dashboard' element={<PGODashboard />}>
+            <Route path='team' element={<Team />} />
+          </Route>
         </Routes>
       </BrowserRouter>
 
