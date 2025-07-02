@@ -9,35 +9,25 @@ const VerticalProgressBar = ({
   className = "",
   progressLineStyle = {},
 }) => {
-  const currentStepIndex = steps.findIndex((step) => step.id === activeStep);
-
-  const handleBackNavigation = () => {
-    if (currentStepIndex > 0) {
-      setActiveStep(steps[currentStepIndex - 1].id);
-    }
-  };
+ 
 
   return (
     <div
       className={`w-full md:w-64 bg-blue-800 text-white flex flex-col items-center py-8 md:py-10 relative ${className}`}
     >
-      {/* Back Button */}
-      {currentStepIndex > 0 && (
-        <button
-          onClick={handleBackNavigation}
-          className="absolute top-4 left-4 flex items-center text-gray-900 cursor-pointer transition-colors duration-200 bg-gray-100 px-1 py-1 rounded-lg"
-        >
+      <a href="/">
+        <button className="absolute top-4 left-4 flex gap-1 items-center text-gray-900 cursor-pointer transition-colors duration-200 bg-gray-100 px-1 py-1 rounded-lg">
           <ArrowLeft className="w-5 h-5" />
+          Back
         </button>
-      )}
+      </a>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-14 text-center mt-8 md:mt-0">
         {title}
       </h2>
 
-      {/* Vertical Progress */}
+      {/*progress bar code below*/}
       <div className="relative flex flex-col items-start space-y-8 md:space-y-12 w-full px-4 md:pl-8">
-        {/* Progress Line */}
         <div
           className="absolute top-0 left-8 md:left-12 w-2 z-0 bg-blue-400"
           style={progressLineStyle}
@@ -58,7 +48,10 @@ const VerticalProgressBar = ({
   );
 };
 
-// Step Progress Circle Component
+{
+  /* progress bar step circle code below*/
+}
+
 const StepCircle = ({ label, active, number, onClick, icon: Icon }) => (
   <div className="relative flex items-center z-10">
     <button
