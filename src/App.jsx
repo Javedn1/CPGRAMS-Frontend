@@ -10,11 +10,11 @@ import AuthForgotPassword from "./pages/auth/AuthForgotPassword";
 import TrackGrievancePage from "./pages/Track-GRV/TrackGrievancePage";
 import MyGrievances from "./pages/My-Complaints/myGrievance";
 import CitizenProfile from "./components/profile/citizen-profile";
-import Team from "./pages/PGO/Team";
-import PGOLayout from "./pages/PGO/PGOLayout";
-import Dashboard from "./pages/PGO/Dashboard";
-import Projects from "./pages/PGO/Projects";
-import HelpCenter from './components/HelpCenter/help';
+import Team from './pages/PGO/Team'
+import PGOLayout from './pages/PGO/PGOLayout'
+import Dashboard from './pages/PGO/Dashboard'
+import Projects from './pages/PGO/Projects'
+
 
 function App() {
   return (
@@ -32,8 +32,8 @@ function App() {
           <Route path="/help"  element={< HelpCenter/>} />
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="team" element={<Team />} />
-            <Route path="projects" element={<Projects />} />
+            <Route path='team' element={<Team />} />
+            <Route path='projects' element={<Projects />} />
           </Route>
         </Routes>
       </BrowserRouter>
