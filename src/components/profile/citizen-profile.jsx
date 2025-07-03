@@ -16,7 +16,7 @@ import {
   useState,
   useRef,
   useEffect,
-} from "../profile/ProfileConstants/utils";
+} from "../profile/ProfileConstants/profile-utils";
 
 import { getTabs } from "../profile/ProfileConstants/navtabs";
 
