@@ -9,8 +9,11 @@ import {
   MessageSquare,
 } from "lucide-react";
 import GrievanceList from './components/GrievanceList';
+import RecentActivity from './components/RecentActivity';
+import { useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+  const navigate = useNavigate();
 
   const stats = [
     {
@@ -115,7 +118,7 @@ function Dashboard() {
 
             <div className="mt-4 flex justify-center">
               <button
-                onClick={() => console.log("Redirect to full grievance list")}
+                onClick={() => navigate("recent-activity")}
                 className="px-2 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition"
               >
                 View More
