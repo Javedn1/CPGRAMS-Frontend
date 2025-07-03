@@ -13,7 +13,7 @@ import CitizenProfile from "./components/profile/citizen-profile";
 import Team from './pages/PGO/Team'
 import PGOLayout from './pages/PGO/PGOLayout'
 import Dashboard from './pages/PGO/Dashboard'
-import Projects from './pages/PGO/Projects'
+
 
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
             <Route path='team' element={<Team />} />
-            <Route path='projects' element={<Projects />} />
+            
           </Route>
         </Routes>
       </BrowserRouter>
