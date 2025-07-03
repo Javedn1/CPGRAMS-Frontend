@@ -7,7 +7,6 @@ import {
   Eye,
   Paperclip,
   Edit3,
-  CheckCircle,
   X,
   ChevronLeft,
 } from "lucide-react";
@@ -40,8 +39,8 @@ const HelpCenter = () => {
         className="fixed inset-0 flex items-center justify-center z-50 p-4"
         style={{
           backdropFilter: "blur(2px)",
-          WebkitBackdropFilter: "blur(6px)",
-          backgroundColor: "rgba(37, 99, 235, 0.5)",
+          WebkitBackdropFilter: "blur(0px)",
+       
         }}
       >
         <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -107,12 +106,9 @@ const HelpCenter = () => {
 
         {/* top welcome section code below */}
         <div
-          className="relative text-white py-54 px-4"
+          className="relative text-white py-25 px-4"
           style={{
-            backgroundImage:
-              "url('https://blog.webex.com/wp-content/uploads/2025/04/call-center-customer-service.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundColor: "#fff",
           }}
         >
           <div
@@ -122,27 +118,28 @@ const HelpCenter = () => {
               backdropFilter: "blur(3px)",
               WebkitBackdropFilter: "blur(6px)",
               zIndex: 1,
+              display: "none",
             }}
           ></div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h1 className="text-4xl font-bold mb-6">
+            <h1 className="text-4xl font-bold mb-6 text-gray-900">
               Welcome to Help & Support Center
             </h1>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-blue-700 mb-8">
               Get assistance with submitting and tracking your grievances
             </p>
 
             <div className="max-w-md mx-auto relative mb-6">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-100 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search for help..."
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-blue-100 focus:outline-none focus:ring-2"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-blue-100 focus:outline-none focus:ring-2 text-gray-900 bg-white"
               />
             </div>
             <a href="/">
-              <button className="mt-0 px-6 cursor-pointer py-2 bg-transparent text-white rounded-lg font-semibold shadow flex items-centr justify-center mx-auto gap-2 transition-colors">
-                <ChevronLeft className="w-5 h-5 text-white" />
+              <button className="mt-15 px-6 cursor-pointer py-2 bg-transparent text-blue-700 rounded-lg font-semibold shadow flex items-center justify-center mx-auto gap-2 transition-colors">
+                <ChevronLeft className="w-5 h-5 text-blue-700" />
                 <span>Back to Dashboard</span>
               </button>
             </a>
@@ -161,10 +158,8 @@ const HelpCenter = () => {
                   key={step.id}
                   className="bg-white border border-blue-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-blue-600 font-bold text-lg">
-                      {step.icon}
-                    </span>
+                  <div className="w-12 h-12 rounded-lg bg-blue-300 flex items-center justify-center mb-4">
+                    {step.icon}
                   </div>
                   <h3 className="font-semibold text-gray-800 mb-2">
                     {step.title}
@@ -190,20 +185,22 @@ const HelpCenter = () => {
 
                 return (
                   <div
-                    key={action.id}
-                    className="bg-white border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors cursor-pointer"
-                    onClick={() => handleActionClick(key)}
+                  key={action.id}
+                  className="bg-white border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors cursor-pointer"
+                  onClick={() => handleActionClick(key)}
                   >
-                    <IconComponent className="w-8 h-8 text-blue-600 mb-4" />
-                    <h3 className="font-semibold text-gray-800 mb-2">
-                      {action.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4">
-                      {action.description}
-                    </p>
-                    <span className="text-blue-600 text-sm font-medium hover:underline">
-                      {action.buttonText}
-                    </span>
+                  <div className="w-12 h-12 flex items-center justify-center bg-blue-300 rounded-lg mb-4">
+                    <IconComponent className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    {action.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {action.description}
+                  </p>
+                  <span className="text-blue-600 text-sm font-medium hover:underline">
+                    {action.buttonText}
+                  </span>
                   </div>
                 );
               })}
