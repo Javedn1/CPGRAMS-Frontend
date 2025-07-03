@@ -168,7 +168,7 @@ const Sidebar = () => {
             </nav>
 
             {/* SIDEBAR */}
-            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-screen flex-col absolute  left-0 top-0">
+            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-[118vh] flex-col absolute  left-0 top-0">
                 <div className="p-4 border-b border-gray-100">
                     <div className="flex items-center">
                         <div className="ml-3 overflow-hidden">
@@ -255,12 +255,12 @@ const Sidebar = () => {
                     </nav>
                 </div>
 
-                <div className="p-3 border-t border-gray-100">
+                {/* <div className="p-3 border-t border-gray-100">
                     <button className="w-full flex items-center px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all duration-200">
                         <Settings className="w-5 h-5 mr-3 flex-shrink-0" />
                         <span className="truncate">Settings</span>
                     </button>
-                </div>
+                </div> */}
             </div>
         </>
     );

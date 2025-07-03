@@ -56,7 +56,7 @@ function Dashboard() {
     }]
   return (
     <>
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-slate-50    ">
+      <section className="px-4 pt-2 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-slate-50">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
             <div
@@ -73,12 +73,12 @@ function Dashboard() {
             </div>
           ))}
         </div>
-        <div className='flex flex-col md:flex-row  p-6 gap-5 '>
-          <div className="w-full md:w-3/4 bg-white p-6 rounded-lg shadow-md mb-6 md:mb-0">
+        <div className='flex flex-col md:flex-row  pt-6 pb-4 gap-5 '>
+          <div className="w-full md:w-3/4 bg-white flex justify-center items-center rounded-lg shadow-sm border border-gray-200 mb-6 md:mb-0">
             <GrievanceList />
           </div>
-          
-          <div className='w-full md:w-1/4 bg-white p-6 rounded-lg shadow-md  relative'>
+
+          <div className='w-full md:w-1/4 bg-white p-6 rounded-lg shadow-sm border border-gray-200  relative'>
             {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"> */}
 
             {/* Recent Activity Card */}
