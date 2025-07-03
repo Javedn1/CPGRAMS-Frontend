@@ -15,22 +15,28 @@ const priorityColorMap = {
 
 const GrievanceCard = ({ grievance }) => {
     return (
-        <div className="bg-white shadow rounded-lg p-4 border border-gray-200">
-            <div className="flex justify-between items-start">
+        <div className="bg-white shadow rounded-lg p-6 border border-gray-200 w-full">
+            <div className="flex justify-between items-start flex-wrap gap-2">
                 <div>
-                    <h3 className="text-md font-semibold">{grievance.title}</h3>
+                    <h3 className="text-md font-semibold text-gray-800">{grievance.title}</h3>
                     <span className="text-xs text-gray-500">{grievance.id}</span>
                 </div>
                 <div className="flex gap-2">
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusColorMap[grievance.status]}`}>
+                    <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${statusColorMap[grievance.status]}`}
+                    >
                         {grievance.status}
                     </span>
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${priorityColorMap[grievance.priority]}`}>
+                    <span
+                        className={`text-xs font-medium px-2 py-1 rounded-full ${priorityColorMap[grievance.priority]}`}
+                    >
                         {grievance.priority}
                     </span>
                 </div>
             </div>
-            <p className="text-sm text-gray-700 mt-2">{grievance.description}</p>
+
+            <p className="break-words whitespace-pre-wrap">{grievance.description}</p>
+
             <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-gray-600">
                 <div>
                     <span className="font-medium">👤 Citizen:</span> {grievance.citizen}
