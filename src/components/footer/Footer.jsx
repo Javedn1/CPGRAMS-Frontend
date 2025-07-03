@@ -3,7 +3,7 @@ import {Shield} from "lucide-react"
 
 const Footer = () => {
   return (
-     <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+     <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8  relative z-20000">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center space-x-3 mb-4">
