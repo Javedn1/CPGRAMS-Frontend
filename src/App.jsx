@@ -1,4 +1,4 @@
-import react, { useState } from "react";
+// import react, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
@@ -13,6 +13,7 @@ import CitizenProfile from "./components/profile/citizen-profile";
 import Team from './pages/PGO/Team'
 import PGOLayout from './pages/PGO/PGOLayout'
 import Dashboard from './pages/PGO/Dashboard'
+import RecentActivity from './pages/PGO/components/RecentActivity'
 
 
 
@@ -28,12 +29,12 @@ function App() {
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
           <Route path="/myGrievance" element={<MyGrievances />} />
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
-          <Route path="/citizen-profile"  element={<CitizenProfile />} />
-          <Route path="/help"  element={< HelpCenter/>} />
+          <Route path="/citizen-profile" element={<CitizenProfile />} />
+          {/* <Route path="/help" element={< HelpCenter />} /> */}
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
             <Route path='team' element={<Team />} />
-            
+            <Route path="recent-activity" element={<RecentActivity />} />
           </Route>
         </Routes>
       </BrowserRouter>
