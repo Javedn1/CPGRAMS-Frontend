@@ -113,12 +113,17 @@ function Dashboard() {
               ))}
             </div>
 
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => console.log("Redirect to full grievance list")}
+                className="px-2 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition"
+              >
+                View More
+              </button>
+            </div>
+
           </div>
-
         </div>
-
-        {/* </div> */}
-        {/* </div> */}
       </section>
     </>
   )
