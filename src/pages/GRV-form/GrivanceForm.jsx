@@ -21,6 +21,9 @@ export default function GrievanceForm() {
     state: "",
     district: "",
     postalCode: "",
+    ministryName: "",
+    ministryDepartment: "",
+    publicAuthority: "",
     grievanceTitle: "",
     grievanceCategory: "",
     grievanceDepartment: "",
@@ -43,7 +46,7 @@ export default function GrievanceForm() {
   };
 
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 3));
+  const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   //generate pdf
@@ -79,13 +82,15 @@ export default function GrievanceForm() {
         <div className="w-full md:w-64 bg-blue-800 text-white flex flex-col items-center py-10 relative">
           <h2 className="text-3xl font-bold mb-12 text-center">Grievance Form</h2>
           <div className="relative flex flex-col items-start space-y-20 w-full px-4 md:pl-8">
-            <div className="absolute top-0 bottom-0 left-12 w-1 z-0 flex flex-col justify-between h-60">
+            <div className="absolute top-0 bottom-0 left-12 w-1 z-0 flex flex-col justify-between h-90">
               <div className={`flex-1 ${step > 1 ? "bg-green-500" : "bg-gray-400"}`}></div>
               <div className={`flex-1 ${step > 2 ? "bg-green-500" : "bg-gray-400"}`}></div>
+              <div className={`flex-1 ${step > 3 ? "bg-green-500" : "bg-gray-400"}`}></div>
             </div>
             <StepCircle label="Personal Details" active={step === 1} completed={step > 1} number={1} />
-            <StepCircle label="Grievance Details" active={step === 2} completed={step > 2} number={2} />
-            <StepCircle label="Review & Submit" active={step === 3} completed={false} number={3} />
+            <StepCircle label="Ministry Details" active={step === 2} completed={step > 2} number={2} />
+            <StepCircle label="Grievance Details" active={step === 3} completed={step > 3} number={3} />
+            <StepCircle label="Review & Submit" active={step === 4} completed={false} number={4} />
           </div>
         </div>
 
@@ -129,6 +134,53 @@ export default function GrievanceForm() {
           )}
 
           {step === 2 && (
+            <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
+              <h2 className="text-2xl font-bold mb-6">Ministry Details</h2>
+              <div className="space-y-4">
+                <div className="flex flex-col md:flex-row md:space-x-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">Ministry Name</label>
+                    <select name="ministryName" value={formData.ministryName} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                      <option value="">Select Ministry</option>
+                      <option value="Ministry of Education">Ministry of Education</option>
+                      <option value="Ministry of Health">Ministry of Health</option>
+                      <option value="Ministry of Home Affairs">Ministry of Home Affairs</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">Department</label>
+                    <select name="ministryDepartment" value={formData.ministryDepartment} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                      <option value="">Select Department</option>
+                      <option value="Higher Education">Higher Education</option>
+                      <option value="Public Health">Public Health</option>
+                      <option value="Internal Security">Internal Security</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Public Authority</label>
+                  <select name="publicAuthority" value={formData.publicAuthority} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                    <option value="">Select Authority</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="AIIMS">AIIMS</option>
+                    <option value="NCRB">NCRB</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-between">
+                <button onClick={prevStep} className="bg-gray-300 px-6 py-2 rounded hover:bg-gray-400 transition">
+                  Back
+                </button>
+                <button onClick={nextStep} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+
+          {step === 3 && (
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Grievance Details</h2>
               <div className="space-y-4">
@@ -183,7 +235,7 @@ export default function GrievanceForm() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <div className="border-2 border-dashed shadow-xl rounded-xl border-gray-300 p-6 bg-white">
               <h2 className="text-3xl font-bold mb-6 text-blue-700">Review Your Details</h2>
 
@@ -202,6 +254,16 @@ export default function GrievanceForm() {
                   <ReviewItem label="State" value={formData.state} />
                   <ReviewItem label="District" value={formData.district} />
                   <ReviewItem label="Postal Code" value={formData.postalCode} />
+                </div>
+              </div>
+
+              {/* Ministry Info */}
+              <div className="mb-6">
+                <h3 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-1 border-gray-200">Ministry Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                  <ReviewItem label="Ministry Name" value={formData.ministryName} />
+                  <ReviewItem label="Department" value={formData.ministryDepartment} />
+                  <ReviewItem label="Public Authority" value={formData.publicAuthority} />
                 </div>
               </div>
 
