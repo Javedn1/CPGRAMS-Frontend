@@ -10,13 +10,13 @@ import AuthForgotPassword from "./pages/auth/AuthForgotPassword";
 import TrackGrievancePage from "./pages/Track-GRV/TrackGrievancePage";
 import MyGrievances from "./pages/My-Complaints/myGrievance";
 import CitizenProfile from "./components/profile/citizen-profile";
-import Team from './pages/PGO/Team'
-import PGOLayout from './pages/PGO/PGOLayout'
-import Dashboard from './pages/PGO/Dashboard'
-import RecentActivity from './pages/PGO/components/RecentActivity'
+import HelpCenter from "./components/HelpCenter/help";
+import Team from "./pages/PGO/Team";
+import PGOLayout from "./pages/PGO/PGOLayout";
+import Dashboard from "./pages/PGO/Dashboard";
+import RecentActivity from "./pages/PGO/components/RecentActivity";
 import TokenPage from "./pages/PGO/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
-
 
 function App() {
   return (
@@ -31,13 +31,13 @@ function App() {
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
           <Route path="/myGrievance" element={<MyGrievances />} />
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
-          <Route path="/citizen-profile"  element={<CitizenProfile />} />
-          <Route path="/help"  element={< HelpCenter/>} />
+          <Route path="/citizen-profile" element={<CitizenProfile />} />
+          <Route path="/help" element={<HelpCenter />} />
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path='team' element={<Team />} />
+            <Route path="team" element={<Team />} />
             <Route path="recent-activity" element={<RecentActivity />} />
-            <Route path='reminder' element={<Reminder />} />
+            <Route path="reminder" element={<Reminder />} />
           </Route>
         </Routes>
       </BrowserRouter>
