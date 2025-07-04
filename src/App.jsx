@@ -15,7 +15,7 @@ import PGOLayout from './pages/PGO/PGOLayout'
 import Dashboard from './pages/PGO/Dashboard'
 import RecentActivity from './pages/PGO/components/RecentActivity'
 import TokenPage from "./pages/PGO/TokenPage";
-import HelpCenter from './components/HelpCenter/help'
+import Reminder from "./pages/PGO/Reminder";
 
 
 function App() {
@@ -37,6 +37,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='team' element={<Team />} />
             <Route path="recent-activity" element={<RecentActivity />} />
+            <Route path='reminder' element={<Reminder />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -20,13 +20,13 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (location.pathname.includes('team')) setActiveNav('Team');
-        else if (location.pathname.includes('projects')) setActiveNav('Projects');
-        else if (location.pathname.includes('calendar')) setActiveNav('Calendar');
-        else if (location.pathname.includes('documents')) setActiveNav('Documents');
+        else if (location.pathname.includes('grievance')) setActiveNav('Grievance');
+        else if (location.pathname.includes('activity')) setActiveNav('Activity');
+        else if (location.pathname.includes('reminder')) setActiveNav('Reminder');
         else if (location.pathname.includes('reports')) setActiveNav('Reports');
         else setActiveNav('Dashboard');
     }, [location.pathname]);
-    
+
     return (
         <>
             {/* NAVBAR */}
@@ -85,71 +85,77 @@ const Sidebar = () => {
                     <div id="mobile-menu" className="px-4 pb-4">
                         <ul className="space-y-2 font-medium">
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Dashboard')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Dashboard'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <Home className="w-5 h-5 mr-2" />
-                                    <Link to="/PGO-Dashboard">
+                                <Link to="/PGO-Dashboard">
+                                    <button
+                                        onClick={() => setActiveNav('Dashboard')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Dashboard'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <Home className="w-5 h-5 mr-2" />
                                         Dashboard
-                                    </Link>
-                                </button>
+                                    </button>
+                                </Link>
                             </li>
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Team')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Team'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <Users className="w-5 h-5 mr-2" />
-                                    <Link to="team">
+                                <Link to="team">
+                                    <button
+                                        onClick={() => setActiveNav('Team')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Team'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <Users className="w-5 h-5 mr-2" />
                                         Team
-                                    </Link>
-                                </button>
+                                    </button>
+                                </Link>
                             </li>
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Projects')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Projects'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <FolderOpen className="w-5 h-5 mr-2" />
-                                    <Link to="projects">
-                                        Projects
-                                    </Link>
-                                </button>
+                                <Link to="ofc-com">
+                                    <button
+                                        onClick={() => setActiveNav('Grievance')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Grievance'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <FolderOpen className="w-5 h-5 mr-2" />
+                                        Grievance
+                                    </button>
+                                </Link>
                             </li>
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Calendar')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Calendar'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <Calendar className="w-5 h-5 mr-2" />
-                                    Calendar
-                                </button>
+                                <Link to="recent-activity">
+                                    <button
+                                        onClick={() => setActiveNav('Activity')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Activity'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <Calendar className="w-5 h-5 mr-2" />
+                                        Activity
+                                    </button>
+                                </Link>
                             </li>
+
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Documents')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Documents'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <FileText className="w-5 h-5 mr-2" />
-                                    Documents
-                                </button>
+                                <Link to="reminder">
+                                    <button
+                                        onClick={() => setActiveNav('Reminder')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Reminder'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <FileText className="w-5 h-5 mr-2" />
+                                        Reminder
+                                    </button>
+                                </Link>
                             </li>
+
                             <li>
                                 <button
                                     onClick={() => setActiveNav('Reports')}
@@ -180,69 +186,71 @@ const Sidebar = () => {
                 </div>
 
                 <div className="flex-1 px-3 py-4 overflow-y-auto">
-                    <nav className="space-y-1">
-                        <button
-                            onClick={() => setActiveNav('Dashboard')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Dashboard'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <Home className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <Link to="/PGO-Dashboard">
+                    <nav className="flex flex-col gap-1">
+                        <Link to="/PGO-Dashboard">
+                            <button
+                                onClick={() => setActiveNav('Dashboard')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Dashboard'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <Home className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Dashboard</span>
-                            </Link>
-                        </button>
+                            </button>
+                        </Link>
 
-                        <button
-                            onClick={() => setActiveNav('Team')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Team'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <Users className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <Link to="team">
+                        <Link to="team">
+                            <button
+                                onClick={() => setActiveNav('Team')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Team'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <Users className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Team</span>
-                            </Link>
-                        </button>
+                            </button>
+                        </Link>
 
-                        <button
-                            onClick={() => setActiveNav('Projects')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Projects'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <FolderOpen className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <Link to="ofc-com">
+                        <Link to="ofc-com">
+                            <button
+                                onClick={() => setActiveNav('Grievance')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Grievance'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <FolderOpen className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Grievance</span>
-                            </Link>
-                        </button>
+                            </button>
+                        </Link>
 
-                        <button
-                            onClick={() => setActiveNav('Calendar')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Calendar'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <Calendar className="w-5 h-5 mr-3 flex-shrink-0" />
-                             <Link to="recent-activity">
-                            <span className="truncate">Activity</span>
-                             </Link>
-                        </button>
+                        <Link to="recent-activity">
+                            <button
+                                onClick={() => setActiveNav('Activity')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Activity'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <Calendar className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="truncate">Activity</span>
+                            </button>
+                        </Link>
 
-                        <button
-                            onClick={() => setActiveNav('Documents')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Documents'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <span className="truncate">Documents</span>
-                        </button>
+                        <Link to="reminder">
+                            <button
+                                onClick={() => setActiveNav('Reminder')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Reminder'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="truncate">Reminder</span>
+                            </button>
+                        </Link>
 
                         <button
                             onClick={() => setActiveNav('Reports')}
