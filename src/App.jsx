@@ -14,8 +14,7 @@ import Team from './pages/PGO/Team'
 import PGOLayout from './pages/PGO/PGOLayout'
 import Dashboard from './pages/PGO/Dashboard'
 import RecentActivity from './pages/PGO/components/RecentActivity'
-import OfficerComplaints from "./pages/PGO/OfficerComplaints";
-
+import TokenPage from "./pages/PGO/TokenPage";
 
 
 function App() {
@@ -27,6 +26,7 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/forgotpassword" element={<AuthForgotPassword />} />
           <Route path="/grv" element={<GrievanceForm />} />
+          <Route path="/grievance-success" element={<TokenPage />} />
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
           <Route path="/myGrievance" element={<MyGrievances />} />
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
@@ -36,7 +36,6 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='team' element={<Team />} />
             <Route path="recent-activity" element={<RecentActivity />} />
-            <Route path="ofc-com" element={<OfficerComplaints />} />
           </Route>
         </Routes>
       </BrowserRouter>
