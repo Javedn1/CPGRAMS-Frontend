@@ -228,7 +228,9 @@ const Sidebar = () => {
                                 }`}
                         >
                             <Calendar className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <span className="truncate">Calendar</span>
+                             <Link to="recent-activity">
+                            <span className="truncate">Activity</span>
+                             </Link>
                         </button>
 
                         <button
