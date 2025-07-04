@@ -16,6 +16,11 @@ import PGOLayout from "./pages/PGO/PGOLayout";
 import Dashboard from "./pages/PGO/Dashboard";
 import RecentActivity from "./pages/PGO/components/RecentActivity";
 import TokenPage from "./pages/PGO/TokenPage";
+import Team from './pages/PGO/Team'
+import PGOLayout from './pages/PGO/PGOLayout'
+import Dashboard from './pages/PGO/Dashboard'
+import RecentActivity from './pages/PGO/components/RecentActivity'
+import TokenPage from "./pages/GRV-form/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
 
 function App() {
