@@ -19,6 +19,7 @@ import RecentActivity from "./pages/PGO/components/RecentActivity";
 import TokenPage from "./pages/GRV-form/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
 import ContactSupportPage from "./components/contactSupport";
+import RejisterJuniorPGO from "./pages/PGO/RejisterJuniorPGO";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
             <Route path="team" element={<Team />} />
             <Route path="recent-activity" element={<RecentActivity />} />
             <Route path="reminder" element={<Reminder />} />
+            <Route path='PGO-Rejister' element={<RejisterJuniorPGO />} />
           </Route>
         </Routes>
       </BrowserRouter>
