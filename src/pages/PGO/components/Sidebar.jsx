@@ -23,7 +23,7 @@ const Sidebar = () => {
         else if (location.pathname.includes('grievance')) setActiveNav('Grievance');
         else if (location.pathname.includes('activity')) setActiveNav('Activity');
         else if (location.pathname.includes('reminder')) setActiveNav('Reminder');
-        else if (location.pathname.includes('reports')) setActiveNav('Reports');
+        else if (location.pathname.includes('PGO-Rejister')) setActiveNav('PGO-Rejister');
         else setActiveNav('Dashboard');
     }, [location.pathname]);
 
@@ -157,16 +157,18 @@ const Sidebar = () => {
                             </li>
 
                             <li>
-                                <button
-                                    onClick={() => setActiveNav('Reports')}
-                                    className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Reports'
-                                        ? "text-white bg-blue-700 dark:bg-blue-600"
-                                        : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        }`}
-                                >
-                                    <BarChart3 className="w-5 h-5 mr-2" />
-                                    Reports
-                                </button>
+                                <Link to='PGO-Rejister'>
+                                    <button
+                                        onClick={() => setActiveNav('PGO-Rejister')}
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'PGO-Rejister'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <BarChart3 className="w-5 h-5 mr-2" />
+                                        PGO Rejister
+                                    </button>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -252,16 +254,18 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
-                        <button
-                            onClick={() => setActiveNav('Reports')}
-                            className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Reports'
-                                ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                }`}
-                        >
-                            <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
-                            <span className="truncate">Reports</span>
-                        </button>
+                        <Link to='PGO-Rejister'>
+                            <button
+                                onClick={() => setActiveNav('PGO-Rejister')}
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'PGO-Rejister'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="truncate">PGO Rejister</span>
+                            </button>
+                        </Link>
                     </nav>
                 </div>
 
