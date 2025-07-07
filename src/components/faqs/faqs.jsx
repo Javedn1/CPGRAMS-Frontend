@@ -4,6 +4,7 @@ import {
   useState,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
   Search,
   faqData,
   Header,
@@ -54,8 +55,13 @@ const FAQPage = () => {
             Government of India and the Role of Department of Administrative
             Reforms and Public Grievance, New Delhi, therein
           </p>
+          <a href="/" className="flex justify-center">
+            <button className="flex items-center gap-2 cursor-pointer mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors font-semibold">
+              <ChevronLeft />
+              Back to Dashboard
+            </button>
+          </a>
         </div>
-
         <div className="mb-8">
           <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -68,7 +74,6 @@ const FAQPage = () => {
             />
           </div>
         </div>
-
         {/* main faqs section below */}
         <div className="space-y-4">
           {filteredFAQ.map((section) => (
@@ -113,7 +118,6 @@ const FAQPage = () => {
             </div>
           ))}
         </div>
-
         {/* no result message */}
         {filteredFAQ.length === 0 && searchTerm && (
           <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
