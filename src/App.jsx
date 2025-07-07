@@ -16,6 +16,7 @@ import Dashboard from './pages/PGO/Dashboard'
 import RecentActivity from './pages/PGO/components/RecentActivity'
 import TokenPage from "./pages/GRV-form/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
+import ContactSupportPage from "./components/contactSupport";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/myGrievance" element={<MyGrievances />} />
           <Route path="/trk-grv" element={<TrackGrievancePage />} />
           <Route path="/citizen-profile" element={<CitizenProfile />} />
+          <Route path="/contact" element={<ContactSupportPage />} />
           {/* <Route path="/help" element={< HelpCenter />} /> */}
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
