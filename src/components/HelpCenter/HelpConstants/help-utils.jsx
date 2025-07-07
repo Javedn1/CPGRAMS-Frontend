@@ -1,6 +1,6 @@
 import { LogIn, BookCopy, TrainTrack, Mail } from "lucide-react";
 import Header from "../../header/MainHeader";
-import Footer from '../../footer/Footer'
+import Footer from "../../footer/Footer";
 
 export const QUICK_START_STEPS = {
   login: {
@@ -41,13 +41,13 @@ export const USER_ACTIONS = {
     description: "Submit a new complaint with all required details",
     buttonText: "Start filing →",
     detailedSteps: [
-    'Go to the official grievance portal and log in.',
-    'Click on “Add Grievance” from the dashboard.',
-    'Fill out the form with correct details.',
-    'Upload any documents if needed.',
-    'Review and submit your complaint.',
-    'Note the grievance ID shown after submission.',
-    'Use this ID to track or edit your grievance later.',
+      "Go to the official grievance portal and log in.",
+      "Click on “Add Grievance” from the dashboard.",
+      "Fill out the form with correct details.",
+      "Upload any documents if needed.",
+      "Review and submit your complaint.",
+      "Note the grievance ID shown after submission.",
+      "Use this ID to track or edit your grievance later.",
     ],
   },
   checkStatus: {
@@ -57,15 +57,14 @@ export const USER_ACTIONS = {
     description: "Track your grievance and see current progress",
     buttonText: "View status →",
     detailedSteps: [
-    'Open the grievance redressal website.',
-    'Click on the “Track Complaints” section on the dashboard.',
-    'Type your Grievance ID.',
-    'Click the “Submit” button to see the status.',
-    'Check what stage your complaint is in or any updates from the department.',
-    'If it’s resolved, you will see the final response or solution.',
-    'If you have questions, contact support using the given details.',
-    'Save your Grievance ID – you’ll need it again later.',
-  
+      "Open the grievance redressal website.",
+      "Click on the “Track Complaints” section on the dashboard.",
+      "Type your Grievance ID.",
+      "Click the “Submit” button to see the status.",
+      "Check what stage your complaint is in or any updates from the department.",
+      "If it’s resolved, you will see the final response or solution.",
+      "If you have questions, contact support using the given details.",
+      "Save your Grievance ID – you’ll need it again later.",
     ],
   },
   attachDocuments: {
@@ -104,7 +103,5 @@ export const USER_ACTIONS = {
     ],
   },
 };
-
-
 
 export { Header, Footer };

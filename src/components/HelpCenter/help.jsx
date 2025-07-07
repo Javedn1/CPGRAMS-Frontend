@@ -40,7 +40,6 @@ const HelpCenter = () => {
         style={{
           backdropFilter: "blur(2px)",
           WebkitBackdropFilter: "blur(0px)",
-       
         }}
       >
         <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -185,22 +184,22 @@ const HelpCenter = () => {
 
                 return (
                   <div
-                  key={action.id}
-                  className="bg-white border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors cursor-pointer"
-                  onClick={() => handleActionClick(key)}
+                    key={action.id}
+                    className="bg-white border border-gray-200 rounded-lg p-6 hover:border-blue-300 transition-colors cursor-pointer"
+                    onClick={() => handleActionClick(key)}
                   >
-                  <div className="w-12 h-12 flex items-center justify-center bg-blue-300 rounded-lg mb-4">
-                    <IconComponent className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-semibold text-gray-800 mb-2">
-                    {action.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    {action.description}
-                  </p>
-                  <span className="text-blue-600 text-sm font-medium hover:underline">
-                    {action.buttonText}
-                  </span>
+                    <div className="w-12 h-12 flex items-center justify-center bg-blue-300 rounded-lg mb-4">
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-semibold text-gray-800 mb-2">
+                      {action.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {action.description}
+                    </p>
+                    <span className="text-blue-600 text-sm font-medium hover:underline">
+                      {action.buttonText}
+                    </span>
                   </div>
                 );
               })}
