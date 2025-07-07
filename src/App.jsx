@@ -11,19 +11,14 @@ import TrackGrievancePage from "./pages/Track-GRV/TrackGrievancePage";
 import MyGrievances from "./pages/My-Complaints/myGrievance";
 import CitizenProfile from "./components/profile/citizen-profile";
 import HelpCenter from "./components/HelpCenter/help";
+import Faqs from "./components/faqs/faqs";
 import Team from "./pages/PGO/Team";
 import PGOLayout from "./pages/PGO/PGOLayout";
 import Dashboard from "./pages/PGO/Dashboard";
 import RecentActivity from "./pages/PGO/components/RecentActivity";
-import TokenPage from "./pages/PGO/TokenPage";
-import Team from './pages/PGO/Team'
-import PGOLayout from './pages/PGO/PGOLayout'
-import Dashboard from './pages/PGO/Dashboard'
-import RecentActivity from './pages/PGO/components/RecentActivity'
 import TokenPage from "./pages/GRV-form/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
 import ContactSupportPage from "./components/contactSupport";
-
 
 function App() {
   return (
@@ -41,6 +36,7 @@ function App() {
           <Route path="/citizen-profile" element={<CitizenProfile />} />
           <Route path="/contact" element={<ContactSupportPage />} />
           <Route path="/help" element={<HelpCenter />} />
+          <Route path="faq" element={<Faqs />} />
           <Route path="/PGO-Dashboard" element={<PGOLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="team" element={<Team />} />
