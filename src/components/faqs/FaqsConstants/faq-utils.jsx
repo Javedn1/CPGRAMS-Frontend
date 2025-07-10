@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, ChevronLeft } from "lucide-react";
 import Header from "../../header/MainHeader";
 import Footer from "../../footer/Footer";
 
@@ -113,4 +113,13 @@ const faqData = [
   },
 ];
 
-export { useState, ChevronDown, ChevronUp, Search, faqData, Header, Footer };
+export {
+  useState,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  ChevronLeft,
+  faqData,
+  Header,
+  Footer,
+};
