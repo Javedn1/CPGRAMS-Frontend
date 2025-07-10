@@ -12,6 +12,7 @@ import {
 //import Header from "../../components/header/MainHeader";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
+import Header from "../../components/header/MainHeader";
 const Home = () => {
   const stats = [
     {
@@ -66,7 +67,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
-      <HeaderLayout />
+      <Header />
 
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">

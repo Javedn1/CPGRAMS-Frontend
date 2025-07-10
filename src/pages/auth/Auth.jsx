@@ -11,6 +11,7 @@ import Register from "../../components/auth/Register";
 import Login from "../../components/auth/login";
 //import Header from "../../components/header/MainHeader";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
+import Header from "../../components/header/MainHeader";
 export default function Auth() {
   const [tab, setTab] = useState("login");
 
@@ -35,7 +36,7 @@ export default function Auth() {
           </button>
         </div>
       </header> */}
-      <HeaderLayout/>
+      <Header/>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

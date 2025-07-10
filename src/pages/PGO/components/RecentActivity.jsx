@@ -36,7 +36,7 @@ function RecentActivity() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 py-10 px-4">
+    <div className="min-h-screen py-10 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Recent Activity</h1>

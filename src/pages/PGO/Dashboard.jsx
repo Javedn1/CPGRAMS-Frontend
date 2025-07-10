@@ -59,7 +59,7 @@ function Dashboard() {
     }]
   return (
     <>
-      <section className="px-4 pt-2 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-white to-slate-50">
+      <section className="px-4 pt-2 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
             <div
