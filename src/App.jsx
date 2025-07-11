@@ -20,10 +20,12 @@ import TokenPage from "./pages/GRV-form/TokenPage";
 import Reminder from "./pages/PGO/Reminder";
 import ContactSupportPage from "./components/contactSupport";
 import RejisterJuniorPGO from "./pages/PGO/RejisterJuniorPGO";
+import { UserProvider } from "./context/userContext";
 
 function App() {
   return (
     <>
+    <UserProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -47,6 +49,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+    </UserProvider>
     </>
   );
 }

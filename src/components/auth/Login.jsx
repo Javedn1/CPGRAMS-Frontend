@@ -1,18 +1,43 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import axios from "axios";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
-  const clickForgotPassword = () => {
-    navigate("/forgotpassword")
-  }
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", loginForm);
+
+      const data = res.data;
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
+
+      if (data.role === "user") {
+        navigate("/");
+      }
+
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Server error");
+      }
+    }
+  };
+
+
+  const clickForgotPassword = () => {
+    navigate("/forgotpassword");
+  };
 
   return (
     <div className="space-y-4">
@@ -48,7 +73,11 @@ const Login = () => {
             className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? <EyeOff className="w-5 h-5 text-gray-500" /> : <Eye className="w-5 h-5 text-gray-500" />}
+            {showPassword ? (
+              <EyeOff className="w-5 h-5 text-gray-500" />
+            ) : (
+              <Eye className="w-5 h-5 text-gray-500" />
+            )}
           </div>
         </div>
       </div>
@@ -66,12 +95,17 @@ const Login = () => {
         </button>
       </div>
 
+      {error && (
+        <p className="text-sm text-red-600 font-medium -mt-3">{error}</p>
+      )}
+
       <div className="space-y-3">
-        <Link href="/citizen/dashboard">
-          <button className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Login as Citizen
-          </button>
-        </Link>
+        <button
+          className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          onClick={handleLogin}
+        >
+          Login as Citizen
+        </button>
         {/* <Link href="/officer/dashboard">
           <button className="w-full border border-gray-300 px-4 py-2 rounded hover:bg-gray-50">
             Login as PG Officer
@@ -88,3 +122,6 @@ const Login = () => {
 };
 
 export default Login;
+
+
+

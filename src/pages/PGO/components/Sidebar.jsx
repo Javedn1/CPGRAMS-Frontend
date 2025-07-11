@@ -170,13 +170,48 @@ const Sidebar = () => {
                                     </button>
                                 </Link>
                             </li>
+                            <hr />
+                            <li className="flex justify-between px-3 w-full border border-gray-200 bg-white shadow-[0px_0px_7px_1px_rgba(0,_0,_0,_0.2)] rounded-xl py-2 z-50 animate-fadeIn">
+
+                                <span className="">
+                                    My Profile
+                                </span>
+
+                                <span className="">
+                                    Setting
+                                </span>
+
+                                <span className="hover:text-red-800">
+                                    Logout
+                                </span>
+                            </li>
                         </ul>
                     </div>
                 )}
             </nav>
 
             {/* SIDEBAR */}
-            <div className="hidden sm:flex w-44 bg-white shadow-[4px_0px_6px_0px_rgba(0,_0,_0,_0.2)] border-r border-gray-200 h-[118vh] flex-col absolute  left-0 top-0">
+            <nav className="hidden sm:flex bg-white shadow-md px-6 py-3 justify-between items-center">
+                <div className="text-xl font-semibold text-gray-800"></div>
+
+                <div className="flex items-center gap-6 text-gray-700 relative">
+                    <details className="relative">
+                        <summary className="list-none cursor-pointer hover:text-blue-600 transition duration-200">
+                            <i className="fa-solid fa-user text-lg"></i>
+                        </summary>
+
+                        <div
+                            className="absolute right-0 mt-4 w-40 bg-white border rounded-md shadow-lg z-50"
+                        >
+                            <a href="#" className="block px-4 py-2 rounded-md hover:bg-gray-100">Profile</a>
+                            <a href="#" className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</a>
+                            <a href="#" className="block px-4 py-2 rounded-md text-red-500 hover:bg-gray-100">Logout</a>
+                        </div>
+                    </details>
+                </div>
+            </nav>
+
+            <div className="hidden sm:flex w-44 bg-red border-r border-gray-200 h-[150vh] flex-col absolute  left-0 top-0">
                 <div className="p-4 border-b border-gray-100">
                     <div className="flex items-center">
                         <div className="ml-3 overflow-hidden">

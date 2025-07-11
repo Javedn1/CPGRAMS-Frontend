@@ -1,18 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Shield, Menu, X, UserCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
-export default function Header({
-  setTrackModalOpen,
-  handleAuthAction,
-  isLoggedIn,
-}) {
+export default function Header({ setTrackModalOpen, handleAuthAction }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
-  const dropdownRef = useRef();
   const navigate = useNavigate();
+  const dropdownRef = useRef();
 
   const hideAuthButtons = location.pathname.includes("/auth");
 
@@ -25,6 +21,15 @@ export default function Header({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token && user.role === "user") {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [location.pathname]); 
 
   return (
     <header className="bg-white shadow-sm border-b border-blue-100 top-0 z-50">
@@ -61,42 +66,23 @@ export default function Header({
 
         {/* Right - Auth or Profile */}
         <div className="flex items-center space-x-3 flex-shrink-0">
-
           {isLoggedIn ? (
-            <>
-              {/* Profile Icon and Dropdown */}
-              <div className="hidden lg:flex items-center relative" ref={dropdownRef}>
-                <button
-                  className="hover:opacity-80 transition"
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                >
-                  <UserCircle className="w-8 h-8 text-gray-700" />
-                </button>
-
-                {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-70 w-52 bg-white shadow-lg border border-gray-100 rounded-xl py-2 z-50 animate-fadeIn">
-
-                    <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">
-                      My Profile
-                    </button>
-
-                    <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">
-                      Help
-                    </button>
-
-                    <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">
-                      FAQ
-                    </button>
-
-                    <button className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 font-semibold transition">
-                      Logout
-                    </button>
-                  </div>
-                )}
-
-
-              </div>
-            </>
+            <div className="hidden lg:flex items-center relative" ref={dropdownRef}>
+              <button
+                className="hover:opacity-80 transition"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              >
+                <UserCircle className="w-8 h-8 text-gray-700" />
+              </button>
+              {profileDropdownOpen && (
+                <div className="absolute right-0 mt-70 w-52 bg-white shadow-lg border border-gray-100 rounded-xl py-2 z-50 animate-fadeIn">
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">My Profile</button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">Help</button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">FAQ</button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 font-semibold transition">Logout</button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <button
@@ -138,16 +124,14 @@ export default function Header({
       {menuOpen && (
         <div className="lg:hidden bg-white shadow-md border-t border-gray-200">
           <nav className="flex flex-col px-4 py-4 space-y-2">
-
             {isLoggedIn ? (
               <>
-                <button className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700">
-                  Add Grievance
-                </button>
-                <button className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700"
+                <button className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700">Add Grievance</button>
+                <button
+                  className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700"
                   onClick={() => {
                     navigate("/myGrievance");
-                    setMenuOpen(false); // close mobile menu
+                    setMenuOpen(false);
                   }}
                 >
                   My Complaints

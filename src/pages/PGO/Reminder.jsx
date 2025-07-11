@@ -50,7 +50,7 @@ const Reminder = () => {
     }, [searchTerm, sortOrder, reminders]);
 
     return (
-        <div className="px-6 py-4 bg-gray-100 min-h-screen">
+        <div className="px-6 py-4 min-h-screen">
             
             <div className="flex flex-col md:flex-row bg-gray-200 justify-between gap-4 mb-6 p-2 rounded-xl shadow-sm border border-gray-200">
                 <div className="bg-white rounded-md w-full md:w-1/2">
