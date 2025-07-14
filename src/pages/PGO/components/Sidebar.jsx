@@ -9,11 +9,15 @@ import {
     Settings
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+
 
 const Sidebar = () => {
     const [activeNav, setActiveNav] = useState('Dashboard');
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate()
 
     const toggleNavbar = () => setIsOpen(!isOpen);
 
@@ -26,6 +30,14 @@ const Sidebar = () => {
         else if (location.pathname.includes('PGO-Rejister')) setActiveNav('PGO-Rejister');
         else setActiveNav('Dashboard');
     }, [location.pathname]);
+
+
+    const handleLogout = async () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        navigate("/")
+    };
+
 
     return (
         <>
@@ -181,7 +193,7 @@ const Sidebar = () => {
                                     Setting
                                 </span>
 
-                                <span className="hover:text-red-800">
+                                <span onClick={handleLogout} className="cursor-pointer hover:text-red-800">
                                     Logout
                                 </span>
                             </li>
@@ -203,9 +215,9 @@ const Sidebar = () => {
                         <div
                             className="absolute right-0 mt-4 w-40 bg-white border rounded-md shadow-lg z-50"
                         >
-                            <a href="#" className="block px-4 py-2 rounded-md hover:bg-gray-100">Profile</a>
-                            <a href="#" className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</a>
-                            <a href="#" className="block px-4 py-2 rounded-md text-red-500 hover:bg-gray-100">Logout</a>
+                            <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Profile</span>
+                            <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</span>
+                            <span onClick={handleLogout} className="block px-4 py-2 cursor-pointer rounded-md text-red-500 hover:bg-gray-100">Logout</span>
                         </div>
                     </details>
                 </div>

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Shield, Menu, X, UserCircle } from "lucide-react";
 
-export default function Header({ setTrackModalOpen, handleAuthAction }) {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,7 +29,13 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
     } else {
       setIsLoggedIn(false);
     }
-  }, [location.pathname]); 
+  }, [location.pathname]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/auth")
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-blue-100 top-0 z-50">
@@ -49,7 +55,7 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
         {/* Center Links - Logged In */}
         {isLoggedIn && (
           <nav className="absolute left-1/2 transform -translate-x-1/2 space-x-6 hidden lg:flex">
-            <button className="text-gray-700 hover:text-blue-600 font-medium">Add Grievance</button>
+            <button onClick={() => navigate("/grv")} className="text-gray-700 hover:text-blue-600 font-medium">Add Grievance</button>
             <button className="text-gray-700 hover:text-blue-600 font-medium"
               onClick={() => navigate("/myGrievance")}
             >
@@ -57,7 +63,7 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
             </button>
             <button
               className="text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setTrackModalOpen(true)}
+              onClick={() => navigate("/trk-grv")}
             >
               Track Complaints
             </button>
@@ -76,17 +82,23 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
               </button>
               {profileDropdownOpen && (
                 <div className="absolute right-0 mt-70 w-52 bg-white shadow-lg border border-gray-100 rounded-xl py-2 z-50 animate-fadeIn">
-                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">My Profile</button>
-                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">Help</button>
-                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition">FAQ</button>
-                  <button className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 font-semibold transition">Logout</button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition" onClick={() => navigate("/citizen-profile")}>
+                    My Profile
+                  </button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition" onClick={() => navigate("/help")}>
+                    Help
+                  </button>
+                  <button className="w-full text-left px-4 py-3 hover:bg-blue-50 text-gray-700 font-medium transition" onClick={() => navigate("/faq")}>
+                    FAQ
+                  </button>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 font-semibold transition">Logout</button>
                 </div>
               )}
             </div>
           ) : (
             <>
               <button
-                onClick={() => setTrackModalOpen(true)}
+                onClick={() => navigate("/auth")}
                 className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-50 hidden lg:inline"
               >
                 Track
@@ -95,13 +107,13 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
               {!hideAuthButtons && (
                 <>
                   <button
-                    onClick={() => handleAuthAction("login")}
+                    onClick={() => navigate("/auth")}
                     className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-50 hidden lg:inline"
                   >
                     Login
                   </button>
                   <button
-                    onClick={() => handleAuthAction("register")}
+                    onClick={() => navigate("/auth")}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded hidden lg:inline"
                   >
                     Register
@@ -126,7 +138,12 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
           <nav className="flex flex-col px-4 py-4 space-y-2">
             {isLoggedIn ? (
               <>
-                <button className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700">Add Grievance</button>
+                <button className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700" onClick={() => {
+                  navigate("/grv");
+                  setMenuOpen(false);
+                }}>
+                  Add Grievance
+                </button>
                 <button
                   className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700"
                   onClick={() => {
@@ -139,17 +156,26 @@ export default function Header({ setTrackModalOpen, handleAuthAction }) {
                 <button
                   className="px-4 py-3 rounded hover:bg-blue-50 text-left font-medium text-gray-700"
                   onClick={() => {
-                    setTrackModalOpen(true);
+                    navigate("/trk-grv");
                     setMenuOpen(false);
                   }}
                 >
                   Track Complaints
                 </button>
                 <div className="border-t border-gray-200 mt-3 pt-3 space-y-2">
-                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700">My Profile</button>
-                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700">Help</button>
-                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700">FAQ</button>
-                  <button className="px-4 py-3 rounded hover:bg-red-50 text-left text-red-600 font-medium">Logout</button>
+                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700"
+                    onClick={() => navigate("/citizen-profile")} >
+                    My Profile
+                  </button>
+                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700"
+                    onClick={() => navigate("/help")} >
+                    Help
+                  </button>
+                  <button className="px-4 py-3 rounded hover:bg-gray-50 text-left text-gray-700"
+                    onClick={() => navigate("/faq")} >
+                    FAQ
+                  </button>
+                  <button onClick={handleLogout} className="px-4 py-3 rounded hover:bg-red-50 text-left text-red-600 font-medium">Logoutttt</button>
                 </div>
               </>
             ) : (
