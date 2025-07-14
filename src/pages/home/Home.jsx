@@ -13,7 +13,12 @@ import {
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
 import Header from "../../components/header/MainHeader";
+import { useNavigate } from "react-router-dom";
+
+
 const Home = () => {
+  const navigate = useNavigate()
+
   const stats = [
     {
       label: "Grievances Resolved",
@@ -65,6 +70,34 @@ const Home = () => {
     },
   ];
 
+
+  const handleTrackComplaint = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/trk-grv");
+    } else {
+      navigate("/auth");
+    }
+  };
+
+  const handleSubmitGrievance = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/grv");
+    } else {
+      navigate("/auth");
+    }
+  };
+
+  const handleGetStart = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/")
+    } else {
+      navigate("/auth")
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
       <Header />
@@ -86,13 +119,13 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => handleAuthAction("register")}
+              onClick={handleSubmitGrievance}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg rounded"
             >
               Submit Your Grievance
             </button>
             <button
-              onClick={() => setTrackModalOpen(true)}
+              onClick={handleTrackComplaint}
               className="border border-gray-300 px-8 py-3 text-lg rounded hover:bg-gray-50"
             >
               Track Existing Complaint
@@ -160,7 +193,7 @@ const Home = () => {
             concerns through our platform.
           </p>
           <button
-            onClick={() => handleAuthAction("register")}
+            onClick={handleGetStart}
             className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-3 text-lg rounded"
           >
             Get Started Today
