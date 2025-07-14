@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Header from "../../header/MainHeader";
 import VerticalProgressBar from "./VerticalProgressBar";
-import Footer from "../../footer/Footer";
+import Footer from "../../footer/footer";
 
 const PROGRESS_STEPS = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3, number: 1 },
