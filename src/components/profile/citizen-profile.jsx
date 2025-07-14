@@ -17,12 +17,14 @@ import {
   useRef,
   useEffect,
 } from "../profile/ProfileConstants/profile-utils";
-
+import axios from "axios";
 import { getTabs } from "../profile/ProfileConstants/navtabs";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function CitizenProfile() {
-  const [profile, setProfile] = useState(PROFILE_DETAILS),
-    [edit, setEdit] = useState(profile),
+  const [profile, setProfile] = useState(null),
+    [edit, setEdit] = useState(null),
     [editing, setEditing] = useState(false),
     [tab, setTab] = useState("dashboard"),
     [aadhaarVisible, setAadhaarVisible] = useState(false),
@@ -30,6 +32,112 @@ export default function CitizenProfile() {
     [img, setImg] = useState(null),
     [showMenu, setShowMenu] = useState(false),
     fileRef = useRef(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get("http://localhost:5000/api/userProfile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = res.data;
+
+        if (data && data.profiles.length > 0) {
+          const userProfile = data.profiles[0];
+          const user = userProfile.userId;
+
+          const profileData = {
+            _id: userProfile._id,
+            name: user.fullName,
+            email: user.email,
+            phone: user.phoneNumber,
+            memberSince: new Date(userProfile.registrationDate).toLocaleString('default', { month: 'long', year: 'numeric' }),
+            lastLogin: new Date(userProfile.lastLogin),
+            accountStatus: userProfile.accountStatus,
+            nationality: userProfile.nationality,
+            gender: user.gender,
+            dob: new Date(userProfile.dob).toISOString().split('T')[0],
+            address: user.address,
+            city: user.city,
+            district: user.district,
+            state: user.state,
+            pincode: user.pincode,
+            aadhaar: userProfile.aadhaar,
+            voterId: userProfile.voterId,
+            pan: userProfile.pan,
+            alternatePhone: userProfile.alternatePhone,
+            username: user.username || "N/A",
+            registrationDate: new Date(userProfile.registrationDate).toLocaleString('default', { month: 'long', year: 'numeric' }),
+            profileImage: userProfile.profileImage,
+            aadhaarCardUrl: userProfile.aadhaarCardUrl,
+            voterIdCardUrl: userProfile.voterIdCardUrl,
+            panCardUrl: userProfile.panCardUrl,
+            utilityBillUrl: userProfile.utilityBillUrl,
+            bankStatementUrl: userProfile.bankStatementUrl,
+            password: "••••••••",
+            visiblePassword: "",
+          };
+
+          setProfile(profileData);
+          setEdit(profileData);
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+
+  const save = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+
+      // Append editable fields
+      for (const key in edit) {
+        if (
+          key !== "password" &&
+          key !== "visiblePassword" &&
+          key !== "lastLogin" &&
+          edit[key] !== undefined
+        ) {
+          formData.append(key, edit[key]);
+        }
+      }
+
+      if (fileRef.current?.files?.[0]) {
+        formData.append("profileImage", fileRef.current.files[0]);
+      }
+
+      // Make PUT request to backend
+      const res = await axios.put(
+        `http://localhost:5000/api/userProfile/${profile._id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        setProfile(res.data.profile);
+        setEditing(false);
+        setImg(null);
+        toast.success("Profile updated successfully!");
+      }
+    } catch (err) {
+      console.error("Failed to save profile:", err.response?.data || err.message);
+    }
+  };
+
 
   useEffect(() => {
     if (!editing) {
@@ -41,17 +149,6 @@ export default function CitizenProfile() {
   }, [editing]);
 
   const update = (field, val) => setEdit((prev) => ({ ...prev, [field]: val }));
-
-  const tabs = getTabs({
-    edit,
-    update,
-    editing,
-    profile,
-    aadhaarVisible,
-    setAadhaarVisible,
-    setPasswordVisible,
-    passwordVisible,
-  });
 
   const uploadImg = (e) => {
     const file = e.target.files?.[0];
@@ -68,18 +165,34 @@ export default function CitizenProfile() {
     }
   };
 
-  const save = () => {
-    setProfile({ ...edit, lastLogin: new Date() });
-    setEditing(false);
-  };
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-gray-500 text-lg">Loading profile...</p>
+      </div>
+    );
+  }
+
+  const tabs = getTabs({
+    edit,
+    update,
+    editing,
+    profile,
+    aadhaarVisible,
+    setAadhaarVisible,
+    setPasswordVisible,
+    passwordVisible,
+  });
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 transition-colors duration-300">
       <Header
-        setTrackModalOpen={() => {}}
-        handleAuthAction={() => {}}
+        setTrackModalOpen={() => { }}
+        handleAuthAction={() => { }}
         isLoggedIn
-        handleLogout={() => {}}
+        handleLogout={() => { }}
       />
       <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
         <div className="hidden md:block">
@@ -146,6 +259,7 @@ export default function CitizenProfile() {
                     <img
                       src={
                         img ||
+                        (editing ? edit?.profileImage : profile?.profileImage) ||
                         "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
                       }
                       alt="profile picture"
@@ -163,6 +277,7 @@ export default function CitizenProfile() {
                     />
                   </label>
                 </div>
+
                 <div className="flex-1 text-center md:text-left">
                   <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
                     <h1 className="text-3xl font-bold text-gray-900">
@@ -179,16 +294,18 @@ export default function CitizenProfile() {
                         editing
                           ? save
                           : () => {
-                              setEdit(profile);
-                              setEditing(true);
-                            }
+                            setEdit(profile);
+                            setEditing(true);
+                          }
                       }
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 rounded-full shadow-md transition-all duration-200 group"
                     >
-                      <Edit className="w-4 h-4 mr-2" />
+                      <Edit className="w-4 h-4 transition-transform duration-200 group-hover:rotate-6" />
                       {editing ? "Save Changes" : "Edit Profile"}
                     </button>
+
                   </div>
+
                   <div className="flex flex-col sm:flex-row gap-4 text-gray-600">
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4" />
@@ -223,6 +340,7 @@ export default function CitizenProfile() {
         </div>
       </div>
       <Footer />
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }
