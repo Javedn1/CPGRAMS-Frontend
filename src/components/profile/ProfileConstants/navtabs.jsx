@@ -22,6 +22,14 @@ const sectionClass =
   "p-6 space-y-6 bg-white rounded-lg shadow border border-blue-100";
 const fieldGrid = "grid grid-cols-1 md:grid-cols-2 gap-6";
 
+const getDownloadUrl = (url) => {
+  if (!url) return "#";
+  const parts = url.split("/upload/");
+  if (parts.length !== 2) return url;
+  return `${parts[0]}/upload/fl_attachment/${parts[1]}`;
+};
+
+
 export const getTabs = ({
   edit,
   update,
@@ -32,6 +40,7 @@ export const getTabs = ({
   setPasswordVisible,
   passwordVisible,
 }) => ({
+
   dashboard: (
     <div className="bg-white border border-blue-100 rounded-lg shadow-sm p-6 text-center">
       <h3 className="text-2xl font-bold text-blue-800 mb-4">
@@ -337,35 +346,77 @@ export const getTabs = ({
   ),
   documents: (
     <div className={sectionClass}>
-      <h3 className="font-bold text-xl text-blue-800 mb-4">
-        Uploaded Documents
-      </h3>
+      <h3 className="font-bold text-xl text-blue-800 mb-4">Uploaded Documents</h3>
       {[
         {
           title: "Identity Proofs",
-          docs: ["Aadhaar Card", "Voter ID", "PAN Card"],
+          docs: [
+            {
+              label: "Aadhaar Card",
+              key: "aadhaarCardUrl",
+            },
+            {
+              label: "Voter ID",
+              key: "voterIdCardUrl",
+            },
+            {
+              label: "PAN Card",
+              key: "panCardUrl",
+            },
+          ],
         },
-        { title: "Address Proofs", docs: ["Utility Bill", "Bank Statement"] },
-      ].map((val, i) => (
-        <div key={i}>
-          <h4 className="font-semibold mb-2 text-blue-700">{val.title}</h4>
-          {val.docs.map((doc, j) => (
+        {
+          title: "Address Proofs",
+          docs: [
+            {
+              label: "Utility Bill",
+              key: "utilityBillUrl",
+            },
+            {
+              label: "Bank Statement",
+              key: "bankStatementUrl",
+            },
+          ],
+        },
+      ].map((section, i) => (
+        <div key={i} className="mb-6">
+          <h4 className="font-semibold mb-2 text-blue-700">{section.title}</h4>
+          {section.docs.map((doc, j) => (
             <div
               key={j}
-              className="flex justify-between items-center p-2 border border-blue-100 rounded-md mt-2 bg-white"
+              className="flex justify-between items-center p-3 border border-blue-100 rounded-md mt-2 bg-white"
             >
-              <span className="flex gap-2 items-center">
+              <span className="flex gap-2 items-center text-gray-800">
                 <FileText className="w-4 h-4 text-blue-600" />
-                {doc}
+                {doc.label}
               </span>
-              <div className="flex gap-2">
-                <button className="text-blue-600 text-sm">View</button>
-                <button className="text-green-600 text-sm">Download</button>
-              </div>
+              {profile[doc.key] ? (
+                <div className="flex gap-3">
+                  <a
+                    href={profile[doc.key]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 text-sm hover:underline"
+                  >
+                    View
+                  </a>
+                  <a
+                    href={getDownloadUrl(profile[doc.key])}
+                    download
+                    className="text-green-600 text-sm hover:underline"
+                  >
+                    Download
+                  </a>
+                </div>
+
+              ) : (
+                <span className="text-gray-400 text-sm italic">Not Uploaded</span>
+              )}
             </div>
           ))}
         </div>
       ))}
     </div>
   ),
+
 });
