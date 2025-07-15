@@ -3,6 +3,7 @@ import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
 import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
+import Header from "../../components/header/MainHeader";
 
 
 export default function GrievanceForm() {
@@ -77,7 +78,7 @@ export default function GrievanceForm() {
 
   return (
     <>
-      <HeaderLayout />
+      <Header />
       <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
         <div className="w-full md:w-64 bg-blue-800 text-white flex flex-col items-center py-10 relative">
           <h2 className="text-3xl font-bold mb-12 text-center">Grievance Form</h2>

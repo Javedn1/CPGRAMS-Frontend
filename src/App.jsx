@@ -45,7 +45,7 @@ function App() {
               <Route path="/faq" element={<Faqs />} />
             </Route>
             
-            <Route element={<ProtectedRoute allowedRoles={['officer']} />}>
+            <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}>
               <Route path="/PGO-Dashboard" element={<PGOLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="team" element={<Team />} />

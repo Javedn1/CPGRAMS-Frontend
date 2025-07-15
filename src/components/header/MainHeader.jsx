@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Shield, Menu, X, UserCircle } from "lucide-react";
 
 export default function Header() {
@@ -47,8 +47,10 @@ export default function Header() {
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">GrievancePortal</h1>
-            <p className="text-xs text-gray-500">Government Services</p>
+            <Link to="/" className="flex flex-col">
+              <span className="text-xl font-bold text-gray-900">GrievancePortal</span>
+              <span className="text-xs text-gray-500">Government Services</span>
+            </Link>
           </div>
         </div>
 

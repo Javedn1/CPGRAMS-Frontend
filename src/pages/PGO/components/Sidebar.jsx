@@ -168,20 +168,23 @@ const Sidebar = () => {
                                 </Link>
                             </li>
 
-                            <li>
-                                <Link to='PGO-Rejister'>
-                                    <button
-                                        onClick={() => setActiveNav('PGO-Rejister')}
-                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'PGO-Rejister'
-                                            ? "text-white bg-blue-700 dark:bg-blue-600"
-                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            }`}
-                                    >
-                                        <BarChart3 className="w-5 h-5 mr-2" />
-                                        PGO Rejister
-                                    </button>
-                                </Link>
-                            </li>
+                            {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
+                                <li>
+                                    <Link to='PGO-Rejister'>
+                                        <button
+                                            onClick={() => setActiveNav('PGO-Rejister')}
+                                            className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'PGO-Rejister'
+                                                ? "text-white bg-blue-700 dark:bg-blue-600"
+                                                : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                }`}
+                                        >
+                                            <BarChart3 className="w-5 h-5 mr-2" />
+                                            PGO Rejister
+                                        </button>
+                                    </Link>
+                                </li>
+                            )}
+
                             <hr />
                             <li className="flex justify-between px-3 w-full border border-gray-200 bg-white shadow-[0px_0px_7px_1px_rgba(0,_0,_0,_0.2)] rounded-xl py-2 z-50 animate-fadeIn">
 
@@ -301,18 +304,21 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
-                        <Link to='PGO-Rejister'>
-                            <button
-                                onClick={() => setActiveNav('PGO-Rejister')}
-                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'PGO-Rejister'
-                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
-                                    }`}
-                            >
-                                <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
-                                <span className="truncate">PGO Rejister</span>
-                            </button>
-                        </Link>
+                        {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
+                            <Link to='PGO-Rejister'>
+                                <button
+                                    onClick={() => setActiveNav('PGO-Rejister')}
+                                    className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'PGO-Rejister'
+                                            ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                            : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                        }`}
+                                >
+                                    <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
+                                    <span className="truncate">PGO Rejister</span>
+                                </button>
+                            </Link>
+                        )}
+
                     </nav>
                 </div>
 

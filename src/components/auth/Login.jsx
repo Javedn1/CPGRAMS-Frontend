@@ -23,7 +23,10 @@ const Login = () => {
 
       if (data.role === "user") {
         navigate("/");
+      } else if (data.role === "officer" || data.role === "lead_officer") {
+        navigate("/pgo-dashboard");
       }
+
 
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
