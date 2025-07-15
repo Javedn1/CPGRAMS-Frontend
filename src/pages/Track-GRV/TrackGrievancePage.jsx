@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
+import Header from "../../components/header/MainHeader";
 const TrackGrievancePage = () => {
   const [activeTab, setActiveTab] = useState("grievance");
   const [trackingData, setTrackingData] = useState({ token: "", email: "" });
@@ -108,7 +109,7 @@ const TrackGrievancePage = () => {
 
   return (
     <>
-      <HeaderLayout />
+      <Header />
       <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
         <div className="w-full md:w-56 bg-blue-800 text-white flex flex-col items-center py-8 md:py-10 relative">
           <button

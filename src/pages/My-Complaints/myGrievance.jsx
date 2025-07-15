@@ -7,6 +7,7 @@ import GrievanceDetails from '../../components/GrievanceDetails';
 import MainNavbar from '../../components/header/MainHeader';
 import HeaderLayout from '../../components/header/Header-Layout/HeaderLayout';
 import Footer from '../../components/footer/footer';
+import Header from '../../components/header/MainHeader';
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -116,7 +117,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
 
     return (
         <>
-            <HeaderLayout />
+            <Header />
             <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
                 <div className='w-full md:w-56 bg-blue-800 text-white flex flex-col items-center py-8 md:py-10 relative'>
                     <button
