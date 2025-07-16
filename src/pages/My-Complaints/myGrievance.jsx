@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, FileText, Bell, ArrowLeft } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -8,6 +8,7 @@ import MainNavbar from '../../components/header/MainHeader';
 import HeaderLayout from '../../components/header/Header-Layout/HeaderLayout';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/MainHeader';
+import axios from 'axios';
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -28,35 +29,30 @@ const getPriorityColor = (priority) =>
     priorityColorMap[priority?.toLowerCase()] || 'bg-gray-100 text-gray-800';
 
 const MyGrievances = ({ complaints = [], setShowForm }) => {
-    const sampleComplaints = [
-        {
-            id: 'GRV-1001',
-            title: 'Street light not working',
-            category: 'Municipal Services',
-            status: 'Pending',
-            priority: 'High',
-            date: '2025-06-25',
-            lastUpdate: '2025-06-27',
-        },
-        {
-            id: 'GRV-1002',
-            title: 'Water leakage in government building',
-            category: 'Public Works Department',
-            status: 'Resolved',
-            priority: 'Medium',
-            date: '2025-06-20',
-            lastUpdate: '2025-06-28',
-        },
-        {
-            id: 'GRV-1003',
-            title: 'Delayed pension disbursement',
-            category: 'Finance Department',
-            status: 'Rejected',
-            priority: 'Low',
-            date: '2025-06-15',
-            lastUpdate: '2025-06-18',
-        },
-    ];
+    const [myGrievance, setMyGrievance] = useState([])
+
+    useEffect(() => {
+        const fetchMyComplaints = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const res = await axios.get("http://localhost:5000/api/grievances/my-grievances", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                // console.log("fetchMyComplaints",res.data);
+                setMyGrievance(res.data)
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchMyComplaints();
+    }, []);
+
+    console.log(myGrievance);
 
     const [feedbackGrievanceId, setFeedbackGrievanceId] = useState(null);
     const [selectedGrievance, setSelectedGrievance] = useState(null);
@@ -71,8 +67,8 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
         setFeedbackGrievanceId(null);
     };
 
-    const openFeedbackForm = (grievanceId) => {
-        setFeedbackGrievanceId(grievanceId);
+    const openFeedbackForm = (uniqueID) => {
+        setFeedbackGrievanceId(uniqueID);
     };
 
     const handleSendReminder = (grievanceId) => {
@@ -80,21 +76,17 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
         alert(`Reminder sent for grievance ID: ${grievanceId}`);
     };
 
-    const finalComplaints = complaints.length > 0 ? complaints : sampleComplaints;
-
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
         doc.text('My Grievances', 14, 16);
 
-        const tableData = finalComplaints.map((complaint, index) => [
+        const tableData = myGrievance.map((complaint, index) => [
             index + 1,
-            complaint.id,
+            complaint.uniqueID,
             complaint.title,
             complaint.category,
             complaint.status,
-            complaint.priority,
-            complaint.date,
-            complaint.lastUpdate,
+            new Date(complaint.createdAt).toLocaleDateString(),
         ]);
 
         autoTable(doc, {
@@ -105,9 +97,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                 'Title',
                 'Category',
                 'Status',
-                'Priority',
                 'Submitted',
-                'Last Update',
             ]],
             body: tableData,
         });
@@ -129,8 +119,8 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                     <div className="mt-12 flex flex-col gap-4 w-full px-4">
                         <button
                             className={`w-full text-left px-4 py-2 rounded ${activeTab === "mygrievance"
-                                    ? "bg-white text-blue-800 font-semibold "
-                                    : "hover:bg-blue-700"
+                                ? "bg-white text-blue-800 font-semibold "
+                                : "hover:bg-blue-700"
                                 }`}
                         >
                             My Grievance
@@ -187,29 +177,25 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {finalComplaints.map((complaint) => (
-                                        <tr key={complaint.id} className="hover:bg-gray-50 transition">
-                                            <td className="p-4 font-mono text-xs text-gray-700">{complaint.id}</td>
+                                    {myGrievance.map((complaint) => (
+                                        <tr key={complaint._id} className="hover:bg-gray-50 transition">
+                                            <td className="p-4 font-mono text-xs text-gray-700">{complaint.uniqueID}</td>
                                             <td className="p-4 max-w-xs truncate text-gray-800" title={complaint.title}>
                                                 {complaint.title}
                                             </td>
                                             <td className="p-4">
-                                                <span className="px-3 py-1 text-xs font-medium ">
+                                                <span className="px-3 py-1 text-xs font-medium">
                                                     {complaint.category}
                                                 </span>
                                             </td>
                                             <td className="p-4">
-                                                <span className={`px-3 py-1 text-xs font-medium  ${getStatusColor(complaint.status)}`}>
+                                                <span className={`px-3 py-1 text-xs font-medium ${getStatusColor(complaint.status)}`}>
                                                     {complaint.status}
                                                 </span>
                                             </td>
-                                            {/* <td className="p-4">
-                                            <span className={`px-3 py-1 text-xs font-medium  ${getPriorityColor(complaint.priority)}`}>
-                                                {complaint.priority}
-                                            </span>
-                                        </td> */}
-                                            <td className="p-4 text-gray-600">{complaint.date}</td>
-                                            {/* <td className="p-4 text-gray-600">{complaint.lastUpdate}</td> */}
+                                            <td className="p-4 text-gray-600">
+                                                {new Date(complaint.createdAt).toLocaleDateString()}
+                                            </td>
                                             <td className="p-4">
                                                 <button
                                                     onClick={() => openDetailsModal(complaint)}
@@ -220,24 +206,48 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                             </td>
                                             <td className="p-4">
                                                 <button
-                                                    onClick={() => openFeedbackForm(complaint.id)}
-                                                    className="text-green-600 hover:underline text-sm"
+                                                    onClick={() => complaint.status === "Resolved" && openFeedbackForm(complaint.uniqueID)}
+                                                    disabled={complaint.status !== "Resolved"}
+                                                    className={`text-sm underline-offset-2 ${complaint.status === "Resolved"
+                                                        ? "text-green-600 hover:underline cursor-pointer"
+                                                        : "text-gray-400 cursor-not-allowed"
+                                                        }`}
                                                 >
                                                     Feedback
                                                 </button>
                                             </td>
+
                                             <td className="p-4">
-                                                <button
-                                                    onClick={() => handleSendReminder(complaint.id)}
-                                                    className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800 text-sm"
-                                                >
-                                                    <Bell className="w-4 h-4" />
-                                                    Remind Officer
-                                                </button>
+                                                {(() => {
+                                                    const createdDate = new Date(complaint.createdAt);
+                                                    const currentDate = new Date();
+                                                    const diffTime = currentDate - createdDate;
+                                                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                                                    const daysLeft = 21 - diffDays;
+                                                    const canRemind = diffDays >= 21;
+
+                                                    return (
+                                                        <button
+                                                            onClick={() => canRemind && handleSendReminder(complaint._id)}
+                                                            disabled={!canRemind}
+                                                            title={
+                                                                !canRemind ? `For Reminder please wait for ${daysLeft} days` : ""
+                                                            }
+                                                            className={`flex items-center gap-1 text-sm ${canRemind
+                                                                    ? "text-yellow-600 hover:text-yellow-800 cursor-pointer"
+                                                                    : "text-gray-400 cursor-not-allowed"
+                                                                }`}
+                                                        >
+                                                            <Bell className="w-4 h-4" />
+                                                            Remind Officer
+                                                        </button>
+                                                    );
+                                                })()}
                                             </td>
+
                                         </tr>
                                     ))}
-                                    {finalComplaints.length === 0 && (
+                                    {myGrievance.length === 0 && (
                                         <tr>
                                             <td colSpan={10} className="p-6 text-center text-gray-500">
                                                 No grievances found.
@@ -245,6 +255,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                         </tr>
                                     )}
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
