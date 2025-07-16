@@ -285,7 +285,7 @@ export const getTabs = ({
             disabled={!editing}
           />
         </div>
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <label className="mb-1 font-medium text-gray-700">Password</label>
           <div className="flex items-center">
             <input
@@ -303,7 +303,7 @@ export const getTabs = ({
               {passwordVisible ? <Eye /> : <EyeOff />}
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   ),
@@ -311,10 +311,10 @@ export const getTabs = ({
     <div className={sectionClass}>
       <h3 className="font-bold text-xl text-blue-800">Account Details</h3>
       <div className={fieldGrid}>
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <label className="mb-1 font-medium text-gray-700">Username</label>
           <input className={inputClass} value={profile.username} disabled />
-        </div>
+        </div> */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-gray-700">
             Registration Date
@@ -382,38 +382,38 @@ export const getTabs = ({
         <div key={i} className="mb-6">
           <h4 className="font-semibold mb-2 text-blue-700">{section.title}</h4>
           {section.docs.map((doc, j) => (
-            <div
-              key={j}
-              className="flex justify-between items-center p-3 border border-blue-100 rounded-md mt-2 bg-white"
-            >
-              <span className="flex gap-2 items-center text-gray-800">
-                <FileText className="w-4 h-4 text-blue-600" />
-                {doc.label}
-              </span>
-              {profile[doc.key] ? (
-                <div className="flex gap-3">
-                  <a
-                    href={profile[doc.key]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 text-sm hover:underline"
-                  >
-                    View
-                  </a>
-                  <a
-                    href={getDownloadUrl(profile[doc.key])}
-                    download
-                    className="text-green-600 text-sm hover:underline"
-                  >
-                    Download
-                  </a>
-                </div>
+  <div
+    key={j}
+    className="flex justify-between items-center p-3 border border-blue-100 rounded-md mt-2 bg-white"
+  >
+    <span className="flex gap-2 items-center text-gray-800">
+      <FileText className="w-4 h-4 text-blue-600" />
+      {doc.label}
+    </span>
+    {profile?.[doc.key] ? (
+      <div className="flex gap-3">
+        <a
+          href={profile[doc.key]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 text-sm hover:underline"
+        >
+          View
+        </a>
+        <a
+          href={getDownloadUrl(profile[doc.key])}
+          download
+          className="text-green-600 text-sm hover:underline"
+        >
+          Download
+        </a>
+      </div>
+    ) : (
+      <span className="text-gray-400 text-sm italic">Not Uploaded</span>
+    )}
+  </div>
+))}
 
-              ) : (
-                <span className="text-gray-400 text-sm italic">Not Uploaded</span>
-              )}
-            </div>
-          ))}
         </div>
       ))}
     </div>

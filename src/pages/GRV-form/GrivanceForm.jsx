@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
 import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/header/MainHeader";
+import axios from "axios";
 
 
 export default function GrievanceForm() {
@@ -36,6 +37,69 @@ export default function GrievanceForm() {
     grievanceAttachment: null,
     declaration: false,
   });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser).user;
+      setFormData((prev) => ({
+        ...prev,
+        fullName: userData.fullName || "",
+        email: userData.email || "",
+        phone: userData.phoneNumber || "",
+        gender: userData.gender || "",
+        dob: userData.dob || "",
+        address1: userData.address || "",
+        city: userData.city || "",
+        state: userData.state || "",
+        district: userData.district || "",
+        postalCode: userData.pincode || "",
+      }));
+    }
+  }, []);
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
+    const form = new FormData();
+
+    form.append("ministryName", formData.ministryName);
+    form.append("departmentName", formData.ministryDepartment);
+    form.append("publicAuthority", formData.publicAuthority);
+    form.append("title", formData.grievanceTitle);
+    form.append("locationOfIssue", formData.grievanceLocation);
+    form.append("dateOfIncident", formData.grievanceDate);
+    form.append("category", formData.grievancePriority);
+    form.append("grievanceDescription", formData.grievanceDescription);
+
+    if (formData.grievanceAttachment) {
+      form.append("attachments", formData.grievanceAttachment);
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/grievances/create",
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.status === 201) {
+        const grievanceId = res.data.grievance.uniqueID;
+        generatePDF(formData); // Optional
+        alert("Grievance Submitted!");
+        navigate("/grievance-success", { state: { grievanceId } });
+      }
+    } catch (error) {
+      console.error("Error submitting grievance:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
+
 
   const handleChange = (e) => {
     const { name, type, value, checked, files } = e.target;
@@ -311,16 +375,11 @@ export default function GrievanceForm() {
                 </button>
                 <button
                   disabled={!formData.declaration}
+                  onClick={handleSubmit}
                   className={`${formData.declaration
-                    ? "bg-green-600 hover:bg-green-700"
-                    : "bg-green-300 cursor-not-allowed"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-green-300 cursor-not-allowed"
                     } text-white px-6 py-2 rounded transition w-full md:w-auto`}
-                  onClick={() => {
-                    const grievanceId = "GRV-" + Date.now(); // You can replace this with real backend-generated ID
-                    generatePDF(formData);
-                    alert("Grievance Submitted! Your PDF has been downloaded.");
-                    navigate("/grievance-success", { state: { grievanceId } });
-                  }}
                 >
                   Submit
                 </button>
