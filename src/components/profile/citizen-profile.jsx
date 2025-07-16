@@ -33,60 +33,101 @@ export default function CitizenProfile() {
     [showMenu, setShowMenu] = useState(false),
     fileRef = useRef(null);
 
+  const capitalizeWords = (str) => {
+    if (!str) return "";
+    return str
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
 
-        const res = await axios.get("http://localhost:5000/api/userProfile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = res.data;
-
-        if (data && data.profiles.length > 0) {
-          const userProfile = data.profiles[0];
-          const user = userProfile.userId;
-
-          const profileData = {
-            _id: userProfile._id,
-            name: user.fullName,
-            email: user.email,
-            phone: user.phoneNumber,
-            memberSince: new Date(userProfile.registrationDate).toLocaleString('default', { month: 'long', year: 'numeric' }),
-            lastLogin: new Date(userProfile.lastLogin),
-            accountStatus: userProfile.accountStatus,
-            nationality: userProfile.nationality,
-            gender: user.gender,
-            dob: new Date(userProfile.dob).toISOString().split('T')[0],
-            address: user.address,
-            city: user.city,
-            district: user.district,
-            state: user.state,
-            pincode: user.pincode,
-            aadhaar: userProfile.aadhaar,
-            voterId: userProfile.voterId,
-            pan: userProfile.pan,
-            alternatePhone: userProfile.alternatePhone,
-            username: user.username || "N/A",
-            registrationDate: new Date(userProfile.registrationDate).toLocaleString('default', { month: 'long', year: 'numeric' }),
-            profileImage: userProfile.profileImage,
-            aadhaarCardUrl: userProfile.aadhaarCardUrl,
-            voterIdCardUrl: userProfile.voterIdCardUrl,
-            panCardUrl: userProfile.panCardUrl,
-            utilityBillUrl: userProfile.utilityBillUrl,
-            bankStatementUrl: userProfile.bankStatementUrl,
-            password: "••••••••",
-            visiblePassword: "",
-          };
-
-          setProfile(profileData);
-          setEdit(profileData);
+        if (!storedUser || !token) {
+          toast.error("Missing user or token");
+          return;
         }
+
+        const parsed = JSON.parse(storedUser);
+        const loggedInUser = parsed.user;
+
+        let userProfile = null;
+
+        //Try fetching from backend
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/userProfile/getUser?userId=${loggedInUser._id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          userProfile = res.data;
+
+          //Ownership check
+          if (userProfile.userId._id.toString() !== loggedInUser._id.toString()) {
+            toast.error("Unauthorized: This profile does not belong to the logged-in user");
+            return;
+          }
+        } catch (err) {
+          if (err.response?.status === 404) {
+            console.warn("No userProfile found, falling back to localStorage data only.");
+            userProfile = null;
+          } else {
+            console.error("Error fetching profile:", err);
+            toast.error("Failed to load profile data");
+            return;
+          }
+        }
+
+        // Merge localStorage + profile or fallback
+        const profileData = {
+          _id: userProfile?._id || loggedInUser._id,
+          name: loggedInUser.fullName,
+          email: loggedInUser.email,
+          phone: loggedInUser.phoneNumber,
+          memberSince: new Date(loggedInUser.createdAt).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          }),
+          lastLogin: userProfile?.lastLogin ? new Date(userProfile.lastLogin) : "",
+          accountStatus: userProfile?.accountStatus || "Active",
+          nationality: userProfile?.nationality || "N/A",
+          gender: loggedInUser.gender || "",
+          dob: userProfile?.dob ? new Date(userProfile.dob).toISOString().split("T")[0] : "",
+          address: loggedInUser.address || "",
+          city: loggedInUser.city || "",
+          district: loggedInUser.district || "",
+          state: capitalizeWords(loggedInUser.state) || "",
+          pincode: loggedInUser.pincode || "",
+          aadhaar: userProfile?.aadhaar || "",
+          voterId: userProfile?.voterId || "",
+          pan: userProfile?.pan || "",
+          alternatePhone: userProfile?.alternatePhone || "",
+          registrationDate: new Date(loggedInUser.createdAt).toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          }),
+          profileImage: userProfile?.profileImage || "",
+          aadhaarCardUrl: userProfile?.aadhaarCardUrl || "",
+          voterIdCardUrl: userProfile?.voterIdCardUrl || "",
+          panCardUrl: userProfile?.panCardUrl || "",
+          utilityBillUrl: userProfile?.utilityBillUrl || "",
+          bankStatementUrl: userProfile?.bankStatementUrl || "",
+          password: "••••••••",
+        };
+
+        setProfile(profileData);
+        setEdit(profileData);
       } catch (err) {
-        console.error("Error fetching profile:", err);
+        console.error("Unhandled error:", err);
+        toast.error("An unexpected error occurred");
       }
     };
 
@@ -94,12 +135,15 @@ export default function CitizenProfile() {
   }, []);
 
 
+
   const save = async () => {
     try {
       const token = localStorage.getItem("token");
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const loggedInUser = storedUser.user;
+
       const formData = new FormData();
 
-      // Append editable fields
       for (const key in edit) {
         if (
           key !== "password" &&
@@ -111,30 +155,60 @@ export default function CitizenProfile() {
         }
       }
 
+      const safeNationality =
+        Array.isArray(edit.nationality) ? edit.nationality[0] : edit.nationality || "N/A";
+      formData.set("nationality", safeNationality);
+
       if (fileRef.current?.files?.[0]) {
         formData.append("profileImage", fileRef.current.files[0]);
       }
 
-      // Make PUT request to backend
-      const res = await axios.put(
-        `http://localhost:5000/api/userProfile/${profile._id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      formData.set("aadhaar", edit.aadhaar || "");
+      formData.set("voterId", edit.voterId || "");
+      formData.set("pan", edit.pan || "");
+      formData.set("alternatePhone", edit.alternatePhone || "");
 
-      if (res.status === 200) {
-        setProfile(res.data.profile);
+      let response;
+
+      try {
+        response = await axios.put(
+          `http://localhost:5000/api/userProfile/${profile._id}`, //updating userProfile
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } catch (err) {
+        if (err.response?.status === 404) {
+          console.warn("⚠️ Profile not found. Attempting to create new profile...");
+
+          formData.append("userId", loggedInUser._id);
+
+          //creating  new userProfile
+          response = await axios.post(`http://localhost:5000/api/userProfile`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+        } else {
+          console.error("❌ PUT error:", err.response?.data || err.message);
+          throw err;
+        }
+      }
+
+      if (response.status === 200 || response.status === 201) {
+        setProfile(response.data.profile);
         setEditing(false);
         setImg(null);
-        toast.success("Profile updated successfully!");
+        toast.success("Profile saved successfully!");
       }
     } catch (err) {
-      console.error("Failed to save profile:", err.response?.data || err.message);
+      console.error("🔥 Failed to save/create profile:", err.response?.data || err.message);
+      toast.error("Error saving profile");
     }
   };
 
@@ -173,6 +247,8 @@ export default function CitizenProfile() {
     );
   }
 
+  if (!profile || !edit) return <div>Loading...</div>;
+
   const tabs = getTabs({
     edit,
     update,
@@ -180,10 +256,9 @@ export default function CitizenProfile() {
     profile,
     aadhaarVisible,
     setAadhaarVisible,
-    setPasswordVisible,
     passwordVisible,
+    setPasswordVisible,
   });
-
 
 
   return (
