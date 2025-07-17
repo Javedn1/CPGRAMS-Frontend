@@ -162,7 +162,22 @@ export default function CitizenProfile() {
       if (fileRef.current?.files?.[0]) {
         formData.append("profileImage", fileRef.current.files[0]);
       }
-
+      if (edit.aadhaarCardFile) {
+        formData.append("aadhaarCardUrl", edit.aadhaarCardFile);
+      }
+      if (edit.voterIdCardFile) {
+        formData.append("voterIdCardUrl", edit.voterIdCardFile);
+      }
+      if (edit.panCardFile) {
+        formData.append("panCardUrl", edit.panCardFile);
+      }
+      if (edit.utilityBillFile) {
+        formData.append("utilityBillUrl", edit.utilityBillFile);
+      }
+      if (edit.bankStatementFile) {
+        formData.append("bankStatementUrl", edit.bankStatementFile);
+      }
+      
       formData.set("aadhaar", edit.aadhaar || "");
       formData.set("voterId", edit.voterId || "");
       formData.set("pan", edit.pan || "");

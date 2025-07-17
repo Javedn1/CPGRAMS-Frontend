@@ -37,8 +37,8 @@ export const getTabs = ({
   profile,
   aadhaarVisible,
   setAadhaarVisible,
-  setPasswordVisible,
-  passwordVisible,
+  // setPasswordVisible,
+  // passwordVisible,
 }) => ({
 
   dashboard: (
@@ -345,78 +345,71 @@ export const getTabs = ({
     </div>
   ),
   documents: (
-    <div className={sectionClass}>
-      <h3 className="font-bold text-xl text-blue-800 mb-4">Uploaded Documents</h3>
-      {[
-        {
-          title: "Identity Proofs",
-          docs: [
-            {
-              label: "Aadhaar Card",
-              key: "aadhaarCardUrl",
-            },
-            {
-              label: "Voter ID",
-              key: "voterIdCardUrl",
-            },
-            {
-              label: "PAN Card",
-              key: "panCardUrl",
-            },
-          ],
-        },
-        {
-          title: "Address Proofs",
-          docs: [
-            {
-              label: "Utility Bill",
-              key: "utilityBillUrl",
-            },
-            {
-              label: "Bank Statement",
-              key: "bankStatementUrl",
-            },
-          ],
-        },
-      ].map((section, i) => (
-        <div key={i} className="mb-6">
-          <h4 className="font-semibold mb-2 text-blue-700">{section.title}</h4>
-          {section.docs.map((doc, j) => (
-  <div
-    key={j}
-    className="flex justify-between items-center p-3 border border-blue-100 rounded-md mt-2 bg-white"
-  >
-    <span className="flex gap-2 items-center text-gray-800">
-      <FileText className="w-4 h-4 text-blue-600" />
-      {doc.label}
-    </span>
-    {profile?.[doc.key] ? (
-      <div className="flex gap-3">
-        <a
-          href={profile[doc.key]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 text-sm hover:underline"
-        >
-          View
-        </a>
-        <a
-          href={getDownloadUrl(profile[doc.key])}
-          download
-          className="text-green-600 text-sm hover:underline"
-        >
-          Download
-        </a>
-      </div>
-    ) : (
-      <span className="text-gray-400 text-sm italic">Not Uploaded</span>
-    )}
-  </div>
-))}
+  <div className={sectionClass}>
+    <h3 className="font-bold text-xl text-blue-800 mb-4">Uploaded Documents</h3>
+    {[
+      {
+        title: "Identity Proofs",
+        docs: [
+          { label: "Aadhaar Card", key: "aadhaarCardUrl", field: "aadhaarCardFile" },
+          { label: "Voter ID", key: "voterIdCardUrl", field: "voterIdCardFile" },
+          { label: "PAN Card", key: "panCardUrl", field: "panCardFile" },
+        ],
+      },
+      {
+        title: "Address Proofs",
+        docs: [
+          { label: "Utility Bill", key: "utilityBillUrl", field: "utilityBillFile" },
+          { label: "Bank Statement", key: "bankStatementUrl", field: "bankStatementFile" },
+        ],
+      },
+    ].map((section, i) => (
+      <div key={i} className="mb-6">
+        <h4 className="font-semibold mb-2 text-blue-700">{section.title}</h4>
 
-        </div>
-      ))}
-    </div>
-  ),
+        {section.docs.map((doc, j) => (
+          <div
+            key={j}
+            className="flex justify-between items-center p-3 border border-blue-100 rounded-md mt-2 bg-white"
+          >
+            <span className="flex gap-2 items-center text-gray-800">
+              <FileText className="w-4 h-4 text-blue-600" />
+              {doc.label}
+            </span>
+
+            {editing ? (
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                onChange={(e) => update(doc.field, e.target.files?.[0])}
+                className="text-sm text-gray-700"
+              />
+            ) : profile?.[doc.key] ? (
+              <div className="flex gap-3">
+                <a
+                  href={profile[doc.key]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 text-sm hover:underline"
+                >
+                  View
+                </a>
+                <a
+                  href={getDownloadUrl(profile[doc.key])}
+                  download
+                  className="text-green-600 text-sm hover:underline"
+                >
+                  Download
+                </a>
+              </div>
+            ) : (
+              <span className="text-gray-400 text-sm italic">Not Uploaded</span>
+            )}
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+),
 
 });

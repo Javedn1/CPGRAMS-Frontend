@@ -23,6 +23,8 @@ import RejisterJuniorPGO from "./pages/PGO/RejisterJuniorPGO";
 import { UserProvider } from "./context/userContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OfficerComplaints from "./pages/PGO/OfficerComplaints";
+import PGOProfile from './pages/PGO/PGOProfile';
+import PGOFeedback from "./pages/PGO/PGOFeedback";
 
 function App() {
   return (
@@ -45,7 +47,7 @@ function App() {
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/faq" element={<Faqs />} />
             </Route>
-            
+
             <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}>
               <Route path="/PGO-Dashboard" element={<PGOLayout />}>
                 <Route index element={<Dashboard />} />
@@ -54,6 +56,8 @@ function App() {
                 <Route path="recent-activity" element={<RecentActivity />} />
                 <Route path="reminder" element={<Reminder />} />
                 <Route path='PGO-Rejister' element={<RejisterJuniorPGO />} />
+                <Route path='PGOProfile' element={<PGOProfile />} />
+                <Route path='PGOFeedback' element={<PGOFeedback />} />
               </Route>
             </Route>
           </Routes>
