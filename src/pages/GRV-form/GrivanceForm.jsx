@@ -16,9 +16,9 @@ export default function GrievanceForm() {
     email: "",
     phone: "",
     gender: "",
-    dob: "",
-    address1: "",
-    address2: "",
+    dateOfBirth: "",
+    addressLine1: "",
+    addressLine2: "",
     city: "",
     state: "",
     district: "",
@@ -48,8 +48,8 @@ export default function GrievanceForm() {
         email: userData.email || "",
         phone: userData.phoneNumber || "",
         gender: userData.gender || "",
-        dob: userData.dob || "",
-        address1: userData.address || "",
+        dateOfBirth: userData.dob || "",
+        addressLine1: userData.address || "",
         city: userData.city || "",
         state: userData.state || "",
         district: userData.district || "",
@@ -61,7 +61,17 @@ export default function GrievanceForm() {
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
     const form = new FormData();
-
+    form.append("fullName", formData.fullName);
+    form.append("email", formData.email);
+    form.append("phone", formData.phone);
+    form.append("gender", formData.gender);
+    form.append("dateOfBirth", formData.dateOfBirth);
+    form.append("addressLine1", formData.addressLine1);
+    form.append("addressLine2", formData.addressLine2);
+    form.append("city", formData.city);
+    form.append("state", formData.state);
+    form.append("district", formData.district);
+    form.append("postalCode", formData.postalCode);
     form.append("ministryName", formData.ministryName);
     form.append("departmentName", formData.ministryDepartment);
     form.append("publicAuthority", formData.publicAuthority);
@@ -177,10 +187,10 @@ export default function GrievanceForm() {
                       <option value="Other">Other</option>
                     </select>
                   </div>
-                  <InputField label="Date of Birth" name="dob" value={formData.dob} onChange={handleChange} type="date" />
+                  <InputField label="Date of Birth"  name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" />
                 </div>
-                <InputField label="Address Line 1" name="address1" value={formData.address1} onChange={handleChange} />
-                <InputField label="Address Line 2" name="address2" value={formData.address2} onChange={handleChange} />
+                <InputField label="Address Line 1" name="addressLine1" value={formData.addressLine1} onChange={handleChange} />
+                <InputField label="Address Line 2" name="addressLine2" type="text" value={formData.addressLine2} onChange={handleChange} />
                 <div className="flex flex-col md:flex-row md:space-x-4">
                   <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
                   <InputField label="Postal Code" name="postalCode" value={formData.postalCode} onChange={handleChange} />

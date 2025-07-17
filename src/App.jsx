@@ -22,6 +22,7 @@ import ContactSupportPage from "./components/contactSupport";
 import RejisterJuniorPGO from "./pages/PGO/RejisterJuniorPGO";
 import { UserProvider } from "./context/userContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OfficerComplaints from "./pages/PGO/OfficerComplaints";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
               <Route path="/PGO-Dashboard" element={<PGOLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="team" element={<Team />} />
+                <Route path="ofc-com" element={<OfficerComplaints />} />
                 <Route path="recent-activity" element={<RecentActivity />} />
                 <Route path="reminder" element={<Reminder />} />
                 <Route path='PGO-Rejister' element={<RejisterJuniorPGO />} />

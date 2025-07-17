@@ -337,7 +337,7 @@ const OfficerComplaints = () => {
                             <Eye className="w-3 h-3" />
                           </button>
                           <button className="hover:bg-green-50 border border-green-200 text-green-600 rounded px-2 py-1">
-                            <MessageSquare className="w-3 h-3" />
+                           Assign
                           </button>
                         </div>
                       </td>
