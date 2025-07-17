@@ -9,7 +9,7 @@ import {
     Settings
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -28,6 +28,7 @@ const Sidebar = () => {
         else if (location.pathname.includes('activity')) setActiveNav('Activity');
         else if (location.pathname.includes('reminder')) setActiveNav('Reminder');
         else if (location.pathname.includes('PGO-Rejister')) setActiveNav('PGO-Rejister');
+        else if (location.pathname.includes('PGOFeedback')) setActiveNav('Feedback');
         else setActiveNav('Dashboard');
     }, [location.pathname]);
 
@@ -168,6 +169,22 @@ const Sidebar = () => {
                                 </Link>
                             </li>
 
+                            <li>
+                                <Link to="PGOFeedback">
+                                    <button
+
+                                        className={`flex items-center w-full py-2 px-3 rounded-md ${activeNav === 'Feedback'
+                                            ? "text-white bg-blue-700 dark:bg-blue-600"
+                                            : "text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                    >
+                                        <FileText className="w-5 h-5 mr-2" />
+                                        Feedback
+                                    </button>
+                                </Link>
+                            </li>
+
+
                             {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
                                 <li>
                                     <Link to='PGO-Rejister'>
@@ -188,9 +205,10 @@ const Sidebar = () => {
                             <hr />
                             <li className="flex justify-between px-3 w-full border border-gray-200 bg-white shadow-[0px_0px_7px_1px_rgba(0,_0,_0,_0.2)] rounded-xl py-2 z-50 animate-fadeIn">
 
-                                <span className="">
+                                <Link to="PGOProfile" className="hover:text-blue-600">
                                     My Profile
-                                </span>
+                                </Link>
+
 
                                 <span className="">
                                     Setting
@@ -218,7 +236,10 @@ const Sidebar = () => {
                         <div
                             className="absolute right-0 mt-4 w-40 bg-white border rounded-md shadow-lg z-50"
                         >
-                            <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Profile</span>
+                            <Link to="PGOProfile" className="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                Profile
+                            </Link>
+
                             <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</span>
                             <span onClick={handleLogout} className="block px-4 py-2 cursor-pointer rounded-md text-red-500 hover:bg-gray-100">Logout</span>
                         </div>
@@ -304,13 +325,25 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
+                        <Link to="PGOFeedback">
+                            <button
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Feedback'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="truncate">Feedback</span>
+                            </button>
+                        </Link>
+
                         {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
                             <Link to='PGO-Rejister'>
                                 <button
                                     onClick={() => setActiveNav('PGO-Rejister')}
                                     className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'PGO-Rejister'
-                                            ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
-                                            : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                        ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                        : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
                                         }`}
                                 >
                                     <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
