@@ -1,5 +1,5 @@
-
-import react,{ useState } from "react";
+import react, { useState } from "react";
+import axios from "axios";
 import {
   Search,
   FileText,
@@ -15,16 +15,19 @@ import {
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
 import Header from "../../components/header/MainHeader";
+
 const TrackGrievancePage = () => {
   const [activeTab, setActiveTab] = useState("grievance");
   const [trackingData, setTrackingData] = useState({ token: "", email: "" });
   const [complaint, setComplaint] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (field, value) => {
     setTrackingData((prev) => ({ ...prev, [field]: value }));
   };
-  const handleTrack = () => {
+
+  const handleTrack = async () => {
     setError("");
     if (!trackingData.token || !trackingData.email) {
       alert("Please enter all required fields.");
@@ -33,74 +36,69 @@ const TrackGrievancePage = () => {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (trackingData.token.toLowerCase() === "grv2024001234") {
-        const mockComplaint = {
-          token: trackingData.token,
-          title: "Water Supply Issue in Sector 15",
-          category: "Public Utilities",
-          status: "In Progress",
-          priority: "High",
-          submissionDate: "2024-01-15",
-          expectedResolution: "2024-01-25",
-          assignedOfficer: "Mr. Rajesh Kumar",
-          officerContact: "+91-9876543210",
-          department: "Water Supply Department",
-          location: "Sector 15, Block A",
-          description:
-            "Irregular water supply for two weeks. Severe inconvenience during peak hours.",
-          timeline: [{
-            date: "2024-01-15",
-            time: "10:30 AM", 
-            status: "Complaint Registered",
-            description: "Complaint registered successfully.",
-            icon:FileText,
-            completed: true,
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.post(
+        'http://localhost:5000/api/grievances/track',
+        {
+          email: trackingData.email,
+          uniqueID: trackingData.token
         },
         {
-            date: "2024-01-16",
-            time: "11:00 AM",
-            status: "Assigned",
-            description: "Complaint assigned to Mr. Rajesh Kumar.",
-            icon:User,
-            completed: true,
-          
-          
-          },
-          {
-            date: "2024-01-18",
-            time: "02:00 PM",
-            status: "Resolved",
-            description: "Site inspection completed by the assigned officer.",
-            icon:CheckCircle,
-            completed: true,
-          },
-          
-        ],
-          updates: [
-            {
-              date: "2024-01-20",
-              message:
-                "Pipeline blockage found at main junction. Repair work has been initiated.",
-              type: "progress",
-            },
-            {
-              date: "2024-01-20",
-              message:
-                "Pipeline blockage found at main junction. Repair work has been initiated.",
-              type: "progress",
-            },
-          ],
-        };
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-        setComplaint(mockComplaint);
-      } else {
-        setComplaint(null);
+      const data = response.data;
+      console.log("tracked data", data);
+
+
+      const mappedComplaint = {
+        token: trackingData.token,
+        title: data.grievanceDetails?.title || "NA",
+        category: data.grievanceDetails?.category || "NA",
+        status: data.currentStatus || "NA",
+        submissionDate: data.grievanceDetails?.createdAt ? new Date(data.grievanceDetails.createdAt).toLocaleDateString() : "NA",
+        expectedResolution: "NA",
+        assignedOfficer: data.assignedOfficer || "NA",
+        officerContact: "NA",
+        department: data.grievanceDetails?.department || "NA",
+        location: data.grievanceDetails?.location || "NA",
+        description: data.grievanceDetails?.description || "NA",
+        timeline: data.recentUpdates?.map((update, index) => ({
+          date: new Date(update.timestamp || update.createdAt).toLocaleDateString(),
+          time: new Date(update.timestamp || update.createdAt).toLocaleTimeString(),
+          status: update.status || update.action || "Update",
+          description: update.comment || update.message || "Status updated",
+          icon: index === 0 ? FileText : index === 1 ? User : CheckCircle,
+          completed: true,
+        })) || [],
+        updates: data.progressUpdates?.map(update => ({
+          date: new Date(update.timestamp).toLocaleDateString(),
+          message: update.message || "Progress update",
+          type: "progress",
+        })) || [],
+      };
+
+      setComplaint(mappedComplaint);
+      setError("");
+    } catch (err) {
+      console.error('Error tracking grievance:', err);
+      setComplaint(null);
+      if (err.response?.status === 404) {
         setError("Invalid Token or No Grievance Found");
+      } else {
+        setError("An error occurred while tracking the grievance");
       }
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
+
   const handleReset = () => {
     setTrackingData({ token: "", email: "" });
     setComplaint(null);
@@ -121,21 +119,19 @@ const TrackGrievancePage = () => {
           <div className="mt-12 flex flex-col gap-4 w-full px-4">
             <button
               onClick={() => setActiveTab("grievance")}
-              className={`w-full text-left px-4 py-2 rounded ${
-                activeTab === "grievance"
-                  ? "bg-white text-blue-800 font-semibold "
-                  : "hover:bg-blue-700"
-              }`}
+              className={`w-full text-left px-4 py-2 rounded ${activeTab === "grievance"
+                ? "bg-white text-blue-800 font-semibold "
+                : "hover:bg-blue-700"
+                }`}
             >
               Track Grievance
             </button>
             <button
               onClick={() => setActiveTab("appeal")}
-              className={`w-full text-left px-4 py-2 rounded ${
-                activeTab === "appeal"
-                  ? "bg-white text-blue-800 font-semibold"
-                  : "hover:bg-blue-700"
-              }`}
+              className={`w-full text-left px-4 py-2 rounded ${activeTab === "appeal"
+                ? "bg-white text-blue-800 font-semibold"
+                : "hover:bg-blue-700"
+                }`}
             >
               Track Appeal
             </button>
@@ -247,9 +243,6 @@ const TrackGrievancePage = () => {
                       <span className="px-2 py-1 text-xs rounded bg-blue-500 text-white">
                         {complaint.status}
                       </span>
-                      <span className="px-2 py-1 text-xs rounded bg-red-500 text-white">
-                        {complaint.priority} Priority
-                      </span>
                     </div>
                   </div>
 
@@ -262,7 +255,7 @@ const TrackGrievancePage = () => {
                       <p className="text-sm text-gray-500">Submitted</p>
                       <p className="font-medium">{complaint.submissionDate}</p>
                     </div>
-                    <div>
+                    <div className="hidden">
                       <p className="text-sm text-gray-500">
                         Expected Resolution
                       </p>
@@ -301,50 +294,53 @@ const TrackGrievancePage = () => {
                   </div>
                 </div>
                 <div className="bg-white shadow rounded p-6 space-y-4">
-                  {complaint.timeline.map((item,index)=>(
+                  {complaint.timeline.map((item, index) => (
                     <div key={index} className="flex items-start space-x-4">
-                      <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${item.completed?"bg-primary text-primary-foreground border-primary":"bg-background border-border text-muted-foreground"}`}>
-                        <item.icon className="w-5 h-5"/>
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${item.completed ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-muted-foreground"}`}>
+                        <item.icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className={`font-medium ${item.completed?"text-foreground":"text-muted-foreground"}`}>{item.status}</h4>
+                          <h4 className={`font-medium ${item.completed ? "text-foreground" : "text-muted-foreground"}`}>{item.status}</h4>
                           <div className="text-xs text-muted-foreground text-right">
                             <div> {item.date}</div>
                             <div>{item.time}</div>
                           </div>
                         </div>
                         <p className="text-sm text-muted-foreground ">{item.description}</p>
-                         </div>
+                      </div>
                     </div>
                   ))}
                 </div>
                 <div className="bg-white shadow rounded p-6 space-y-4">
                   <h3 className="text-lg font-semibold">Recent Updates</h3>
-                  {complaint.updates.map((update, index) => (
-                    <div
-                      key={index}
-                      className="border-l-2 border-gray-300 pl-4"
-                    >
-                      <div className="flex justify-between items-center mb-1">
-                        <span
-                          className={`text-xs px-2 py-1 rounded ${
-                            update.type === "progress"
+                  {complaint.updates.length > 0 ? (
+                    complaint.updates.map((update, index) => (
+                      <div
+                        key={index}
+                        className="border-l-2 border-gray-300 pl-4"
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <span
+                            className={`text-xs px-2 py-1 rounded ${update.type === "progress"
                               ? "bg-blue-100"
                               : "bg-gray-200"
-                          }`}
-                        >
-                          {update.type === "progress"
-                            ? "Progress Update"
-                            : "Information"}
-                        </span>
-                        <span>{update.date}</span>
+                              }`}
+                          >
+                            {update.type === "progress"
+                              ? "Progress Update"
+                              : "Information"}
+                          </span>
+                          <span>{update.date}</span>
+                        </div>
+                        <p className="text-sm">{update.message}</p>
                       </div>
-                      <p className="text-sm">{update.message}</p>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">No recent updates available</p>
+                  )}
                 </div>
-                
+
               </div>
             )}
           </div>
