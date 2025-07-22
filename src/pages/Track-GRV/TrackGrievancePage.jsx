@@ -22,7 +22,7 @@ const TrackGrievancePage = () => {
   const [complaint, setComplaint] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isOpen, setIsOpen] = useState(false);
   const handleInputChange = (field, value) => {
     setTrackingData((prev) => ({ ...prev, [field]: value }));
   };
@@ -63,10 +63,17 @@ const TrackGrievancePage = () => {
         category: data.grievanceDetails?.category || "NA",
         status: data.currentStatus || "NA",
         submissionDate: data.grievanceDetails?.createdAt ? new Date(data.grievanceDetails.createdAt).toLocaleDateString() : "NA",
+        attachments: data.grievanceDetails?.attachments || [],
+        publicAuthority: data.grievanceDetails?.publicAuthority || "NA",
+        ministry: data.grievanceDetails?.ministry || "NA",
+        userCity: data.personalInfo?.city || "NA",
+        userState: data.personalInfo?.state || "NA",
+        userDistrict: data.personalInfo?.district || "NA",
+        userName: data.personalInfo?.name || "NA",
         expectedResolution: "NA",
         assignedOfficer: data.assignedTo || "NA",
-        officerContact: data.assignedOfficerPhone  || "NA",
-        officerDepatment: data.assignedOfficerDepartment  || "NA",
+        officerContact: data.assignedOfficerPhone || "NA",
+        officerDepatment: data.assignedOfficerDepartment || "NA",
         department: data.grievanceDetails?.department || "NA",
         location: data.grievanceDetails?.location || "NA",
         description: data.grievanceDetails?.description || "NA",
@@ -247,7 +254,7 @@ const TrackGrievancePage = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-between mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div>
                       <p className="text-sm text-gray-500">Category</p>
                       <p className="font-medium">{complaint.category}</p>
@@ -256,21 +263,100 @@ const TrackGrievancePage = () => {
                       <p className="text-sm text-gray-500">Submitted</p>
                       <p className="font-medium">{complaint.submissionDate}</p>
                     </div>
-                    {/* <div className="hidden">
-                      <p className="text-sm text-gray-500">
-                        Expected Resolution
-                      </p>
-                      <p className="font-medium">
-                        {complaint.expectedResolution}
-                      </p>
-                    </div> */}
+                    <div>
+                      <p className="text-sm text-gray-500">Attachments</p>
+                      {complaint.attachments && complaint.attachments.length > 0 ? (
+                        <button
+                          onClick={() => setIsOpen(true)}
+                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                        >
+                          See Attachments
+                        </button>
+                      ) : (
+                        <p className="font-medium text-gray-400">No attachments</p>
+                      )}
+
+                      {isOpen && (
+                          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/10">
+                          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+                            <h2 className="text-xl font-semibold mb-4">Attachments</h2>
+
+                            <button
+                              onClick={() => setIsOpen(false)}
+                              className="absolute top-2 right-3 text-gray-500 hover:text-black text-xl"
+                            >
+                              &times;
+                            </button>
+
+                            <ul className="space-y-3">
+                              {complaint.attachments.map((file, index) => (
+                                <li key={file._id || index}>
+                                  <a
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline block"
+                                  >
+                                    Attachment {index + 1}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
+                  <hr />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Ministry</p>
+                      <p className="font-medium">{complaint.ministry}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Department</p>
+                      <p className="font-medium">{complaint.officerDepatment}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Public Authority</p>
+                      <p className="font-medium flex items-center gap-1">
+                        {complaint.publicAuthority}
+                      </p>
+                    </div>
+                  </div>
                   <div className="border-t pt-4 mt-4">
                     <p className="text-sm text-gray-500 mb-1">Description</p>
                     <p className="text-sm">{complaint.description}</p>
                   </div>
                 </div>
+
+                <div className="bg-white shadow rounded p-6 space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    Personal Info
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Name</p>
+                      <p className="font-medium">{complaint.userName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">City</p>
+                      <p className="font-medium">{complaint.userCity}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">District</p>
+                      <p className="font-medium">{complaint.userDistrict}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">State</p>
+                      <p className="font-medium">{complaint.userState}</p>
+                    </div>
+
+                  </div>
+                </div>
+
                 <div className="bg-white shadow rounded p-6 space-y-4">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <User className="w-5 h-5" />
@@ -283,7 +369,7 @@ const TrackGrievancePage = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Department</p>
-                      <p className="font-medium">{complaint.officerDepatment}</p>
+                      <p className="font-medium">{complaint.department}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Contact</p>
@@ -295,24 +381,42 @@ const TrackGrievancePage = () => {
                   </div>
                 </div>
                 <div className="bg-white shadow rounded p-6 space-y-4">
-                  {complaint.timeline.map((item, index) => (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${item.completed ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-muted-foreground"}`}>
-                        <item.icon className="w-5 h-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className={`font-medium ${item.completed ? "text-foreground" : "text-muted-foreground"}`}>{item.status}</h4>
-                          <div className="text-xs text-muted-foreground text-right">
-                            <div> {item.date}</div>
-                            <div>{item.time}</div>
-                          </div>
+                  {complaint.timeline.length > 0 ? (
+                    complaint.timeline.map((item, index) => (
+                      <div key={index} className="flex items-start space-x-4">
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${item.completed
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-background border-border text-muted-foreground"
+                            }`}
+                        >
+                          <item.icon className="w-5 h-5" />
                         </div>
-                        <p className="text-sm text-muted-foreground ">{item.description}</p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4
+                              className={`font-medium ${item.completed ? "text-foreground" : "text-muted-foreground"
+                                }`}
+                            >
+                              {item.status}
+                            </h4>
+                            <div className="text-xs text-muted-foreground text-right">
+                              <div> {item.date}</div>
+                              <div>{item.time}</div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground ">{item.description}</p>
+                        </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="text-sm flex space-x-2 text-muted-foreground italic">
+                      <Clock className="w-5 h-5 text-gray-400" />
+                      <span className="font-semibold text-lg">In Pending</span>
                     </div>
-                  ))}
+                  )}
                 </div>
+
                 <div className="bg-white shadow rounded p-6 space-y-4">
                   <h3 className="text-lg font-semibold">Recent Updates</h3>
                   {complaint.updates.length > 0 ? (
