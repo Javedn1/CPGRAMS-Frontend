@@ -25,6 +25,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import OfficerComplaints from "./pages/PGO/OfficerComplaints";
 import PGOProfile from './pages/PGO/PGOProfile';
 import PGOFeedback from "./pages/PGO/PGOFeedback";
+import ProfileSettings from "./pages/PGO/Settings";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                 <Route path='PGO-Rejister' element={<RejisterJuniorPGO />} />
                 <Route path='PGOProfile' element={<PGOProfile />} />
                 <Route path='PGOFeedback' element={<PGOFeedback />} />
+                <Route path='pgo-settings' element={<ProfileSettings/>} />
               </Route>
             </Route>
           </Routes>

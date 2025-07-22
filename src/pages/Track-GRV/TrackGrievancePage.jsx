@@ -64,8 +64,9 @@ const TrackGrievancePage = () => {
         status: data.currentStatus || "NA",
         submissionDate: data.grievanceDetails?.createdAt ? new Date(data.grievanceDetails.createdAt).toLocaleDateString() : "NA",
         expectedResolution: "NA",
-        assignedOfficer: data.assignedOfficer || "NA",
-        officerContact: "NA",
+        assignedOfficer: data.assignedTo || "NA",
+        officerContact: data.assignedOfficerPhone  || "NA",
+        officerDepatment: data.assignedOfficerDepartment  || "NA",
         department: data.grievanceDetails?.department || "NA",
         location: data.grievanceDetails?.location || "NA",
         description: data.grievanceDetails?.description || "NA",
@@ -246,7 +247,7 @@ const TrackGrievancePage = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div className="flex justify-between mt-4">
                     <div>
                       <p className="text-sm text-gray-500">Category</p>
                       <p className="font-medium">{complaint.category}</p>
@@ -255,14 +256,14 @@ const TrackGrievancePage = () => {
                       <p className="text-sm text-gray-500">Submitted</p>
                       <p className="font-medium">{complaint.submissionDate}</p>
                     </div>
-                    <div className="hidden">
+                    {/* <div className="hidden">
                       <p className="text-sm text-gray-500">
                         Expected Resolution
                       </p>
                       <p className="font-medium">
                         {complaint.expectedResolution}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="border-t pt-4 mt-4">
@@ -282,7 +283,7 @@ const TrackGrievancePage = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Department</p>
-                      <p className="font-medium">{complaint.department}</p>
+                      <p className="font-medium">{complaint.officerDepatment}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Contact</p>

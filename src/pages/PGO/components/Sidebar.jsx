@@ -337,6 +337,18 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
+                        <Link to="pgo-settings">
+                            <button
+                                className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Feedback'
+                                    ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
+                                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-700 hover:border-r-2 hover:border-purple-700'
+                                    }`}
+                            >
+                                <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
+                                <span className="truncate">Settings</span>
+                            </button>
+                        </Link>
+
                         {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
                             <Link to='PGO-Rejister'>
                                 <button
