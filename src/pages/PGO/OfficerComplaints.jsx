@@ -1,84 +1,77 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, FileText, Eye, MessageSquare } from "lucide-react";
 import ComplaintDetails from "./ComplaintDetails";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+
 const OfficerComplaints = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
-  const [complaints, setComplaints] = useState([
-    {
-      id: "CMP001",
-      title: "Pothole on Main Street",
-      citizen: "John Doe",
-      email:"hard@gmail.com",
-        phone: "123-456-7890",
-        location: "Main Street, City Center",
-      description: "A large pothole has formed on Main Street, causing traffic disruptions and potential accidents. Immediate repair is needed to ensure public safety.",
-      attachments: [],
-      category: "Road",
-      status: "pending",
-      priority: "high",
-      date: "2025-07-02",
-      updates: []
-    },
-    {
-      id: "CMP002",
-      title: "Pothole on Main Street",
-      citizen: "John Doe",
-      email:"hard@gmail.com",
-        phone: "123-456-7890",
-        location: "Main Street, City Center",
-      description: "A large pothole has formed on Main Street, causing traffic disruptions and potential accidents. Immediate repair is needed to ensure public safety.",
-      attachments: [],
-      category: "Road",
-      status: "pending",
-      priority: "high",
-      date: "2025-07-02",
-      updates: [
+  const navigate = useNavigate();
+  const [complaints, setComplaints] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+useEffect(() => {
+  const fetchComplaints = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:5000/api/grievances/assigned",
         {
-          message: "Complaint received and assigned to officer",
-          date: "2025-07-02 10:00 AM",
-          by: "Officer",
-        },
-        {
-          message: "Inspection scheduled for July 3rd",
-          date: "2025-07-02 11:00 AM",
-          by: "Officer",
-        },
-      ]
-    },
-    {
-      id: "CMP003",
-      title: "Pothole on Main Street",
-      citizen: "John Doe",
-      email:"hard@gmail.com",
-        phone: "123-456-7890",
-        location: "Main Street, City Center",
-      description: "A large pothole has formed on Main Street, causing traffic disruptions and potential accidents. Immediate repair is needed to ensure public safety.",
-      attachments: [],
-      category: "Road",
-      status: "pending",
-      priority: "high",
-      date: "2025-07-02",
-      updates: []
-    },
-    {
-      id: "CMP004",
-      title: "Pothole on Main Street",
-      citizen: "John Doe",
-      email:"hard@gmail.com",
-        phone: "123-456-7890",
-        location: "Main Street, City Center",
-      description: "A large pothole has formed on Main Street, causing traffic disruptions and potential accidents. Immediate repair is needed to ensure public safety.",
-      attachments: [],
-      category: "Road",
-      status: "pending",
-      priority: "high",
-      date: "2025-07-02",
-      updates: []
-    },
-  ]);
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const mapped = response.data.map((data) => ({
+        id: data.uniqueID,
+        title: data.title,
+        citizen: data.user?.fullName || "N/A",
+        email: data.user?.email || "N/A",
+        phone: data.user?.phoneNumber || "N/A",
+        location: data.locationOfIssue || "Not specified",
+        description: data.grievanceDescription || "No description",
+        attachments: (data.attachments || []).map((f) => ({
+          name: f.url.split("/").pop(),
+          url: f.url,
+        })),
+        category: data.departmentName || "General",
+        status: data.status,
+        priority: data.category?.toLowerCase() || "medium", // default fallback
+        date: data.dateOfIncident
+          ? new Date(data.dateOfIncident).toLocaleDateString()
+          : "N/A",
+        updates: [
+          ...(data.activityLog || []).map((log) => ({
+            message: log.message || log.comment || "",
+            date: new Date(log.timestamp).toLocaleString(),
+            by: log.updatedBy || "Unknown",
+          })),
+          ...(data.progressUpdates || []).map((log) => ({
+            message: log.message || "",
+            date: new Date(log.timestamp).toLocaleString(),
+            by: log.updatedBy || "Unknown",
+          })),
+        ],
+      }));
+
+      setComplaints(mapped);
+    } catch (err) {
+      console.error("Error fetching complaints", err);
+      setError("Failed to load complaints.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchComplaints();
+}, []);
+
+
   const filteredComplaints = complaints.filter((complaint) => {
     const matchesSearch =
       complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -125,20 +118,20 @@ const OfficerComplaints = () => {
       prev.map((c) =>
         c.id === selectedComplaint.id
           ? {
-              ...c,
-              status: newStatus,
-              updates: [
-                ...c.updates,
-                {
-                  message:
-                    newStatus === "resolved"
-                      ? `marked as resolved ${finalMessage} || ""}`
-                      : `status Changed to ${newStatus}`,
-                 date: new Date().toLocaleString(),
-                  by: "Officer",
-                },
-              ],
-            }
+            ...c,
+            status: newStatus,
+            updates: [
+              ...c.updates,
+              {
+                message:
+                  newStatus === "resolved"
+                    ? `marked as resolved ${finalMessage} || ""}`
+                    : `status Changed to ${newStatus}`,
+                date: new Date().toLocaleString(),
+                by: "Officer",
+              },
+            ],
+          }
           : c
       )
     );
@@ -147,48 +140,48 @@ const OfficerComplaints = () => {
     if (!updateMessage.trim()) return;
     const newUpdate = {
       message: updateMessage,
-        date: new Date().toLocaleString(),
-        by: "Officer",
+      date: new Date().toLocaleString(),
+      by: "Officer",
     };
     setComplaints((prev) =>
       prev.map((c) =>
         c.id === selectedComplaint.id
           ? {
-              ...c,
-              updates: [
-                ...c.updates,
-                newUpdate,
-              ]
-            }
+            ...c,
+            updates: [
+              ...c.updates,
+              newUpdate,
+            ]
+          }
           : c
       )
     );
     setSelectedComplaint((prev) => ({
       ...prev,
-        updates: [...prev.updates, newUpdate],
+      updates: [...prev.updates, newUpdate],
     }));
   };
-    const handleCloseComplaint = (feedback) => {
-        setComplaints((prev) =>
-            prev.map((c) =>
-                c.id === selectedComplaint.id
-                    ? {
-                        ...c,
-                        status: "closed",
-                        feedback: feedback || "",
-                        updates: [
-                            ...c.updates,
-                            {
-                                message: `Complaint closed with feedback: ${feedback || "No feedback provided"}`,
-                                date: new Date().toLocaleString(),
-                                by: "Officer",
-                            },
-                        ],
-                    }
-                    : c
-            )
-        );
-    }
+  const handleCloseComplaint = (feedback) => {
+    setComplaints((prev) =>
+      prev.map((c) =>
+        c.id === selectedComplaint.id
+          ? {
+            ...c,
+            status: "closed",
+            feedback: feedback || "",
+            updates: [
+              ...c.updates,
+              {
+                message: `Complaint closed with feedback: ${feedback || "No feedback provided"}`,
+                date: new Date().toLocaleString(),
+                by: "Officer",
+              },
+            ],
+          }
+          : c
+      )
+    );
+  }
   if (selectedComplaint) {
     return (
       <ComplaintDetails
@@ -289,8 +282,7 @@ const OfficerComplaints = () => {
                   {filteredComplaints.map((complaint) => (
                     <tr
                       key={complaint.id}
-                      className="hover:bg-blue-50/50 transition-colors cursor-pointer border-b border-gray-100 "
-                      onClick={() => setSelectedComplaint(complaint)}
+                      onClick={() => navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`)} // 👈 dynamic nav
                     >
                       <td className="font-mono p-2  text-sm font-medium text-blue-600">
                         {complaint.id}
@@ -328,16 +320,15 @@ const OfficerComplaints = () => {
                       <td className="p-2">
                         <div className="flex gap-1">
                           <button
-                            className="hover:bg-blue-50 border border-blue-200 text-blue-600 rounded px-2 py-1"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedComplaint(complaint);
+                              navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`); // 👈 same
                             }}
                           >
                             <Eye className="w-3 h-3" />
                           </button>
                           <button className="hover:bg-green-50 border border-green-200 text-green-600 rounded px-2 py-1">
-                           Assign
+                            Assign
                           </button>
                         </div>
                       </td>

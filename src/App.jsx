@@ -25,7 +25,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import OfficerComplaints from "./pages/PGO/OfficerComplaints";
 import PGOProfile from './pages/PGO/PGOProfile';
 import PGOFeedback from "./pages/PGO/PGOFeedback";
-import ProfileSettings from "./pages/PGO/Settings";
+import ComplaintDetails from "./pages/PGO/ComplaintDetails";
 
 function App() {
   return (
@@ -54,12 +54,12 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="team" element={<Team />} />
                 <Route path="ofc-com" element={<OfficerComplaints />} />
+                <Route path="ofc-com/:uniqueID" element={<ComplaintDetails />} />
                 <Route path="recent-activity" element={<RecentActivity />} />
                 <Route path="reminder" element={<Reminder />} />
                 <Route path='PGO-Rejister' element={<RejisterJuniorPGO />} />
                 <Route path='PGOProfile' element={<PGOProfile />} />
                 <Route path='PGOFeedback' element={<PGOFeedback />} />
-                <Route path='pgo-settings' element={<ProfileSettings/>} />
               </Route>
             </Route>
           </Routes>
