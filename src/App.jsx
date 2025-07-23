@@ -26,6 +26,11 @@ import OfficerComplaints from "./pages/PGO/OfficerComplaints";
 import PGOProfile from './pages/PGO/PGOProfile';
 import PGOFeedback from "./pages/PGO/PGOFeedback";
 import ComplaintDetails from "./pages/PGO/ComplaintDetails";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLayout from "./pages/admin/AdminLayout";
+import RejisterLeadOfficer from "./pages/admin/LeadOfficersDetails";
+import RejisterOfficer from "./pages/admin/RejisterOfficer";
+import LeadOfficersDetails from "./pages/admin/LeadOfficersDetails";
 
 function App() {
   return (
@@ -49,7 +54,7 @@ function App() {
               <Route path="/faq" element={<Faqs />} />
             </Route>
 
-            <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}>
+            {/* <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}> */}
               <Route path="/PGO-Dashboard" element={<PGOLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="team" element={<Team />} />
@@ -61,7 +66,15 @@ function App() {
                 <Route path='PGOProfile' element={<PGOProfile />} />
                 <Route path='PGOFeedback' element={<PGOFeedback />} />
               </Route>
+            {/* </Route> */}
+
+            <Route path="/Admin-Dashboard" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path='RejisterLeadOfficer' element={<RejisterLeadOfficer />} />
+              <Route path='RejisterOfficer' element={<RejisterOfficer />} />
+              <Route path='LeadOfficerDetails' element={<LeadOfficersDetails />} />
             </Route>
+
           </Routes>
         </BrowserRouter>
       </UserProvider>
