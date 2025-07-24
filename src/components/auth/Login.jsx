@@ -24,7 +24,9 @@ const Login = () => {
       if (data.role === "user") {
         navigate("/");
       } else if (data.role === "officer" || data.role === "lead_officer") {
-        navigate("/pgo-dashboard");
+        navigate("/PGO-Dashboard");
+      } else if (data.role === "admin") {
+        navigate("/Admin-Dashboard");
       }
 
 
