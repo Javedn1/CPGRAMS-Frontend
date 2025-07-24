@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import {
   ArrowLeft,
   FileText,
@@ -15,7 +16,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Default color functions
 const getStatusColor = (status) => {
@@ -46,74 +47,78 @@ const getPriorityColor = (priority) => {
   }
 };
 
-const ComplaintDetails = ({
-  setSelectedComplaint,
-  // handleAddUpdate,
-  handleCloseComplaint,
-  uniqueID: propUniqueID,
-}) => {
+const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   const { uniqueID: routeUniqueID } = useParams();
-  const [selectedComplaint, setSelected] = useState(null);
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [finalMessage, setFinalMessage] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
-
+  const navigate = useNavigate();
   const uniqueID = propUniqueID || routeUniqueID;
 
+  const fetchGrievanceByUniqueID = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `http://localhost:5000/api/grievances/grievance/${uniqueID}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = res.data;
+      const mapped = {
+        _mongoId: data._id,
+        id: data.uniqueID,
+        title: data.title,
+        status: data.status,
+        priority: data.category || "Medium",
+        date: data.dateOfIncident
+          ? new Date(data.dateOfIncident).toLocaleDateString()
+          : "N/A",
+        category: data.departmentName || "General",
+        ministry: data.ministryName || "N/A",
+        authority: data.publicAuthority || "N/A",
+        location: data.locationOfIssue || "Not specified",
+        description: data.grievanceDescription || "No description",
+        citizen: data.fullName || "Citizen",
+        email: data.email || "N/A",
+        phone: data.phoneNumber || "N/A",
+        feedbackGiven: data.feedbackGiven || false,
+        isClosed: data.isClosed || false,
+        escalatedToLeadOfficer: data.escalatedToLeadOfficer || false,
+        attachments: (data.attachments || []).map((f) => ({
+          name: f.url?.split("/").pop(),
+          url: f.url,
+        })),
+        // ✅ Updated activityLog mapping
+        activityLog: (data.updates || []).map((log) => ({
+          message: log.message || "",
+          date: new Date(log.timestamp).toLocaleString(),
+          by: log.updatedBy?.fullName || "Unknown",
+          _id: log._id || null,
+          timestamp: log.timestamp || null,
+        })),
+
+        progressUpdates: (data.progressUpdates || []).map((log) => ({
+          message: log.message || "",
+          date: new Date(log.timestamp).toLocaleString(),
+          by: log.updatedBy?.fullName || "Unknown",
+          progressId: log._id,
+          _id: log._id,
+          timestamp: log.timestamp || null,
+        })),
+      };
+
+      setSelectedComplaint(mapped);
+    } catch (err) {
+      console.error("\u274C Error fetching grievance:", err);
+      toast.error("Failed to load complaint.");
+    }
+  };
+
   useEffect(() => {
-    const fetchComplaint = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `http://localhost:5000/api/grievances/grievance/${uniqueID}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = res.data;
-
-        const mapped = {
-          _mongoId: data._id,
-          id: data.uniqueID,
-          title: data.title,
-          status: data.status,
-          priority: data.category || "Medium",
-          date: new Date(data.dateOfIncident).toLocaleDateString(),
-          category: data.departmentName || "General",
-          location: data.locationOfIssue || "Not specified",
-          description: data.grievanceDescription || "No description",
-          citizen: data.fullName || "Citizen",
-          email: data.email || "N/A",
-          phone: data.phoneNumber || "N/A",
-          attachments: (data.attachments || []).map((f) => ({
-            name: f.url.split("/").pop(),
-            url: f.url,
-          })),
-          updates: [
-            ...(data.activityLog || []).map((log) => ({
-              message: log.message || log.comment || "",
-              date: new Date(log.timestamp).toLocaleString(),
-              by: log.updatedBy || "Unknown",
-            })),
-            ...(data.progressUpdates || []).map((log) => ({
-              message: log.message || "",
-              date: new Date(log.timestamp).toLocaleString(),
-              by: log.updatedBy || "Unknown",
-              progressId: log._id,
-            })),
-          ],
-        };
-
-        setSelected(mapped);
-      } catch (err) {
-        console.error("Error fetching grievance:", err);
-      }
-    };
-
-    if (uniqueID) fetchComplaint();
+    if (uniqueID) fetchGrievanceByUniqueID();
   }, [uniqueID]);
 
 
@@ -131,29 +136,17 @@ const ComplaintDetails = ({
         }
       );
 
-      console.log("Status update response:", res.data);
-
       const grievance = res?.data?.grievance;
       if (!grievance) {
         alert("No grievance object in response");
         return;
       }
 
-      const updatedLog = grievance.activityLog?.slice(-1)[0];
-
-      setSelected((prev) => ({
+      setSelectedComplaint((prev) => ({
         ...prev,
         status: grievance.status,
-        updates: [
-          ...prev.updates,
-          {
-            message: updatedLog?.message || "",
-            date: updatedLog?.timestamp
-              ? new Date(updatedLog.timestamp).toLocaleString()
-              : "",
-            by: updatedLog?.updatedBy?.fullName || "Officer",
-          },
-        ],
+        activityLog: grievance.activityLog || [],
+        progressUpdates: grievance.progressUpdates || [],
       }));
 
       setNewStatus("");
@@ -166,7 +159,6 @@ const ComplaintDetails = ({
       );
     }
   };
-
 
   const handleDeleteProgress = async (progressId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this progress update?");
@@ -184,16 +176,12 @@ const ComplaintDetails = ({
         }
       );
 
-      // Refresh UI after deletion
-      setSelected((prev) => ({
-        ...prev,
-        updates: prev.updates.filter((u) => u.progressId !== progressId),
-      }));
+      await fetchGrievanceByUniqueID(); // Re-fetch to update UI
 
-      alert("Progress update deleted");
-    } catch (error) {
-      console.error("Failed to delete progress update:", error);
-      alert(error?.response?.data?.message || "Error deleting progress update.");
+      alert("Progress update deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting progress update:", err);
+      alert(err?.response?.data?.message || "Failed to delete progress update.");
     }
   };
 
@@ -205,7 +193,7 @@ const ComplaintDetails = ({
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.delete(
+      await axios.delete(
         `http://localhost:5000/api/grievances/status-delete/${selectedComplaint._mongoId}`,
         {
           headers: {
@@ -214,34 +202,7 @@ const ComplaintDetails = ({
         }
       );
 
-      console.log("Delete response:", res.data);
-
-      const grievance = res?.data?.grievance;
-
-      if (!grievance) {
-        alert("Failed to retrieve grievance from delete response.");
-        return;
-      }
-
-      const mapped = {
-        ...selectedComplaint,
-        status: grievance.status,
-        updates: [
-          ...(grievance.activityLog || []).map((log) => ({
-            message: log.message || log.comment || "",
-            date: new Date(log.timestamp).toLocaleString(),
-            by: log.updatedBy?.fullName || "Unknown",
-          })),
-          ...(grievance.progressUpdates || []).map((log) => ({
-            message: log.message || "",
-            date: new Date(log.timestamp).toLocaleString(),
-            by: log.updatedBy?.fullName || "Unknown",
-            progressId: log._id,
-          })),
-        ],
-      };
-
-      setSelected(mapped);
+      await fetchGrievanceByUniqueID(); // Refresh state
       alert("Last activity log deleted successfully");
     } catch (err) {
       console.error("Error deleting activity log:", err);
@@ -249,12 +210,11 @@ const ComplaintDetails = ({
     }
   };
 
-
   const handleAddUpdate = async (message) => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
+      await axios.post(
         `http://localhost:5000/api/grievances/progress/${selectedComplaint._mongoId}`,
         { message },
         {
@@ -264,34 +224,14 @@ const ComplaintDetails = ({
         }
       );
 
-      const grievance = res?.data?.grievance;
-      const newProgress = grievance.progressUpdates?.slice(-1)[0];
-
-      if (!newProgress) {
-        alert("Update saved, but no progress returned from backend.");
-        return;
-      }
-
-      setSelected((prev) => ({
-        ...prev,
-        updates: [
-          ...prev.updates,
-          {
-            message: newProgress.message || "",
-            date: new Date(newProgress.timestamp).toLocaleString(),
-            by: newProgress.updatedBy?.fullName || "Officer",
-            progressId: newProgress._id,
-          },
-        ],
-      }));
-
       alert("Progress update added!");
+      setUpdateMessage("");
+      fetchGrievanceByUniqueID();
     } catch (error) {
       console.error("Failed to add progress update:", error);
       alert(error?.response?.data?.error || "Error adding progress update.");
     }
   };
-
 
   if (!selectedComplaint) return <div className="p-6">Loading complaint...</div>;
 
@@ -302,7 +242,7 @@ const ComplaintDetails = ({
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => setSelectedComplaint?.(null)}
+                onClick={() => navigate(-1)}
                 className="flex items-center gap-2 border border-gray-300 rounded px-3 py-1 hover:bg-gray-50 text-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -397,57 +337,33 @@ const ComplaintDetails = ({
                   </div>
                 )}
 
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Activity Timeline</h3>
-
-                  {/* Determine the last activity log index before mapping */}
-                  {(() => {
-                    const activityLogIndexes = selectedComplaint.updates
-                      .map((u, index) => ({
-                        index,
-                        isActivityLog: u.message?.toLowerCase().includes("updated by"),
-                      }))
-                      .filter((item) => item.isActivityLog);
-
-                    const lastActivityLogIndex =
-                      activityLogIndexes.length > 0
-                        ? activityLogIndexes[activityLogIndexes.length - 1].index
-                        : -1;
-
-                    return (
-                      <div className="space-y-3">
-                        {selectedComplaint.updates.map((update, idx) => (
-                          <div
-                            key={idx}
-                            className="flex gap-3 border p-3 rounded bg-white justify-between"
-                          >
-                            <div className="flex gap-3">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full mt-2"></div>
-                              <div>
-                                <p className="font-medium text-gray-900 text-sm">
-                                  {update.message}
-                                </p>
-                                <div className="text-xs text-gray-500 mt-1">
-                                  {update.date} • by {update.by}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Show delete only for last activity log */}
-                            {idx === lastActivityLogIndex && (
-                              <button
-                                onClick={handleDeleteActivityLog}
-                                className="text-red-600 text-xs hover:underline"
-                              >
-                                Delete
-                              </button>
-                            )}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold">Activity Timeline</h3>
+                  {selectedComplaint.progressUpdates?.length > 0 ? (
+                    <ul className="mt-2 space-y-2">
+                      {selectedComplaint.progressUpdates.map((update) => (
+                        <li
+                          key={update._id}
+                          className="border border-gray-300 rounded p-3 flex justify-between items-center"
+                        >
+                          <div>
+                            <p className="text-sm">{update.message}</p>
+                            <p className="text-xs text-gray-500">{new Date(update.timestamp).toLocaleString()}</p>
                           </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
+                          <button
+                            onClick={() => handleDeleteProgress(update._id)}
+                            className="text-red-500 hover:underline text-sm"
+                          >
+                            Delete
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-600 mt-2">No progress updates available.</p>
+                  )}
                 </div>
+
 
               </div>
             </div>
@@ -493,45 +409,43 @@ const ComplaintDetails = ({
               </div>
             </div>
 
-            <div>
-              <h3 className="text-sm font-semibold mb-2">Progress Updates</h3>
-              <div className="space-y-3">
-                {selectedComplaint.updates
-                  .filter(
-                    (log) =>
-                      log.progressId &&
-                      ["in progress", "resolved", "closed"].includes(log.message?.toLowerCase())
-                  )
-                  .map((update, idx) => (
-                    <div
-                      key={idx}
-                      className="flex gap-3 border p-3 rounded bg-white justify-between"
+            {/* <div className="mt-6">
+              <h3 className="text-lg font-semibold">Progress Updates</h3>
+              {selectedComplaint.progressUpdates?.length > 0 ? (
+                <ul className="mt-2 space-y-2">
+                  {selectedComplaint.progressUpdates.map((update) => (
+                    <li
+                      key={update._id}
+                      className="border border-gray-300 rounded p-3 flex justify-between items-center"
                     >
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{update.message}</p>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {update.date} • by {update.by}
-                        </div>
+                        <p className="text-sm">{update.message}</p>
+                        <p className="text-xs text-gray-500">{new Date(update.timestamp).toLocaleString()}</p>
                       </div>
-
                       <button
-                        className="text-red-600 text-xs hover:underline"
-                        onClick={() => handleDeleteProgress(update.progressId)}
+                        onClick={() => handleDeleteProgress(update._id)}
+                        className="text-red-500 hover:underline text-sm"
                       >
                         Delete
                       </button>
-                    </div>
+                    </li>
                   ))}
-              </div>
-            </div>
+                </ul>
+              ) : (
+                <p className="text-gray-600 mt-2">No progress updates available.</p>
+              )}
+            </div> */}
 
 
             {/* Add Update Box */}
             <div className="border border-gray-200 rounded-lg bg-white shadow-sm">
+              {/* Header */}
               <div className="border-b p-4 bg-gray-50 flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-gray-600" />
                 <h3 className="text-sm font-semibold text-gray-900">Add Update</h3>
               </div>
+
+              {/* Add Update Input */}
               <div className="p-4 space-y-3">
                 <textarea
                   className="w-full border border-gray-300 rounded p-2 text-sm resize-none"
@@ -541,11 +455,10 @@ const ComplaintDetails = ({
                   onChange={(e) => setUpdateMessage(e.target.value)}
                 />
                 <button
-                  onClick={() => {
-                    handleAddUpdate?.(updateMessage);
-                    setUpdateMessage("");
+                  onClick={async () => {
+                    await handleAddUpdate(updateMessage);
+                    setUpdateMessage(""); // clear only after success
                   }}
-
                   disabled={!updateMessage.trim()}
                   className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded flex items-center justify-center gap-2 text-sm"
                 >
@@ -553,6 +466,7 @@ const ComplaintDetails = ({
                 </button>
               </div>
             </div>
+
 
             {/* Close Complaint Box */}
             {selectedComplaint.status === "resolved" && (
