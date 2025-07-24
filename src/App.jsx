@@ -54,7 +54,7 @@ function App() {
               <Route path="/faq" element={<Faqs />} />
             </Route>
 
-            {/* <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}> */}
+            <Route element={<ProtectedRoute allowedRoles={['officer', 'lead_officer']} />}>
               <Route path="/PGO-Dashboard" element={<PGOLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="team" element={<Team />} />
@@ -66,13 +66,15 @@ function App() {
                 <Route path='PGOProfile' element={<PGOProfile />} />
                 <Route path='PGOFeedback' element={<PGOFeedback />} />
               </Route>
-            {/* </Route> */}
+            </Route>
 
-            <Route path="/Admin-Dashboard" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path='RejisterLeadOfficer' element={<RejisterLeadOfficer />} />
-              <Route path='RejisterOfficer' element={<RejisterOfficer />} />
-              <Route path='LeadOfficerDetails' element={<LeadOfficersDetails />} />
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/Admin-Dashboard" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path='RejisterLeadOfficer' element={<RejisterLeadOfficer />} />
+                <Route path='RejisterOfficer' element={<RejisterOfficer />} />
+                <Route path='LeadOfficerDetails' element={<LeadOfficersDetails />} />
+              </Route>
             </Route>
 
           </Routes>
