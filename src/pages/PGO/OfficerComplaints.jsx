@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Search, FileText, Eye, MessageSquare } from "lucide-react";
 import ComplaintDetails from "./ComplaintDetails";
 import { useNavigate } from "react-router-dom";
@@ -12,17 +12,22 @@ const OfficerComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [officerNames, setOfficerNames] = useState({});
+  // const [officerNamesCache, setOfficerNamesCache] = useState({});
+
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const isOfficer = userData?.role === "officer";
 
   const handleOpenAssign = (complaintId, e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setModalPosition({
-      top: rect.top + window.scrollY - 40,   // move slightly up
-      left: rect.left + window.scrollX - 220, // shift more to the left
+      top: rect.top + window.scrollY - 40,
+      left: rect.left + window.scrollX - 220,
     });
     setSelectedComplaintId(complaintId);
     setAssignModalOpen(true);
@@ -33,8 +38,6 @@ const OfficerComplaints = () => {
     const fetchComplaints = async () => {
       try {
         const token = localStorage.getItem("token");
-        const userData = JSON.parse(localStorage.getItem("user")); // assuming you store user info after login
-        const isOfficer = userData?.role === "officer";
 
         const endpoint = isOfficer
           ? "http://localhost:5000/api/officer/assigned-grv"
@@ -49,6 +52,7 @@ const OfficerComplaints = () => {
         const data = isOfficer ? response.data.grievances : response.data.grievances;
 
         const mapped = data.map((data) => ({
+          _id: data._id,
           id: data.uniqueID,
           title: data.title,
           citizen: data.fullName || data.user?.fullName || "N/A",
@@ -64,6 +68,8 @@ const OfficerComplaints = () => {
           ministry: data.ministryName || "N/A",
           authority: data.publicAuthority || "N/A",
           status: data.status,
+          assignedTo: data.assignedTo || null,
+          assignedBy: data.assignedOfficer || null,
           assigned: !!data.assignedTo || data.status === "In Progress",
           priority: data.category?.toLowerCase() || "medium",
           date: data.dateOfIncident
@@ -89,9 +95,9 @@ const OfficerComplaints = () => {
         setComplaints(mapped);
       } catch (err) {
         console.error("Error fetching complaints", err);
-        setError("Failed to load complaints.");
+        // setError("Failed to load complaints.");
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
     fetchComplaints();
@@ -105,8 +111,6 @@ const OfficerComplaints = () => {
 
   const handleAssignOfficer = async (complaintId, officerId) => {
     try {
-      console.log("POST /assign payload", { grievanceId: complaintId, officerId }); // 👈 add this
-
       const token = localStorage.getItem("token");
       const res = await axios.post(
         `http://localhost:5000/api/officer/assign`,
@@ -118,12 +122,22 @@ const OfficerComplaints = () => {
         }
       );
 
+      const updatedGrievance = res.data;
+
       setComplaints((prev) =>
         prev.map((c) =>
-          c.id === complaintId ? { ...c, status: "In Progress", assigned: true } : c
+          c.id === complaintId
+            ? {
+              ...c,
+              status: updatedGrievance.status,
+              assigned: true,
+              assignedTo: updatedGrievance.assignedTo, // 👈 this updates officer info
+            }
+            : c
         )
       );
 
+      setAssignModalOpen(false); // 👈 close the modal
       alert("Officer assigned successfully.");
     } catch (err) {
       console.error("Assignment failed", err);
@@ -133,20 +147,26 @@ const OfficerComplaints = () => {
 
 
 
-  const filteredComplaints = complaints.filter((complaint) => {
-    const matchesSearch =
-      complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      complaint.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" ||
-      complaint.status.toLowerCase() === filterStatus.toLowerCase();
-    const matchesPriority =
-      filterPriority === "all" ||
-      complaint.priority.toLowerCase() === filterPriority.toLowerCase();
 
-    return matchesSearch && matchesStatus && matchesPriority;
-  });
+  const filteredComplaints = useMemo(() => {
+    return complaints.filter((complaint) => {
+      const matchesSearch =
+        complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        complaint.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus =
+        filterStatus === "all" ||
+        complaint.status.toLowerCase() === filterStatus.toLowerCase();
+
+      const matchesPriority =
+        filterPriority === "all" ||
+        complaint.priority.toLowerCase() === filterPriority.toLowerCase();
+
+      return matchesSearch && matchesStatus && matchesPriority;
+    });
+  }, [complaints, searchTerm, filterStatus, filterPriority]);
+
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
@@ -243,6 +263,63 @@ const OfficerComplaints = () => {
       )
     );
   }
+
+  useEffect(() => {
+    const loadOfficerNames = async () => {
+      const namesMap = { ...officerNames };
+      let changed = false;
+
+      for (const complaint of filteredComplaints) {
+        if (complaint._id && !namesMap[complaint._id]) {
+          const { assignedToName, assignedOfficerName, assignedDate } = await fetchOfficerNames(complaint._id);
+          namesMap[complaint._id] = {
+            assignedToName,
+            assignedOfficerName,
+            assignedDate,
+          };
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        setOfficerNames(namesMap);
+      }
+    };
+
+    loadOfficerNames();
+  }, [filteredComplaints]);
+
+
+
+
+  const fetchOfficerNames = async (grievanceId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`http://localhost:5000/api/officer/grievance/${grievanceId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const grievance = res.data.grievance;
+
+      return {
+        assignedToName: grievance.assignedTo?.fullName || null,
+        assignedOfficerName: grievance.assignedOfficer?.fullName || null,
+        assignedDate: grievance.assignedDate || null,
+      };
+    } catch (error) {
+      console.error("Error fetching officer names:", error);
+      return {
+        assignedToName: null,
+        assignedOfficerName: null,
+        assignedDate: null,
+      };
+    }
+  };
+
+
+
   if (selectedComplaint) {
     return (
       <ComplaintDetails
@@ -327,7 +404,7 @@ const OfficerComplaints = () => {
 
             {filteredComplaints.length > 0 ? (
               <div className="overflow-x-auto ">
-                <table className="w-full text-left  ">
+                <table className="w-full text-left-10  ">
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="p-2">Complaint ID</th>
@@ -335,18 +412,26 @@ const OfficerComplaints = () => {
                       <th className="p-2 hidden sm:table-cell">Citizen</th>
                       <th className="p-2 hidden md:table-cell">Category</th>
                       <th className="p-2">Status</th>
-                      {/* <th className="p-2 hidden lg:table-cell">Priority</th> */}
                       <th className="p-2 hidden xl:table-cell">Date</th>
-                      <th className="p-2">Actions</th>
+
+                      {!isOfficer ? (
+                        <>
+                          <th className="p-2">Actions</th>
+                          <th className="p-2">Assigned To</th>
+                        </>
+                      ) : (
+                        <th className="p-2">Assigned By</th>
+                      )}
                     </tr>
                   </thead>
+
                   <tbody>
                     {filteredComplaints.map((complaint) => (
                       <tr
                         key={complaint.id}
-                        onClick={() => navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`)} // 👈 dynamic nav
+                        onClick={() => navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`)}
                       >
-                        <td className="font-mono p-2  text-sm font-medium text-blue-600">
+                        <td className="font-mono p-2 text-sm font-medium text-blue-600">
                           {complaint.id}
                         </td>
                         <td className="p-2 font-medium text-gray-900 max-w-xs truncate">
@@ -367,47 +452,68 @@ const OfficerComplaints = () => {
                             {complaint.status}
                           </span>
                         </td>
-                        {/* <td className="p-2 hidden lg:table-cell">
-                        <span
-                          className={`px-2 py-1  text-xs font-semibold ${getPriorityColor(
-                            complaint.priority
-                          )}`}
-                        >
-                          {complaint.priority}
-                        </span>
-                      </td> */}
                         <td className="p-2 text-gray-600 hidden xl:table-cell">
-                          {complaint.date}
+                          {officerNames[complaint._id]?.assignedDate
+                            ? new Date(officerNames[complaint._id].assignedDate).toLocaleDateString()
+                            : "--"}
                         </td>
-                        <td className="p-2">
-                          <div className="flex gap-1">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`); // 👈 same
-                              }}
-                            >
-                              <Eye className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // only open modal if not already assigned
-                                if (!complaint.assigned && complaint.status !== "In Progress") {
-                                  handleOpenAssign(complaint.id, e);
-                                }
-                              }}
-                              disabled={complaint.assigned || complaint.status === "In Progress"}
-                              className={`px-2 py-1 border rounded ${complaint.assigned || complaint.status === "In Progress"
-                                ? "bg-green-100 text-green-700 border-green-300 cursor-not-allowed"
-                                : "hover:bg-green-50 border-green-200 text-green-600"
-                                }`}
-                            >
-                              {complaint.assigned || complaint.status === "In Progress" ? "Assigned" : "Assign"}
-                            </button>
 
-                          </div>
-                        </td>
+                        {!isOfficer ? (
+                          <>
+                            <td className="p-2">
+                              <div className="flex gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`);
+                                  }}
+                                >
+                                  <Eye className="w-3 h-3" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!complaint.assignedTo) {
+                                      handleOpenAssign(complaint._id || complaint.id, e);
+                                    }
+                                  }}
+                                  disabled={!!complaint.assignedTo}
+                                  className={`px-2 py-1 border rounded text-xs 
+            ${complaint.assignedTo
+                                      ? "bg-green-100 text-green-700 border-green-300 cursor-not-allowed"
+                                      : "hover:bg-green-50 border-green-200 text-green-600"
+                                    }`}
+                                >
+                                  {complaint.assignedTo?.fullName ? "Assigned" : "Assign"}
+                                </button>
+                              </div>
+                            </td>
+                            <td className="p-2">
+                              {Object.prototype.hasOwnProperty.call(officerNames, complaint._id) ? (
+                                officerNames[complaint._id]?.assignedToName || (
+                                  <span className="italic text-gray-400">Not assigned</span>
+                                )
+                              ) : (
+                                <span className="italic text-gray-400">Loading...</span>
+                              )}
+                            </td>
+
+
+                          </>
+                        ) : (
+                          <td className="p-2">
+                            {Object.prototype.hasOwnProperty.call(officerNames, complaint._id) ? (
+                              officerNames[complaint._id]?.assignedOfficerName || (
+                                <span className="italic text-gray-400">Not assigned</span>
+                              )
+                            ) : (
+                              <span className="italic text-gray-400">Loading...</span>
+                            )}
+                          </td>
+
+
+                        )}
+
                       </tr>
                     ))}
                   </tbody>
@@ -429,11 +535,10 @@ const OfficerComplaints = () => {
         <AssignOfficerModal
           isOpen={assignModalOpen}
           onClose={() => setAssignModalOpen(false)}
-          complaintId={selectedComplaintId}  // ✅ ensure this is complaint.id string
-          onAssign={(complaintId, officerId) => handleAssignOfficer(complaintId, officerId)}
+          complaintId={selectedComplaintId}
+          onAssign={handleAssignOfficer}
           position={modalPosition}
         />
-
       </div>
     </>
   );
