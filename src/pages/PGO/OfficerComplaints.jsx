@@ -34,72 +34,73 @@ const OfficerComplaints = () => {
   };
 
 
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const fetchComplaints = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        const endpoint = isOfficer
-          ? "http://localhost:5000/api/officer/assigned-grv"
-          : "http://localhost:5000/api/grievances/getallgrv";
+      const endpoint = isOfficer
+        ? "http://localhost:5000/api/officer/assigned-grv"
+        : "http://localhost:5000/api/grievances/getallgrv";
 
-        const response = await axios.get(endpoint, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const response = await axios.get(endpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = isOfficer ? response.data.grievances : response.data.grievances;
+      const data = isOfficer ? response.data.grievances : response.data.grievances;
 
-        const mapped = data.map((data) => ({
-          _id: data._id,
-          id: data.uniqueID,
-          title: data.title,
-          citizen: data.fullName || data.user?.fullName || "N/A",
-          email: data.email || data.user?.email || "N/A",
-          phone: data.phoneNumber || data.user?.phoneNumber || "N/A",
-          location: data.locationOfIssue || "Not specified",
-          description: data.grievanceDescription || "No description",
-          attachments: (data.attachments || []).map((f) => ({
-            name: f.url.split("/").pop(),
-            url: f.url,
+      const mapped = data.map((data) => ({
+        _id: data._id,
+        id: data.uniqueID,
+        title: data.title,
+        citizen: data.fullName || data.user?.fullName || "N/A",
+        email: data.email || data.user?.email || "N/A",
+        phone: data.phoneNumber || data.user?.phoneNumber || "N/A",
+        location: data.locationOfIssue || "Not specified",
+        description: data.grievanceDescription || "No description",
+        attachments: (data.attachments || []).map((f) => ({
+          name: f.url.split("/").pop(),
+          url: f.url,
+        })),
+        category: data.departmentName || "General",
+        ministry: data.ministryName || "N/A",
+        authority: data.publicAuthority || "N/A",
+        status: data.status,
+        assignedTo: data.assignedTo || null,
+        assignedBy: data.assignedOfficer || null,
+        assigned: !!data.assignedTo || data.status === "In Progress",
+        priority: data.category?.toLowerCase() || "medium",
+        date: data.dateOfIncident
+          ? new Date(data.dateOfIncident).toLocaleDateString()
+          : "N/A",
+        feedbackGiven: data.feedbackGiven || false,
+        isClosed: data.isClosed || false,
+        escalatedToLeadOfficer: data.escalatedToLeadOfficer || false,
+        updates: [
+          ...(data.activityLog || []).map((log) => ({
+            message: log.message || log.comment || "",
+            date: new Date(log.timestamp).toLocaleString(),
+            by: log.updatedBy?.fullName || "Unknown",
           })),
-          category: data.departmentName || "General",
-          ministry: data.ministryName || "N/A",
-          authority: data.publicAuthority || "N/A",
-          status: data.status,
-          assignedTo: data.assignedTo || null,
-          assignedBy: data.assignedOfficer || null,
-          assigned: !!data.assignedTo || data.status === "In Progress",
-          priority: data.category?.toLowerCase() || "medium",
-          date: data.dateOfIncident
-            ? new Date(data.dateOfIncident).toLocaleDateString()
-            : "N/A",
-          feedbackGiven: data.feedbackGiven || false,
-          isClosed: data.isClosed || false,
-          escalatedToLeadOfficer: data.escalatedToLeadOfficer || false,
-          updates: [
-            ...(data.activityLog || []).map((log) => ({
-              message: log.message || log.comment || "",
-              date: new Date(log.timestamp).toLocaleString(),
-              by: log.updatedBy?.fullName || "Unknown",
-            })),
-            ...(data.progressUpdates || []).map((log) => ({
-              message: log.message || "",
-              date: new Date(log.timestamp).toLocaleString(),
-              by: log.updatedBy?.fullName || "Unknown",
-            })),
-          ],
-        }));
+          ...(data.progressUpdates || []).map((log) => ({
+            message: log.message || "",
+            date: new Date(log.timestamp).toLocaleString(),
+            by: log.updatedBy?.fullName || "Unknown",
+          })),
+        ],
+      }));
 
-        setComplaints(mapped);
-      } catch (err) {
-        console.error("Error fetching complaints", err);
-        // setError("Failed to load complaints.");
-      } finally {
-        // setLoading(false);
-      }
-    };
+      setComplaints(mapped);
+    } catch (err) {
+      console.error("Error fetching complaints", err);
+      // setError("Failed to load complaints.");
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchComplaints();
   }, []);
 
@@ -144,8 +145,6 @@ const OfficerComplaints = () => {
       alert("Failed to assign officer.");
     }
   };
-
-
 
 
   const filteredComplaints = useMemo(() => {
@@ -318,7 +317,19 @@ const OfficerComplaints = () => {
     }
   };
 
+  const handleUnassign = async (complaintId) => {
+    try {
+      await axios.put(`http://localhost:5000/api/officer/unassign/${complaintId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
+      fetchComplaints();
+    } catch (error) {
+      console.error("Failed to unassign:", error);
+    }
+  };
 
   if (selectedComplaint) {
     return (
@@ -468,26 +479,33 @@ const OfficerComplaints = () => {
                                     navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`);
                                   }}
                                 >
-                                  <Eye className="w-3 h-3" />
+                                  <Eye className="w-4 h-4 text-blue-600 hover:text-blue-800" />
                                 </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!complaint.assignedTo) {
+
+                                {complaint.assignedTo ? (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleUnassign(complaint._id || complaint.id);
+                                    }}
+                                    className="px-2 py-1 border border-red-200 text-red-600 hover:bg-red-50 text-xs rounded"
+                                  >
+                                    Unassign
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       handleOpenAssign(complaint._id || complaint.id, e);
-                                    }
-                                  }}
-                                  disabled={!!complaint.assignedTo}
-                                  className={`px-2 py-1 border rounded text-xs 
-            ${complaint.assignedTo
-                                      ? "bg-green-100 text-green-700 border-green-300 cursor-not-allowed"
-                                      : "hover:bg-green-50 border-green-200 text-green-600"
-                                    }`}
-                                >
-                                  {complaint.assignedTo?.fullName ? "Assigned" : "Assign"}
-                                </button>
+                                    }}
+                                    className="px-2 py-1 border border-green-200 text-green-600 hover:bg-green-50 text-xs rounded"
+                                  >
+                                    Assign
+                                  </button>
+                                )}
                               </div>
                             </td>
+
                             <td className="p-2">
                               {Object.prototype.hasOwnProperty.call(officerNames, complaint._id) ? (
                                 officerNames[complaint._id]?.assignedToName || (

@@ -6,6 +6,8 @@ import {
   FileText,
   User,
   Phone,
+  UserCircle,
+  Calendar,
   MapPin,
   Download,
   AlertCircle,
@@ -13,6 +15,7 @@ import {
   MessageSquare,
   Send,
   X,
+  Mail,
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
@@ -72,6 +75,9 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         id: data.uniqueID,
         title: data.title,
         status: data.status,
+        dob: data.dateOfBirth,
+        gender: data.gender,
+        address: data.addressLine1,
         priority: data.category || "Medium",
         date: data.dateOfIncident
           ? new Date(data.dateOfIncident).toLocaleDateString()
@@ -176,7 +182,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         }
       );
 
-      await fetchGrievanceByUniqueID(); // Re-fetch to update UI
+      await fetchGrievanceByUniqueID();
 
       alert("Progress update deleted successfully.");
     } catch (err) {
@@ -186,29 +192,29 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   };
 
 
-  const handleDeleteActivityLog = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete the last activity log?");
-    if (!confirmDelete) return;
+  // const handleDeleteActivityLog = async () => {
+  //   const confirmDelete = window.confirm("Are you sure you want to delete the last activity log?");
+  //   if (!confirmDelete) return;
 
-    try {
-      const token = localStorage.getItem("token");
+  //   try {
+  //     const token = localStorage.getItem("token");
 
-      await axios.delete(
-        `http://localhost:5000/api/grievances/status-delete/${selectedComplaint._mongoId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     await axios.delete(
+  //       `http://localhost:5000/api/grievances/status-delete/${selectedComplaint._mongoId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      await fetchGrievanceByUniqueID(); // Refresh state
-      alert("Last activity log deleted successfully");
-    } catch (err) {
-      console.error("Error deleting activity log:", err);
-      alert(err?.response?.data?.message || "Failed to delete activity log.");
-    }
-  };
+  //     await fetchGrievanceByUniqueID(); // Refresh state
+  //     alert("Last activity log deleted successfully");
+  //   } catch (err) {
+  //     console.error("Error deleting activity log:", err);
+  //     alert(err?.response?.data?.message || "Failed to delete activity log.");
+  //   }
+  // };
 
   const handleAddUpdate = async (message) => {
     try {
@@ -280,27 +286,59 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
               <div className="p-4 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-sm font-semibold mb-2">Citizen Information</h3>
-                    <div className="space-y-2 text-sm text-gray-700">
+                    <h3 className="text-sm font-semibold mb-2 text-gray-900">Citizen Information</h3>
+                    <div className="space-y-3 text-sm text-gray-700">
+
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-gray-400" />
-                        {selectedComplaint.citizen}
+                        <span className="font-medium">{selectedComplaint.citizen}</span>
                       </div>
-                      <div>{selectedComplaint.email}</div>
+
                       <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-gray-400" />
+                        <span>{selectedComplaint.email || "N/A"}</span>
+                      </div>
+
+                      {/* <div className="flex items-center gap-2">
                         <Phone className="w-4 h-4 text-gray-400" />
-                        {selectedComplaint.phone}
+                        <span>{selectedComplaint.phone || "N/A"}</span>
+                      </div> */}
+
+                      <div className="flex items-center gap-2">
+                        <UserCircle className="w-4 h-4 text-gray-400" />
+                        <span>{selectedComplaint.gender || "N/A"}</span>
                       </div>
                     </div>
                   </div>
 
+
                   <div>
                     <h3 className="text-sm font-semibold mb-2">Location</h3>
-                    <div className="flex items-start gap-2 text-sm text-gray-700">
-                      <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
-                      <p>{selectedComplaint.location}</p>
+                    <div className="space-y-2 text-sm text-gray-700">
+
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <p>{selectedComplaint.location || "N/A"}</p>
+                      </div>
+
+                      {/* <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <span>
+                          DOB:{" "}
+                          {selectedComplaint.dateOfBirth
+                            ? new Date(selectedComplaint.dateOfBirth).toLocaleDateString()
+                            : "N/A"}
+                        </span>
+                      </div> */}
+
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <span>{selectedComplaint.address || "N/A"}</span>
+                      </div>
+
                     </div>
                   </div>
+
                 </div>
 
                 <div>
