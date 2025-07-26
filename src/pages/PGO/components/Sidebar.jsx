@@ -24,7 +24,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         if (location.pathname.includes('team')) setActiveNav('Team');
-        else if (location.pathname.includes('grievance')) setActiveNav('Grievance');
+        else if (location.pathname.includes('ofc-com')) setActiveNav('Grievance');
         else if (location.pathname.includes('activity')) setActiveNav('Activity');
         else if (location.pathname.includes('reminder')) setActiveNav('Reminder');
         else if (location.pathname.includes('PGO-Rejister')) setActiveNav('PGO-Rejister');

@@ -1,12 +1,28 @@
 import React, { useState } from "react";
 import ForgotPasswordOTP from "./ForgotPasswordOTP";
+import axios from 'axios'
 
 export default function ForgotPassword() {
     const [showOTP, setShowOTP] = useState(false);
+    const [email,setEmail] = useState("")
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setShowOTP(true);
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/forgot-password',{email});
+            console.log("Response-->",response);
+            
+            if (response.status == 200){
+                 localStorage.setItem("email", email);
+                setShowOTP(true);
+                console.log("Password reset OTP sent to email. Please verify.",response.data.message);
+                
+            }
+        } catch (error) {
+            console.log("something Went Wrong ",error);
+            
+        }
+        // setShowOTP(true);
     };
 
     return (
@@ -21,6 +37,8 @@ export default function ForgotPassword() {
                                 <label className="block text-sm font-medium text-gray-700">Email Address</label>
                                 <input
                                     type="email"
+                                    value={email}
+                                    onChange={(e)=>setEmail(e.target.value)}
                                     required
                                     className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
