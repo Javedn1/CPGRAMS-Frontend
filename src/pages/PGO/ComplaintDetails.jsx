@@ -98,13 +98,13 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
           url: f.url,
         })),
         // ✅ Updated activityLog mapping
-        activityLog: (data.updates || []).map((log) => ({
-          message: log.message || "",
-          date: new Date(log.timestamp).toLocaleString(),
-          by: log.updatedBy?.fullName || "Unknown",
-          _id: log._id || null,
-          timestamp: log.timestamp || null,
-        })),
+        // activityLog: (data.updates || []).map((log) => ({
+        //   message: log.message || "",
+        //   date: new Date(log.timestamp).toLocaleString(),
+        //   by: log.updatedBy?.fullName || "Unknown",
+        //   _id: log._id || null,
+        //   timestamp: log.timestamp || null,
+        // })),
 
         progressUpdates: (data.progressUpdates || []).map((log) => ({
           message: log.message || "",
@@ -151,7 +151,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       setSelectedComplaint((prev) => ({
         ...prev,
         status: grievance.status,
-        activityLog: grievance.activityLog || [],
+        // activityLog: grievance.activityLog || [],
         progressUpdates: grievance.progressUpdates || [],
       }));
 
@@ -167,29 +167,44 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   };
 
   const handleDeleteProgress = async (progressId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this progress update?");
-    if (!confirmDelete) return;
+  const confirmDelete = window.confirm("Are you sure you want to delete this progress update?");
+  if (!confirmDelete) return;
 
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      await axios.delete(
-        `http://localhost:5000/api/grievances/progress-delete/${selectedComplaint._mongoId}/${progressId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const res = await axios.delete(
+      `http://localhost:5000/api/grievances/progress-delete/${selectedComplaint._mongoId}/${progressId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      await fetchGrievanceByUniqueID();
+    console.log("After delete response:", res?.data?.grievance); 
 
-      alert("Progress update deleted successfully.");
-    } catch (err) {
-      console.error("Error deleting progress update:", err);
-      alert(err?.response?.data?.message || "Failed to delete progress update.");
+    const grievance = res?.data?.grievance;
+
+    if (!grievance) {
+      alert("No grievance object in response");
+      return;
     }
-  };
+
+    // ✅ Update the selected complaint
+    setSelectedComplaint((prev) => ({
+      ...prev,
+      status: grievance.status,  // <- this is what you want
+      progressUpdates: grievance.progressUpdates || [],
+    }));
+
+    alert("Progress update deleted successfully.");
+  } catch (err) {
+    console.error("Error deleting progress update:", err);
+    alert(err?.response?.data?.message || "Failed to delete progress update.");
+  }
+};
+
 
 
   // const handleDeleteActivityLog = async () => {
