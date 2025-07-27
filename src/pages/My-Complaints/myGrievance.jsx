@@ -71,10 +71,28 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
         setFeedbackGrievanceId(uniqueID);
     };
 
-    const handleSendReminder = (grievanceId) => {
-        console.log('Reminder sent for:', grievanceId);
-        alert(`Reminder sent for grievance ID: ${grievanceId}`);
+    const handleSendReminder = async (grievanceId) => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await axios.post(
+                `http://localhost:5000/api/grievances/reminder/${grievanceId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = res.data;
+            alert(`Reminder sent to ${data.recipient.name} (${data.recipient.email})`);
+        } catch (err) {
+            console.error("Error sending reminder:", err);
+            alert("Failed to send reminder. Please try again later.");
+        }
     };
+
 
     const handleDownloadPDF = () => {
         const doc = new jsPDF();
@@ -234,8 +252,8 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                                                 !canRemind ? `For Reminder please wait for ${daysLeft} days` : ""
                                                             }
                                                             className={`flex items-center gap-1 text-sm ${canRemind
-                                                                    ? "text-yellow-600 hover:text-yellow-800 cursor-pointer"
-                                                                    : "text-gray-400 cursor-not-allowed"
+                                                                ? "text-yellow-600 hover:text-yellow-800 cursor-pointer"
+                                                                : "text-gray-400 cursor-not-allowed"
                                                                 }`}
                                                         >
                                                             <Bell className="w-4 h-4" />
