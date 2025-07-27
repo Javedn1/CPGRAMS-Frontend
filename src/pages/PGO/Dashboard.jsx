@@ -137,70 +137,78 @@ function Dashboard() {
             <GrievanceList />
           </div>
 
-          <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-sm border border-gray-200  relative">
-            {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"> */}
-
-            {/* Recent Activity Card */}
-            {/* <div className="border rounded-lg shadow-sm lg:col-span-1 bg-white"> */}
-
-            <div className="border-b p-4">
-              <h2 className="text-lg font-semibold">Recent Activity</h2>
-              <p className="text-sm text-gray-500">
-                Your latest actions and updates
-              </p>
+          <div className="w-full md:w-1/4 bg-white p-6 rounded-lg shadow-sm border border-gray-200 relative">
+            <div className="border-b pb-4">
+              <h2 className="text-lg font-semibold text-gray-800">Recent Activity</h2>
+              <p className="text-sm text-gray-500">Your latest actions and updates</p>
             </div>
 
-            <div className="p-4 space-y-4">
+            {/* Marquee animation CSS injected */}
+            <style>
+              {`
+      @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+
+      .marquee {
+        animation: marquee 20s linear infinite;
+      }
+    `}
+            </style>
+
+            <div className="relative p-4 overflow-hidden">
               {loading ? (
                 <p className="text-gray-500 text-sm">Loading...</p>
               ) : activities.length === 0 ? (
                 <p className="text-sm text-gray-500">No activity found.</p>
               ) : (
-                activities.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-4 bg-white rounded-xl shadow border border-gray-100"
-                  >
+                <div className="flex gap-4 w-max marquee">
+                  {activities.map((activity, index) => (
                     <div
-                      className={`w-2.5 h-2.5 mt-1.5 rounded-full ${
-                        statusColor[activity.status] || "bg-gray-400"
-                      }`}
-                    ></div>
+                      key={index}
+                      className="min-w-[250px] max-w-xs flex-shrink-0 p-4 bg-gray-50 rounded-xl shadow-md border border-gray-200 transition hover:shadow-lg"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`w-2.5 h-2.5 mt-1.5 rounded-full ${statusColor[activity.status] || "bg-gray-400"
+                            }`}
+                        ></div>
 
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium text-gray-900">
-                        {activity.message || "Status updated"}
-                      </p>
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium text-gray-800">
+                            {activity.message || "Status updated"}
+                          </p>
 
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <UserCircle className="w-4 h-4 text-gray-400" />
-                          <span className="font-semibold">
-                            {activity.updatedBy}
-                          </span>
-                        </span>
-                        <span className="bg-gray-100 px-2 py-0.5 rounded-full text-gray-700 font-medium">
-                          {activity.role?.replace(/_/g, " ") || "officer"}
-                        </span>
-                        <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-semibold">
-                          {activity.ticketId}
-                        </span>
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <UserCircle className="w-4 h-4 text-gray-400" />
+                              <span className="font-semibold">{activity.updatedBy}</span>
+                            </span>
+                            <span className="bg-gray-100 px-2 py-0.5 rounded-full text-gray-700 font-medium">
+                              {activity.role?.replace(/_/g, " ") || "officer"}
+                            </span>
+                            <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-semibold">
+                              {activity.ticketId}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-gray-400 flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {moment(activity.timestamp).fromNow()}
+                          </p>
+                        </div>
                       </div>
-
-                      <p className="text-xs text-gray-400 flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {moment(activity.timestamp).fromNow()}
-                      </p>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
 
             <div className="mt-4 flex justify-center">
               <button
                 onClick={() => navigate("recent-activity")}
-                className="px-2 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition"
+                className="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow transition duration-200"
               >
                 View More
               </button>
