@@ -10,6 +10,7 @@ import Footer from '../../components/footer/footer';
 import Header from '../../components/header/MainHeader';
 import Pagination from '../../components/Pagination';
 import axios from 'axios';
+import { showToast } from "../../utils/customToast";
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -77,10 +78,10 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
         setSelectedGrievance(grievance);
     };
 
-    const handleFeedbackSubmit = ({ grievanceId, feedback, rating }) => {
-        console.log('Feedback submitted:', { grievanceId, feedback, rating });
-        setFeedbackGrievanceId(null);
-    };
+    // const handleFeedbackSubmit = ({ grievanceId, feedback, rating }) => {
+    //     console.log('Feedback submitted:', { grievanceId, feedback, rating });
+    //     setFeedbackGrievanceId(null);
+    // };
 
     const openFeedbackForm = (uniqueID) => {
         setFeedbackGrievanceId(uniqueID);
@@ -101,12 +102,41 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
             );
 
             const data = res.data;
-            alert(`Reminder sent to ${data.recipient.name} (${data.recipient.email})`);
+            showToast(
+                `Reminder sent to ${data.recipient.name} (${data.recipient.email})`,
+                "success"
+            );
         } catch (err) {
             console.error("Error sending reminder:", err);
-            alert("Failed to send reminder. Please try again later.");
+            showToast("Failed to send reminder. Please try again later.", "error");
         }
     };
+
+    const handleFeedbackSubmit = async ({ grievanceId, feedback, rating }) => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await axios.post(
+                `http://localhost:5000/api/grievances/submit/${grievanceId}`,
+                {
+                    rating,
+                    message: feedback,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            showToast("Feedback submitted successfully. Thank you!", "success");
+            setFeedbackGrievanceId(null);
+        } catch (err) {
+            console.error("Error submitting feedback:", err);
+            showToast("Failed to submit feedback. Please try again later.", "error");
+        }
+    };
+
 
 
     const handleDownloadPDF = () => {
@@ -241,8 +271,8 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                                 <button
                                                     onClick={() => complaint.status === "Resolved" && openFeedbackForm(complaint.uniqueID)}
                                                     disabled={complaint.status !== "Resolved"}
-                                                    title={complaint.status === "Resolved" 
-                                                        ? "Click to provide feedback for this resolved grievance" 
+                                                    title={complaint.status === "Resolved"
+                                                        ? "Click to provide feedback for this resolved grievance"
                                                         : "Feedback is only available for resolved grievances"
                                                     }
                                                     className={`text-sm underline-offset-2 ${complaint.status === "Resolved"
@@ -267,7 +297,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                                         <button
                                                             onClick={() => canRemind && handleSendReminder(complaint._id)}
                                                             disabled={!canRemind}
-                                                            title={!canRemind 
+                                                            title={!canRemind
                                                                 ? `Reminder will be available after 21 days from creation date. Please wait ${daysLeft} more day${daysLeft !== 1 ? 's' : ''}.`
                                                                 : "Click to send a reminder to the assigned officer"
                                                             }
@@ -295,7 +325,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                 </tbody>
 
                             </table>
-                            
+
                             {/* Pagination Component */}
                             <Pagination
                                 currentPage={currentPage}
