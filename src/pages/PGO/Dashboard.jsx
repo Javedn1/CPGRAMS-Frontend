@@ -22,6 +22,8 @@ function Dashboard() {
   const [statsData, setStatsData] = useState("");
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [feedbacks, setFeedbacks] = useState([]);
+
 
   const statusColor = {
     success: "bg-green-500",
@@ -64,10 +66,32 @@ function Dashboard() {
     }
   };
 
+  const fetchRecentFeedbacks = async () => {
+    try {
+      const token = localStorage.getItem("token"); 
+
+      const res = await axios.get("http://localhost:5000/api/grievances/feedbacks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 200) {
+        setFeedbacks(res.data.feedbacks.slice(0, 3)); // only show top 3
+      }
+    } catch (err) {
+      console.error("Failed to fetch feedbacks:", err);
+    }
+  };
+
+
+
   useEffect(() => {
     response();
     fetchRecentActivity();
+    fetchRecentFeedbacks();
   }, []);
+
 
   console.log("hard stats -->", statsData.inProgress);
 
@@ -143,6 +167,9 @@ function Dashboard() {
               <p className="text-sm text-gray-500">Your latest actions and updates</p>
             </div>
 
+
+
+
             {/* Marquee animation CSS injected */}
             <style>
               {`
@@ -213,6 +240,37 @@ function Dashboard() {
                 View More
               </button>
             </div>
+
+            {/* Recent Feedback Section */}
+            <div className="mt-6 border-t pt-4">
+              <h3 className="text-md font-semibold text-gray-800 mb-2">Recent Feedback</h3>
+
+              {feedbacks.length === 0 ? (
+                <p className="text-sm text-gray-500">No feedback submitted yet.</p>
+              ) : (
+                <div className="space-y-4">
+                  {feedbacks.map((feedback, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition"
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="text-sm font-semibold text-gray-800">{feedback.user}</div>
+                        <div className="text-yellow-500 font-bold text-sm">{feedback.rating} ★</div>
+                      </div>
+                      <div className="text-xs text-gray-600 italic truncate">
+                        {feedback.message || "No comments provided."}
+                      </div>
+                      <div className="text-[11px] text-gray-400 mt-1">
+                        {moment(feedback.submittedAt).fromNow()} &middot;{" "}
+                        <span className="text-blue-600 font-medium">{feedback.uniqueID}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       </section>
