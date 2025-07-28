@@ -3,7 +3,10 @@ import { Search, FileText, Eye, MessageSquare } from "lucide-react";
 import ComplaintDetails from "./ComplaintDetails";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import AssignOfficerModal from '../../components/AssignOfficerModal';
+// import AssignOfficerModal from '../../components/AssignOfficerModal';
+import { useRef } from "react";
+import { showToast } from "../../utils/customToast";
+import Pagination from "../../components/Pagination";
 
 const OfficerComplaints = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,23 +17,52 @@ const OfficerComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
-  const [assignModalOpen, setAssignModalOpen] = useState(false);
-  const [selectedComplaintId, setSelectedComplaintId] = useState(null);
-  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [assignDropdownOpenId, setAssignDropdownOpenId] = useState(null);
+  const [dropdownLoading, setDropdownLoading] = useState(false);
+  const [dropdownOfficers, setDropdownOfficers] = useState([]);
+  const [dropdownAnchor, setDropdownAnchor] = useState({});
   const [officerNames, setOfficerNames] = useState({});
   // const [officerNamesCache, setOfficerNamesCache] = useState({});
+  const assignBtnRef = useRef({});
+  const [assignBtnLoadingId, setAssignBtnLoadingId] = useState(null);
+  const [unassignBtnLoadingId, setUnassignBtnLoadingId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   const userData = JSON.parse(localStorage.getItem("user"));
   const isOfficer = userData?.role === "officer";
 
-  const handleOpenAssign = (complaintId, e) => {
+  const handleOpenAssign = async (complaintId, e) => {
+    e.stopPropagation();
+    setAssignDropdownOpenId(complaintId);
+    setDropdownLoading(true);
+    setDropdownOfficers([]);
+    // Position dropdown below button
     const rect = e.currentTarget.getBoundingClientRect();
-    setModalPosition({
-      top: rect.top + window.scrollY - 40,
-      left: rect.left + window.scrollX - 220,
+    setDropdownAnchor({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX,
+      width: rect.width
     });
-    setSelectedComplaintId(complaintId);
-    setAssignModalOpen(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/officer/all-officers", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDropdownOfficers(res.data.officers || []);
+    } catch (err) {
+      setDropdownOfficers([]);
+    } finally {
+      setDropdownLoading(false);
+    }
+  };
+
+  const handleAssignOfficerDropdown = async (complaintId, officerId) => {
+    setAssignBtnLoadingId(complaintId);
+    await handleAssignOfficer(complaintId, officerId);
+    await fetchComplaints();
+    setAssignDropdownOpenId(null);
+    setAssignBtnLoadingId(null);
   };
 
 
@@ -129,20 +161,20 @@ const OfficerComplaints = () => {
         prev.map((c) =>
           c.id === complaintId
             ? {
-              ...c,
-              status: updatedGrievance.status,
-              assigned: true,
-              assignedTo: updatedGrievance.assignedTo, // 👈 this updates officer info
-            }
+                ...c,
+                status: updatedGrievance.status,
+                assigned: true,
+                assignedTo: updatedGrievance.assignedTo, // 👈 this updates officer info
+              }
             : c
         )
       );
 
-      setAssignModalOpen(false); // 👈 close the modal
-      alert("Officer assigned successfully.");
+      // setAssignModalOpen(false); // 👈 close the modal
+      showToast("Officer assigned successfully!", "success");
     } catch (err) {
       console.error("Assignment failed", err);
-      alert("Failed to assign officer.");
+      showToast("Failed to assign officer.", "error");
     }
   };
 
@@ -318,17 +350,35 @@ const OfficerComplaints = () => {
   };
 
   const handleUnassign = async (complaintId) => {
+    setUnassignBtnLoadingId(complaintId);
     try {
-      await axios.put(`http://localhost:5000/api/officer/unassign/${complaintId}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await axios.put(
+        "http://localhost:5000/api/officer/unassign",
+        { grievanceId: complaintId },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      fetchComplaints();
+      await fetchComplaints();
+      showToast("Officer unassigned successfully!", "success");
     } catch (error) {
       console.error("Failed to unassign:", error);
+      showToast("Failed to unassign officer.", "error");
     }
+    setUnassignBtnLoadingId(null);
+  };
+
+  // Pagination logic for filteredComplaints
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentComplaints = filteredComplaints.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredComplaints.length / itemsPerPage);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (selectedComplaint) {
@@ -437,7 +487,7 @@ const OfficerComplaints = () => {
                   </thead>
 
                   <tbody>
-                    {filteredComplaints.map((complaint) => (
+                    {currentComplaints.map((complaint) => (
                       <tr
                         key={complaint.id}
                         onClick={() => navigate(`/PGO-Dashboard/ofc-com/${complaint.id}`)}
@@ -488,20 +538,84 @@ const OfficerComplaints = () => {
                                       e.stopPropagation();
                                       handleUnassign(complaint._id || complaint.id);
                                     }}
-                                    className="px-2 py-1 border border-red-200 text-red-600 hover:bg-red-50 text-xs rounded"
+                                    className="px-2 py-1 border border-red-200 text-red-600 hover:bg-red-50 text-xs rounded flex items-center gap-1"
+                                    disabled={unassignBtnLoadingId === (complaint._id || complaint.id)}
                                   >
+                                    {unassignBtnLoadingId === (complaint._id || complaint.id) && (
+                                      <svg className="animate-spin h-4 w-4 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                      </svg>
+                                    )}
                                     Unassign
                                   </button>
                                 ) : (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleOpenAssign(complaint._id || complaint.id, e);
-                                    }}
-                                    className="px-2 py-1 border border-green-200 text-green-600 hover:bg-green-50 text-xs rounded"
-                                  >
-                                    Assign
-                                  </button>
+                                  <div className="relative inline-block">
+                                    <button
+                                      ref={el => assignBtnRef.current[complaint._id || complaint.id] = el}
+                                      onClick={(e) => handleOpenAssign(complaint._id || complaint.id, e)}
+                                      className="px-3 py-1 border border-green-200 text-green-600 hover:bg-green-50 text-xs rounded-lg font-medium shadow-sm transition-all duration-150 flex items-center gap-1"
+                                      disabled={assignBtnLoadingId === (complaint._id || complaint.id)}
+                                    >
+                                      {assignBtnLoadingId === (complaint._id || complaint.id) && (
+                                        <svg className="animate-spin h-4 w-4 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        </svg>
+                                      )}
+                                      Assign
+                                    </button>
+                                    {assignDropdownOpenId === (complaint._id || complaint.id) && (
+                                      <div
+                                        className="absolute z-50 mt-1 bg-white border border-green-200 rounded-lg shadow-lg p-1 min-w-[80px] max-w-[200px]"
+                                        style={{
+                                          left: 0,
+                                          width: assignBtnRef.current[complaint._id || complaint.id]?.offsetWidth || 'auto',
+                                        }}
+                                      >
+                                        {dropdownLoading ? (
+                                          <div className="flex items-center justify-center py-1">
+                                            <svg className="animate-spin h-4 w-4 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                            </svg>
+                                          </div>
+                                        ) : (
+                                          <>
+                                            {dropdownOfficers.length === 0 ? (
+                                              <div className="text-xs text-gray-500 py-1 px-2">No officers</div>
+                                            ) : (
+                                              <ul className="max-h-40 overflow-y-auto">
+                                                {dropdownOfficers.map((officer) => (
+                                                  <li key={officer._id}>
+                                                    <button
+                                                      className="w-full text-left px-3 py-1 rounded-lg hover:bg-green-50 text-xs text-gray-700 transition-all"
+                                                      style={{ fontSize: '12px' }}
+                                                      onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleAssignOfficerDropdown(complaint._id || complaint.id, officer._id);
+                                                      }}
+                                                    >
+                                                      {officer.fullName}
+                                                    </button>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                            )}
+                                            <button
+                                              className="w-full mt-1 text-xs text-gray-400 hover:text-gray-700 py-1 rounded-lg"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setAssignDropdownOpenId(null);
+                                              }}
+                                            >
+                                              Cancel
+                                            </button>
+                                          </>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
                                 )}
                               </div>
                             </td>
@@ -536,6 +650,15 @@ const OfficerComplaints = () => {
                     ))}
                   </tbody>
                 </table>
+                {/* Pagination Component */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={filteredComplaints.length}
+                  showItemsPerPage={true}
+                />
               </div>
             ) : (
               <div className="text-center py-12 text-gray-500">
@@ -550,13 +673,6 @@ const OfficerComplaints = () => {
             )}
           </div>
         </div>
-        <AssignOfficerModal
-          isOpen={assignModalOpen}
-          onClose={() => setAssignModalOpen(false)}
-          complaintId={selectedComplaintId}
-          onAssign={handleAssignOfficer}
-          position={modalPosition}
-        />
       </div>
     </>
   );

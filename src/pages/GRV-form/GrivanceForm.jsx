@@ -10,6 +10,7 @@ import axios from "axios";
 export default function GrievanceForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
+  const [declarationChecked, setDeclarationChecked] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -121,7 +122,7 @@ export default function GrievanceForm() {
   };
 
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
+  const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   //generate pdf
@@ -157,20 +158,69 @@ export default function GrievanceForm() {
         <div className="w-full md:w-64 bg-blue-800 text-white flex flex-col items-center py-10 relative">
           <h2 className="text-3xl font-bold mb-12 text-center">Grievance Form</h2>
           <div className="relative flex flex-col items-start space-y-20 w-full px-4 md:pl-8">
-            <div className="absolute top-0 bottom-0 left-12 w-1 z-0 flex flex-col justify-between h-90">
+            <div className="absolute top-0 bottom-0 left-12 w-1 z-0 flex flex-col justify-between h-full">
               <div className={`flex-1 ${step > 1 ? "bg-green-500" : "bg-gray-400"}`}></div>
               <div className={`flex-1 ${step > 2 ? "bg-green-500" : "bg-gray-400"}`}></div>
               <div className={`flex-1 ${step > 3 ? "bg-green-500" : "bg-gray-400"}`}></div>
+              <div className={`flex-1 ${step > 4 ? "bg-green-500" : "bg-gray-400"}`}></div>
             </div>
-            <StepCircle label="Personal Details" active={step === 1} completed={step > 1} number={1} />
-            <StepCircle label="Ministry Details" active={step === 2} completed={step > 2} number={2} />
-            <StepCircle label="Grievance Details" active={step === 3} completed={step > 3} number={3} />
-            <StepCircle label="Review & Submit" active={step === 4} completed={false} number={4} />
+            <StepCircle label="Declaration" active={step === 1} completed={step > 1} number={1} />
+            <StepCircle label="Personal Details" active={step === 2} completed={step > 2} number={2} />
+            <StepCircle label="Ministry Details" active={step === 3} completed={step > 3} number={3} />
+            <StepCircle label="Grievance Details" active={step === 4} completed={step > 4} number={4} />
+            <StepCircle label="Review & Submit" active={step === 5} completed={false} number={5} />
           </div>
         </div>
 
         <div className="flex-1 p-8 lg:p-16 bg-gradient-to-br from-blue-50 via-white to-slate-50 w-full">
           {step === 1 && (
+            <div className="border-2 border-dashed shadow-xl rounded-xl border-gray-300 p-0 bg-white flex flex-col w-full">
+              <div className="flex items-center gap-3 px-8 pt-8 pb-2">
+                <svg className="w-8 h-8 text-black-600" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+                </svg>
+                <h2 className="text-2xl font-bold mb-6">Declaration & Terms</h2>
+              </div>
+              <div className="w-full px-8 pb-8">
+                {/* <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-8 shadow-inner max-h-64 overflow-y-auto text-gray-700 text-base leading-relaxed"> */}
+                  <strong className="text-lg text-blue-800">Terms and Conditions:</strong>
+                  <ul className="list-decimal ml-8 mt-3 space-y-3">
+                    <li>I hereby declare that the information provided in this grievance form is true and correct to the best of my knowledge and belief.</li>
+                    <li>I understand that providing false or misleading information may result in the rejection of my grievance and/or legal action.</li>
+                    <li>I authorize the concerned authorities to verify the information and documents submitted by me.</li>
+                    <li>I agree to abide by the rules and procedures of the grievance redressal system.</li>
+                    <li>I understand that my personal data will be used solely for the purpose of grievance resolution and will be kept confidential as per applicable laws.</li>
+                    <li>I accept that the decision of the authorities regarding my grievance will be final and binding.</li>
+                  </ul>
+                {/* </div> */}
+                <div className="flex items-start mt-8">
+                  <input
+                    type="checkbox"
+                    id="declarationCheck"
+                    checked={declarationChecked}
+                    onChange={e => setDeclarationChecked(e.target.checked)}
+                    className="mt-1 mr-3 accent-blue-600 w-5 h-5 border-2 border-blue-400 rounded focus:ring-2 focus:ring-blue-300"
+                  />
+                  <label htmlFor="declarationCheck" className="text-base text-gray-900 select-none font-medium">
+                    I have read and agree to the above terms and conditions.
+                  </label>
+                </div>
+                <div className="flex justify-end mt-8">
+                  <button
+                    onClick={nextStep}
+                    disabled={!declarationChecked}
+                    className={`
+                      ${declarationChecked ? "bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition" : "bg-gray-300 text-white cursor-not-allowed px-6 py-2 rounded hover:bg-blue-700 transition"}`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Personal Details</h2>
               <div className="space-y-4">
@@ -208,7 +258,7 @@ export default function GrievanceForm() {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Ministry Details</h2>
               <div className="space-y-4">
@@ -255,7 +305,7 @@ export default function GrievanceForm() {
           )}
 
 
-          {step === 3 && (
+          {step === 4 && (
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Grievance Details</h2>
               <div className="space-y-4">
@@ -310,7 +360,7 @@ export default function GrievanceForm() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="border-2 border-dashed shadow-xl rounded-xl border-gray-300 p-6 bg-white">
               <h2 className="text-3xl font-bold mb-6 text-blue-700">Review Your Details</h2>
 

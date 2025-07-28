@@ -7,15 +7,21 @@ export default function TokenPage() {
     const location = useLocation();
     const navigate = useNavigate();
     const grievanceId = location.state?.grievanceId || "N/A";
+    const [copied, setCopied] = React.useState(false);
+    const handleCopy = () => {
+      navigator.clipboard.writeText(grievanceId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    };
 
     return (
         <>
             <Header />
-            <div className="min-h-screen flex items-center justify-center bg-gray-200 font-sans px-4">
-                <div className="w-full max-w-md bg-neutral-300 rounded-2xl shadow-[10px_10px_20px_#babecc,-10px_-10px_20px_#ffffff] flex flex-col items-center p-8 text-center">
-                    <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-md">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 font-sans px-4">
+                <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl flex flex-col items-center p-10 text-center border border-blue-100">
+                    <div className="w-24 h-24 bg-gradient-to-br from-green-200 to-green-400 text-green-700 rounded-full flex items-center justify-center mb-8 shadow-lg animate-bounce-slow">
                         <svg
-                            className="w-10 h-10"
+                            className="w-14 h-14"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="3"
@@ -25,17 +31,26 @@ export default function TokenPage() {
                         </svg>
                     </div>
 
-                    <h1 className="text-3xl font-bold text-gray-700 mb-2">Thank You!</h1>
-                    <p className="text-gray-600 mb-6">Your grievance has been submitted successfully.</p>
+                    <h1 className="text-4xl font-extrabold text-blue-700 mb-2 tracking-tight">Thank You!</h1>
+                    <p className="text-lg text-gray-600 mb-6">Your grievance has been submitted successfully.</p>
 
-                    <div className="w-full bg-gray-200 rounded-xl shadow-[inset_4px_4px_8px_#babecc,inset_-4px_-4px_8px_#ffffff] px-4 py-3 mb-6">
-                        <p className="text-xs text-gray-500 mb-1">Your Grievance Token No.</p>
-                        <p className="text-lg font-semibold text-blue-700">{grievanceId}</p>
+                    <div className="w-full bg-gradient-to-r from-blue-100 to-blue-50 rounded-xl shadow-inner px-6 py-5 mb-6 flex flex-col items-center border border-blue-200">
+                        <p className="text-xs text-blue-700 mb-1 font-semibold uppercase tracking-wider">Your Grievance Token No.</p>
+                        <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-blue-900 tracking-widest select-all">{grievanceId}</span>
+                            <button
+                                onClick={handleCopy}
+                                className="ml-2 px-2 py-1 rounded bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-semibold border border-blue-200 transition"
+                                title="Copy Token"
+                            >
+                                {copied ? "Copied!" : "Copy"}
+                            </button>
+                        </div>
                     </div>
 
                     <button
                         onClick={() => navigate("/")}
-                        className="mt-2 px-6 py-2 rounded-xl bg-gray-200 shadow-[5px_5px_10px_#babecc,-5px_-5px_10px_#ffffff] hover:shadow-inner transition text-sm font-medium text-gray-700"
+                        className="mt-2 px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-base font-bold shadow-lg transition-all duration-200"
                     >
                         Back to Home
                     </button>

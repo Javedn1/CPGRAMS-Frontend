@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ChangePassword from "./ChangePassword";
+import { showToast } from "../../utils/customToast";
  
 const ForgotPasswordOTP = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const inputRefs = useRef([]);
  
   // Focus first input on mount
@@ -59,30 +62,44 @@ const ForgotPasswordOTP = () => {
     const otp = otpValues.join("");
  
     if (otp.length !== 6) {
-      alert("Please enter 6-digit OTP");
+      showToast("Please enter 6-digit OTP", "error");
       return;
     }
  
+    setIsLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/api/auth/verify-forgot-password", {
         otp,
       });
  
       if (response.status === 200) {
-        console.log("OTP verified successfully:", response.data.message);
+        showToast("OTP verified successfully!", "success");
         setShowChangePassword(true);
       }
     } catch (error) {
       console.error("OTP verification failed:", error.response?.data?.message || error.message);
-      alert("Invalid OTP. Please try again.");
+      const errorMessage = error.response?.data?.message || "Invalid OTP. Please try again.";
+      showToast(errorMessage, "error");
+    } finally {
+      setIsLoading(false);
     }
   };
  
-  const handleResendOTP = () => {
+  const handleResendOTP = async () => {
     if (!canResend) return;
  
-    console.log("Resending OTP...");
-    // Here you can also call the API to resend OTP if needed
+    setIsResending(true);
+    try {
+      const email = localStorage.getItem("email");
+      await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      showToast("OTP resent successfully!", "success");
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to resend OTP. Please try again.";
+      showToast(errorMessage, "error");
+    } finally {
+      setIsResending(false);
+    }
+    
     setOtpValues(["", "", "", "", "", ""]);
     setTimer(30);
     setCanResend(false);
@@ -124,9 +141,16 @@ const ForgotPasswordOTP = () => {
  
                 <button
                   type="submit"
-                  className="w-[300px] bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
+                  className="w-[300px] bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 flex items-center justify-center gap-2"
+                  disabled={isLoading}
                 >
-                  Submit
+                  {isLoading && (
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                  )}
+                  {isLoading ? 'Verifying...' : 'Submit'}
                 </button>
  
                 <div className="flex flex-row items-center justify-center text-sm font-medium space-x-1 text-gray-500">
@@ -135,10 +159,17 @@ const ForgotPasswordOTP = () => {
                       <p>Didn't receive code?</p>
                       <button
                         type="button"
-                        className="text-blue-600"
+                        className="text-blue-600 flex items-center gap-1 disabled:opacity-50"
                         onClick={handleResendOTP}
+                        disabled={isResending}
                       >
-                        Resend OTP
+                        {isResending && (
+                          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                          </svg>
+                        )}
+                        {isResending ? 'Sending...' : 'Resend OTP'}
                       </button>
                     </>
                   ) : (

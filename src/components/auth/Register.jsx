@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { showToast } from "../../utils/customToast";
 
-export default function MultiStepRegister() {
+export default function MultiStepRegister({ onRegisterSuccess }) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,12 +37,12 @@ export default function MultiStepRegister() {
 
   const handleRegister = async () => {
     if (registerForm.securityCode !== captcha) {
-      alert("Incorrect Security Code. Please try again.");
+      showToast("Incorrect Security Code. Please try again.", "error");
       return;
     }
 
     if (registerForm.password !== registerForm.confirmPassword) {
-      alert("Passwords do not match. Please try again.");
+      showToast("Passwords do not match. Please try again.", "error");
       return;
     }
 
@@ -70,20 +72,26 @@ export default function MultiStepRegister() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Registration Successful! Welcome email has been sent.");
-        console.log("Registration successful:", data);
+        setTimeout(() => {
+          showToast("Registration Successful! Welcome email has been sent.", "success");
+          console.log("Registration successful:", data);
+          setIsSubmitting(false);
+          if (onRegisterSuccess) {
+            onRegisterSuccess();
+          }
+        }, 1000);
+        return;
       } else {
         if (data.errors) {
           const errorMessages = data.errors.map(error => error.msg).join(', ');
-          alert(`Registration failed: ${errorMessages}`);
+          showToast(`Registration failed: ${errorMessages}`, "error");
         } else {
-          alert(`Registration failed: ${data.message}`);
+          showToast(`Registration failed: ${data.message}`, "error");
         }
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('Registration failed. Please try again.');
-    } finally {
+      showToast('Registration failed. Please try again.', "error");
       setIsSubmitting(false);
     }
   };
@@ -279,8 +287,14 @@ export default function MultiStepRegister() {
             <button 
               onClick={handleRegister} 
               disabled={isSubmitting}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
+              {isSubmitting && (
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              )}
               {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>

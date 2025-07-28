@@ -70,6 +70,8 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       );
 
       const data = res.data;
+      console.log(data);
+      
       const mapped = {
         _mongoId: data._id,
         id: data.uniqueID,
@@ -82,11 +84,18 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         date: data.dateOfIncident
           ? new Date(data.dateOfIncident).toLocaleDateString()
           : "N/A",
-        category: data.departmentName || "General",
+          city: data.city,
+          district: data.district,
+          state: data.state,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2,
+        category: data.category || "General",
         ministry: data.ministryName || "N/A",
+        department: data.departmentName || "N/A",
         authority: data.publicAuthority || "N/A",
         location: data.locationOfIssue || "Not specified",
         description: data.grievanceDescription || "No description",
+        dateOfIncident: data.dateOfIncident || "N/A",
         citizen: data.fullName || "Citizen",
         email: data.email || "N/A",
         phone: data.phoneNumber || "N/A",
@@ -113,6 +122,13 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
           progressId: log._id,
           _id: log._id,
           timestamp: log.timestamp || null,
+        })),
+        activityLog: (data.activityLog || data.recentUpdates || []).map((log) => ({
+          _id: log._id,
+          status: log.status,
+          comment: log.comment,
+          timestamp: log.timestamp,
+          updatedBy: log.updatedBy?.fullName || "Unknown",
         })),
       };
 
@@ -151,8 +167,8 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       setSelectedComplaint((prev) => ({
         ...prev,
         status: grievance.status,
-        // activityLog: grievance.activityLog || [],
         progressUpdates: grievance.progressUpdates || [],
+        activityLog: grievance.activityLog || [],
       }));
 
       setNewStatus("");
@@ -205,6 +221,26 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   }
 };
 
+  const handleDeleteStatus = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete the last status update?");
+    if (!confirmDelete) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/grievances/status-delete/${selectedComplaint._mongoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      await fetchGrievanceByUniqueID();
+      toast.success("Last status update deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting status update:", err);
+      toast.error(err?.response?.data?.message || "Failed to delete status update.");
+    }
+  };
 
 
   // const handleDeleteActivityLog = async () => {
@@ -275,9 +311,9 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
               <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(selectedComplaint.status)}`}>
                 {selectedComplaint.status}
               </span>
-              <span className={`px-2 py-1 rounded text-xs font-medium ${getPriorityColor(selectedComplaint.priority)}`}>
+              {/* <span className={`px-2 py-1 rounded text-xs font-medium ${getPriorityColor(selectedComplaint.priority)}`}>
                 {selectedComplaint.priority} Priority
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
@@ -303,54 +339,73 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
                   <div>
                     <h3 className="text-sm font-semibold mb-2 text-gray-900">Citizen Information</h3>
                     <div className="space-y-3 text-sm text-gray-700">
-
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-gray-400" />
                         <span className="font-medium">{selectedComplaint.citizen}</span>
                       </div>
-
                       <div className="flex items-center gap-2">
                         <Mail className="w-4 h-4 text-gray-400" />
                         <span>{selectedComplaint.email || "N/A"}</span>
                       </div>
-
-                      {/* <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-400" />
-                        <span>{selectedComplaint.phone || "N/A"}</span>
-                      </div> */}
-
                       <div className="flex items-center gap-2">
                         <UserCircle className="w-4 h-4 text-gray-400" />
                         <span>{selectedComplaint.gender || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <span>DOB: {selectedComplaint.dob ? new Date(selectedComplaint.dob).toLocaleDateString() : "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>City: {selectedComplaint.city || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>District: {selectedComplaint.district || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>State: {selectedComplaint.state || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>Address Line 1: {selectedComplaint.addressLine1 || selectedComplaint.address || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>Address Line 2: {selectedComplaint.addressLine2 || "N/A"}</span>
                       </div>
                     </div>
                   </div>
 
 
                   <div>
-                    <h3 className="text-sm font-semibold mb-2">Location</h3>
+                    <h3 className="text-sm font-semibold mb-2">Location & Grievance Info</h3>
                     <div className="space-y-2 text-sm text-gray-700">
-
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
-                        <p>{selectedComplaint.location || "N/A"}</p>
+                        <p>{selectedComplaint.locationOfIssue || selectedComplaint.location || "N/A"}</p>
                       </div>
-
-                      {/* <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-400" />
+                        <span>Category: {selectedComplaint.category || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span>
-                          DOB:{" "}
-                          {selectedComplaint.dateOfBirth
-                            ? new Date(selectedComplaint.dateOfBirth).toLocaleDateString()
-                            : "N/A"}
-                        </span>
-                      </div> */}
-
-                      <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
-                        <span>{selectedComplaint.address || "N/A"}</span>
+                        <span>Date of Incident: {selectedComplaint.dateOfIncident? new Date(selectedComplaint.dateOfIncident).toLocaleDateString() : "N/A"}</span>
                       </div>
-
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-400" />
+                        <span>Department: {selectedComplaint.department||  "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-400" />
+                        <span>Ministry: {selectedComplaint.ministry || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-400" />
+                        <span>Public Authority: {selectedComplaint.authority || "N/A"}</span>
+                      </div>
                     </div>
                   </div>
 
@@ -459,6 +514,46 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
                 >
                   <CheckCircle className="w-4 h-4" /> Update Status
                 </button>
+              </div>
+            </div>
+
+            {/* Status History Card */}
+            <div className="border border-gray-200 rounded-lg bg-white shadow-sm">
+              <div className="border-b p-4 bg-gray-50 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-gray-600" />
+                <h3 className="text-sm font-semibold text-gray-900">Status History</h3>
+              </div>
+              <div className="p-4 space-y-3 max-h-64 overflow-y-auto">
+                {selectedComplaint.activityLog && selectedComplaint.activityLog.filter(
+                  (log) => ["In Progress", "Resolved", "Closed"].includes((log.status || "").replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
+                ).length > 0 ? (
+                  <>
+                    <ul className="space-y-3">
+                      {selectedComplaint.activityLog
+                        .filter((log) => ["In Progress", "Resolved", "Closed"].includes((log.status || "").replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())))
+                        .map((log) => (
+                          <li key={log._id} className="flex items-center justify-between bg-white border border-blue-100 rounded-lg shadow-sm p-3 hover:shadow-md transition">
+                            <div className="flex items-center gap-3">
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(log.status)}`}>{log.status}</span>
+                              <span className="text-xs text-gray-500">{log.timestamp ? new Date(log.timestamp).toLocaleString() : ""}</span>
+                              {log.comment && <span className="text-xs text-gray-700 italic">{log.comment}</span>}
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={handleDeleteStatus}
+                        className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded flex items-center justify-center gap-2 text-sm"
+                        title="Delete last status update"
+                      >
+                        <X className="w-4 h-4" /> Delete Last Status
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-gray-500 text-sm">No status history available.</p>
+                )}
               </div>
             </div>
 
