@@ -15,6 +15,7 @@ import {
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/footer";
 import Header from "../../components/header/MainHeader";
+import ProgressTimeline from "../../components/ProgressTimeline";
 
 const TrackGrievancePage = () => {
   const [activeTab, setActiveTab] = useState("grievance");
@@ -380,42 +381,38 @@ const TrackGrievancePage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white shadow rounded p-6 space-y-4">
-                  {complaint.timeline.length > 0 ? (
-                    complaint.timeline.map((item, index) => (
-                      <div key={index} className="flex items-start space-x-4">
-                        <div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${item.completed
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-background border-border text-muted-foreground"
-                            }`}
-                        >
-                          <item.icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <h4
-                              className={`font-medium ${item.completed ? "text-foreground" : "text-muted-foreground"
-                                }`}
-                            >
-                              {item.status}
-                            </h4>
-                            <div className="text-xs text-muted-foreground text-right">
-                              <div> {item.date}</div>
-                              <div>{item.time}</div>
-                            </div>
-                          </div>
-                          <p className="text-sm text-muted-foreground ">{item.description}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-sm flex space-x-2 text-muted-foreground italic">
-                      <Clock className="w-5 h-5 text-gray-400" />
-                      <span className="font-semibold text-lg">In Pending</span>
-                    </div>
-                  )}
-                </div>
+                {/* Progress Timeline */}
+                <ProgressTimeline grievanceData={{
+                  status: complaint.status?.toLowerCase(),
+                  createdAt: complaint.submissionDate,
+                  assignedOfficer: complaint.assignedOfficer,
+                  progressUpdate: complaint.updates.length > 0 ? complaint.updates[0]?.message : null,
+                  // Extract resolution message from timeline or updates
+                  resolutionMessage: complaint.timeline?.find(item => 
+                    item.status?.toLowerCase().includes('resolved')
+                  )?.description || 
+                  complaint.updates?.find(update => 
+                    update.message?.toLowerCase().includes('resolved')
+                  )?.message || null,
+                  // Extract closure message from timeline or updates
+                  closureMessage: complaint.timeline?.find(item => 
+                    item.status?.toLowerCase().includes('closed')
+                  )?.description || 
+                  complaint.updates?.find(update => 
+                    update.message?.toLowerCase().includes('closed')
+                  )?.message || null,
+                  // Fallback messages
+                  resolutionNote: complaint.status === 'Resolved' ? 'Issue has been resolved and closed' : null,
+                  closureNote: complaint.status === 'Closed' ? 'Grievance case has been officially closed' : null,
+                  // Map the timeline data from the API response
+                  timeline: complaint.timeline,
+                  updates: complaint.updates,
+                  // Add timestamps if available in the API response
+                  assignedAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('assigned'))?.date,
+                  inProgressAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('progress'))?.date,
+                  resolvedAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('resolved'))?.date,
+                  closedAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('closed'))?.date,
+                }} />
 
                 <div className="bg-white shadow rounded p-6 space-y-4">
                   <h3 className="text-lg font-semibold">Recent Updates</h3>

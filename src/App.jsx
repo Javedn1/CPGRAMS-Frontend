@@ -1,5 +1,6 @@
 // import react, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/home/Home";
 import GrievanceForm from "./pages/GRV-form/GrivanceForm";
@@ -35,6 +36,7 @@ import LeadOfficersDetails from "./pages/admin/LeadOfficersDetails";
 function App() {
   return (
     <>
+      <Toaster position="top-right"/>
       <UserProvider>
         <BrowserRouter>
           <Routes>

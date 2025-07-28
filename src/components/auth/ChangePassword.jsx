@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
+import { showToast } from "../../utils/customToast";
  
 const ChangePassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setshowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
  
   const navigate = useNavigate();
  
@@ -18,15 +18,16 @@ const ChangePassword = () => {
     const email = localStorage.getItem("email");
  
     if (!email) {
-      setError("Email not found. Please restart the reset process.");
+      showToast("Email not found. Please restart the reset process.", "error");
       return;
     }
  
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      showToast("Passwords do not match", "error");
       return;
     }
  
+    setIsLoading(true);
     try {
 const response = await axios.post("http://localhost:5000/api/auth/reset-password", {
         email,
@@ -34,7 +35,7 @@ const response = await axios.post("http://localhost:5000/api/auth/reset-password
       });
  
       if (response.status === 200) {
-        setSuccessMessage("Password changed successfully");
+        showToast("Password changed successfully!", "success");
         localStorage.removeItem("email");
         setTimeout(() => {
           navigate("/auth"); // redirect to login page after 2 seconds
@@ -42,7 +43,9 @@ const response = await axios.post("http://localhost:5000/api/auth/reset-password
       }
     } catch (error) {
       const msg = error.response?.data?.message || "Something went wrong";
-      setError(msg);
+      showToast(msg, "error");
+    } finally {
+      setIsLoading(false);
     }
   };
  
@@ -52,11 +55,6 @@ const response = await axios.post("http://localhost:5000/api/auth/reset-password
         <h2 className="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
           Change Password
         </h2>
- 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        {successMessage && (
-          <p className="text-green-500 text-sm text-center">{successMessage}</p>
-        )}
  
         <form onSubmit={handleSubmit} className="mt-4 space-y-4 lg:mt-5 md:space-y-5">
           <div>
@@ -127,9 +125,16 @@ const response = await axios.post("http://localhost:5000/api/auth/reset-password
  
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 flex items-center justify-center gap-2"
+            disabled={isLoading}
           >
-            Reset Password
+            {isLoading && (
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            )}
+            {isLoading ? 'Resetting Password...' : 'Reset Password'}
           </button>
         </form>
       </div>

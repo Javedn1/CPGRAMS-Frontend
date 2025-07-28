@@ -8,6 +8,7 @@ import MainNavbar from '../../components/header/MainHeader';
 import HeaderLayout from '../../components/header/Header-Layout/HeaderLayout';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/MainHeader';
+import Pagination from '../../components/Pagination';
 import axios from 'axios';
 
 const statusColorMap = {
@@ -30,6 +31,8 @@ const getPriorityColor = (priority) =>
 
 const MyGrievances = ({ complaints = [], setShowForm }) => {
     const [myGrievance, setMyGrievance] = useState([])
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5);
 
     useEffect(() => {
         const fetchMyComplaints = async () => {
@@ -57,6 +60,18 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
     const [feedbackGrievanceId, setFeedbackGrievanceId] = useState(null);
     const [selectedGrievance, setSelectedGrievance] = useState(null);
     const [activeTab, setActiveTab] = useState("mygrievance");
+
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentGrievances = myGrievance.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(myGrievance.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        // Scroll to top when page changes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const openDetailsModal = (grievance) => {
         setSelectedGrievance(grievance);
@@ -147,7 +162,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                 </div>
                 <div className="flex-1 p-4 md:p-8 bg-gradient-to-br from-blue-50 via-white to-slate-50 w-full">
                     {/* Header */}
-                    <div className="max-w-4xl  space-y-6">
+                    <div className="max-w-7xl  space-y-6">
                         <h1 className="text-3xl font-bold mb-2">
                             My Grievances
                         </h1>
@@ -164,7 +179,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                     </div>
 
                     {/* Table Card */}
-                    <div className="max-w-5xl mx-auto space-y-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
                         <div className="border-b-2 border-gray-300 px-6 py-4 flex items-center justify-between">
                             <div className="flex items-center text-lg font-semibold text-gray-800 gap-2">
                                 <FileText
@@ -195,7 +210,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {myGrievance.map((complaint) => (
+                                    {currentGrievances.map((complaint) => (
                                         <tr key={complaint._id} className="hover:bg-gray-50 transition">
                                             <td className="p-4 font-mono text-xs text-gray-700">{complaint.uniqueID}</td>
                                             <td className="p-4 max-w-xs truncate text-gray-800" title={complaint.title}>
@@ -226,6 +241,10 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                                 <button
                                                     onClick={() => complaint.status === "Resolved" && openFeedbackForm(complaint.uniqueID)}
                                                     disabled={complaint.status !== "Resolved"}
+                                                    title={complaint.status === "Resolved" 
+                                                        ? "Click to provide feedback for this resolved grievance" 
+                                                        : "Feedback is only available for resolved grievances"
+                                                    }
                                                     className={`text-sm underline-offset-2 ${complaint.status === "Resolved"
                                                         ? "text-green-600 hover:underline cursor-pointer"
                                                         : "text-gray-400 cursor-not-allowed"
@@ -248,8 +267,9 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                                         <button
                                                             onClick={() => canRemind && handleSendReminder(complaint._id)}
                                                             disabled={!canRemind}
-                                                            title={
-                                                                !canRemind ? `For Reminder please wait for ${daysLeft} days` : ""
+                                                            title={!canRemind 
+                                                                ? `Reminder will be available after 21 days from creation date. Please wait ${daysLeft} more day${daysLeft !== 1 ? 's' : ''}.`
+                                                                : "Click to send a reminder to the assigned officer"
                                                             }
                                                             className={`flex items-center gap-1 text-sm ${canRemind
                                                                 ? "text-yellow-600 hover:text-yellow-800 cursor-pointer"
@@ -265,7 +285,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
 
                                         </tr>
                                     ))}
-                                    {myGrievance.length === 0 && (
+                                    {currentGrievances.length === 0 && (
                                         <tr>
                                             <td colSpan={10} className="p-6 text-center text-gray-500">
                                                 No grievances found.
@@ -275,6 +295,16 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                                 </tbody>
 
                             </table>
+                            
+                            {/* Pagination Component */}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                itemsPerPage={itemsPerPage}
+                                totalItems={myGrievance.length}
+                                showItemsPerPage={true}
+                            />
                         </div>
                     </div>
 

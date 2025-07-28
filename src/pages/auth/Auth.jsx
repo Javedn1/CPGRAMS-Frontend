@@ -159,7 +159,7 @@ export default function Auth() {
                 {tab === "login" && <Login />}
 
                 {/* Register Form */}
-                {tab === "register" && <Register />}
+                {tab === "register" && <Register onRegisterSuccess={() => setTab("login")} />}
               </div>
             </div>
           </div>
