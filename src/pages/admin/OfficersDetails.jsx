@@ -3,7 +3,7 @@ import { Eye, ArrowUp, Search } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
-const LeadOfficersDetails = () => {
+const OfficersDetails = () => {
   const employeesData = [
     { name: "John Doe", email: "john@example.com", number: "9876543210", gender: "Male", department: "Development", location: "Mumbai" },
     { name: "Jane Smith", email: "jane@example.com", number: "9876501234", gender: "Female", department: "Design", location: "Delhi" },
@@ -112,6 +112,9 @@ const LeadOfficersDetails = () => {
                 <td className="px-3 py-2 border-b">{emp.location}</td>
                 <td className="px-3 py-2 border-b">
                   <div className="flex items-center justify-center gap-3">
+                    <button className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
+                      <ArrowUp size={16} /> Promote
+                    </button>
                     <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
                       <Eye size={16} /> View
                     </button>
@@ -159,4 +162,4 @@ const LeadOfficersDetails = () => {
   );
 };
 
-export default LeadOfficersDetails;
+export default OfficersDetails;
