@@ -32,6 +32,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import RejisterLeadOfficer from "./pages/admin/LeadOfficersDetails";
 import RejisterOfficer from "./pages/admin/RejisterOfficer";
 import LeadOfficersDetails from "./pages/admin/LeadOfficersDetails";
+import OfficersDetails from "./pages/admin/OfficersDetails";
+import AllGrievance from "./pages/admin/AllGrievance";
 
 function App() {
   return (
@@ -76,6 +78,8 @@ function App() {
                 <Route path='RejisterLeadOfficer' element={<RejisterLeadOfficer />} />
                 <Route path='RejisterOfficer' element={<RejisterOfficer />} />
                 <Route path='LeadOfficerDetails' element={<LeadOfficersDetails />} />
+                <Route path='OfficerDetails' element={<OfficersDetails />} />
+                <Route path='AllGrievance' element={<AllGrievance />} />
               </Route>
             </Route>
 
