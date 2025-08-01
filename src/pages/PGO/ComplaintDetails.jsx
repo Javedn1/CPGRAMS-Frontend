@@ -20,6 +20,7 @@ import {
   ThumbsDown,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
+import { showToast } from "../../utils/customToast";
 
 // Default color functions
 const getStatusColor = (status) => {
@@ -56,6 +57,9 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   const [newStatus, setNewStatus] = useState("");
   const [finalMessage, setFinalMessage] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [isLoadingDeleteStatus, setIsLoadingUpdateDeleteStatus] = useState(false);
+  const [isLoadingUpdateProgress, setIsLoadingUpdateProgress] = useState(false);
   const navigate = useNavigate();
   const uniqueID = propUniqueID || routeUniqueID;
 
@@ -145,6 +149,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
 
 
   const handleStatusUpdate = async (status, comment) => {
+    setIsLoadingUpdate(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -179,6 +184,8 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         error?.response?.data?.message ||
         "Failed to update grievance status. Try again later."
       );
+    }finally{
+      setIsLoadingUpdate(false)
     }
   };
 
@@ -214,16 +221,17 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       progressUpdates: grievance.progressUpdates || [],
     }));
 
-    alert("Progress update deleted successfully.");
+    showToast("Progress update deleted successfully.","success");
   } catch (err) {
     console.error("Error deleting progress update:", err);
-    alert(err?.response?.data?.message || "Failed to delete progress update.");
+    showToast("err?.response?.data?.message || Failed to delete progress update.","error");
   }
 };
 
   const handleDeleteStatus = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete the last status update?");
     if (!confirmDelete) return;
+    setIsLoadingUpdateDeleteStatus(true)
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
@@ -238,7 +246,9 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       toast.success("Last status update deleted successfully.");
     } catch (err) {
       console.error("Error deleting status update:", err);
-      toast.error(err?.response?.data?.message || "Failed to delete status update.");
+      showToast("err?.response?.data?.message || Failed to delete status update.","error");
+    }finally{
+      setIsLoadingUpdateDeleteStatus(false)
     }
   };
 
@@ -268,6 +278,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   // };
 
   const handleAddUpdate = async (message) => {
+    setIsLoadingUpdateProgress(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -287,6 +298,8 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     } catch (error) {
       console.error("Failed to add progress update:", error);
       alert(error?.response?.data?.error || "Error adding progress update.");
+    }finally{
+      setIsLoadingUpdateProgress(false);
     }
   };
 
@@ -411,6 +424,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
 
                 </div>
 
+
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Description</h3>
                   <div className="bg-gray-50 p-3 rounded border border-gray-200 text-gray-700">
@@ -512,7 +526,14 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
                   disabled={!newStatus}
                   className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded flex items-center justify-center gap-2 text-sm"
                 >
-                  <CheckCircle className="w-4 h-4" /> Update Status
+                 
+                <CheckCircle className="w-4 h-4" /> Update Status
+                    {isLoadingUpdate && (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          )}
                 </button>
               </div>
             </div>
@@ -548,6 +569,12 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
                         title="Delete last status update"
                       >
                         <X className="w-4 h-4" /> Delete Last Status
+                         {isLoadingDeleteStatus && (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          )}
                       </button>
                     </div>
                   </>
@@ -611,6 +638,12 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
                   className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded flex items-center justify-center gap-2 text-sm"
                 >
                   <Send className="w-4 h-4" /> Add Update
+                   {isLoadingUpdateProgress && (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          )}
                 </button>
               </div>
             </div>

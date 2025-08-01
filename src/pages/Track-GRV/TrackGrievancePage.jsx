@@ -63,7 +63,7 @@ const TrackGrievancePage = () => {
         title: data.grievanceDetails?.title || "NA",
         category: data.grievanceDetails?.category || "NA",
         status: data.currentStatus || "NA",
-        submissionDate: data.grievanceDetails?.createdAt ? new Date(data.grievanceDetails.createdAt).toLocaleDateString() : "NA",
+        submissionDate: data.grievanceDetails?.createdAt || "NA",
         attachments: data.grievanceDetails?.attachments || [],
         publicAuthority: data.grievanceDetails?.publicAuthority || "NA",
         ministry: data.grievanceDetails?.ministry || "NA",
@@ -79,8 +79,8 @@ const TrackGrievancePage = () => {
         location: data.grievanceDetails?.location || "NA",
         description: data.grievanceDetails?.description || "NA",
         timeline: data.recentUpdates?.map((update, index) => ({
-          date: new Date(update.timestamp || update.createdAt).toLocaleDateString(),
-          time: new Date(update.timestamp || update.createdAt).toLocaleTimeString(),
+          date: update.timestamp,
+          time: update.timestamp,
           status: update.status || update.action || "Update",
           description: update.comment || update.message || "Status updated",
           icon: index === 0 ? FileText : index === 1 ? User : CheckCircle,
@@ -159,7 +159,7 @@ const TrackGrievancePage = () => {
 
             <div className="bg-white shadow rounded p-6 space-y-4">
               <div className="flex items-center gap-2 mb-4 text-lg font-semibold">
-                <Search className="w-5 h-5" /> Enter Tracking Details
+                <Search className="w-5 h-5" /> Enter Tracking Details 
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -413,6 +413,8 @@ const TrackGrievancePage = () => {
                   resolvedAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('resolved'))?.date,
                   closedAt: complaint.timeline?.find(item => item.status?.toLowerCase().includes('closed'))?.date,
                 }} />
+
+
 
                 <div className="bg-white shadow rounded p-6 space-y-4">
                   <h3 className="text-lg font-semibold">Recent Updates</h3>

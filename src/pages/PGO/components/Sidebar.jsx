@@ -23,8 +23,8 @@ const Sidebar = () => {
 
 
     useEffect(() => {
-        if (location.pathname.includes('team')) setActiveNav('Team');
-        else if (location.pathname.includes('ofc-com')) setActiveNav('Grievance');
+        // if (location.pathname.includes('team')) setActiveNav('Team');
+         if (location.pathname.includes('ofc-com')) setActiveNav('Grievance');
         else if (location.pathname.includes('activity')) setActiveNav('Activity');
         else if (location.pathname.includes('reminder')) setActiveNav('Reminder');
         else if (location.pathname.includes('PGO-Rejister')) setActiveNav('PGO-Rejister');
@@ -111,7 +111,7 @@ const Sidebar = () => {
                                     </button>
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link to="team">
                                     <button
                                         onClick={() => setActiveNav('Team')}
@@ -124,7 +124,7 @@ const Sidebar = () => {
                                         Team
                                     </button>
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link to="ofc-com">
                                     <button
@@ -210,9 +210,9 @@ const Sidebar = () => {
                                 </Link>
 
 
-                                <span className="">
+                                {/* <span className="">
                                     Setting
-                                </span>
+                                </span> */}
 
                                 <span onClick={handleLogout} className="cursor-pointer hover:text-red-800">
                                     Logout
@@ -240,7 +240,7 @@ const Sidebar = () => {
                                 Profile
                             </Link>
 
-                            <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</span>
+                            {/* <span className="block px-4 py-2 rounded-md hover:bg-gray-100">Settings</span> */}
                             <span onClick={handleLogout} className="block px-4 py-2 cursor-pointer rounded-md text-red-500 hover:bg-gray-100">Logout</span>
                         </div>
                     </details>
@@ -273,7 +273,7 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
-                        <Link to="team">
+                        {/* <Link to="team">
                             <button
                                 onClick={() => setActiveNav('Team')}
                                 className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Team'
@@ -284,7 +284,7 @@ const Sidebar = () => {
                                 <Users className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Team</span>
                             </button>
-                        </Link>
+                        </Link> */}
 
                         <Link to="ofc-com">
                             <button
@@ -325,7 +325,7 @@ const Sidebar = () => {
                             </button>
                         </Link>
 
-                        <Link to="PGOFeedback">
+                        {/* <Link to="PGOFeedback">
                             <button
                                 className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Feedback'
                                     ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
@@ -335,9 +335,9 @@ const Sidebar = () => {
                                 <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Feedback</span>
                             </button>
-                        </Link>
+                        </Link> */}
 
-                        <Link to="pgo-settings">
+                        {/* <Link to="pgo-settings">
                             <button
                                 className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${activeNav === 'Feedback'
                                     ? 'bg-purple-50 text-purple-700 border-r-2 border-purple-700'
@@ -347,7 +347,7 @@ const Sidebar = () => {
                                 <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Settings</span>
                             </button>
-                        </Link>
+                        </Link> */}
 
                         {JSON.parse(localStorage.getItem("user"))?.role !== "officer" && (
                             <Link to='PGO-Rejister'>
@@ -359,7 +359,7 @@ const Sidebar = () => {
                                         }`}
                                 >
                                     <BarChart3 className="w-5 h-5 mr-3 flex-shrink-0" />
-                                    <span className="truncate">PGO Rejister</span>
+                                    <span className="truncate">PGO Register</span>
                                 </button>
                             </Link>
                         )}

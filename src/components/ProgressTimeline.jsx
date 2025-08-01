@@ -57,6 +57,8 @@ const ProgressTimeline = ({ grievanceData }) => {
       time: grievanceData?.closedAt ? new Date(grievanceData.closedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
     }
   ];
+  console.log("grievance data --->",grievanceData);
+  
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
