@@ -62,37 +62,37 @@ const AllGrievance = () => {
             </div>
 
             <div className="bg-white shadow-xl overflow-hidden border border-gray-200 overflow-x-auto">
-                <table className="min-w-[900px]">
-                    <thead className="bg-gradient-to-r from-blue-50 to-indigo-50">
+                <table className="min-w-full text-sm text-gray-700 border border-gray-300">
+                    <thead className="bg-gray-100 border-b border-gray-300">
                         <tr>
-                            <th className="p-4 border-b text-left font-semibold text-gray-700 w-1/12">Sr.No</th>
-                            <th className="p-4 border-b text-left font-semibold text-gray-700 w-3/12">Name</th>
-                            <th className="p-4 border-b text-left font-semibold text-gray-700 w-3/12">Email</th>
-                            <th className="p-4 border-b text-left font-semibold text-gray-700 w-2/12">Phone</th>
-                            <th className="p-4 border-b text-center font-semibold text-gray-700 w-2/12">Action</th>
+                            <th className="px-4 py-2 border border-gray-300 text-left">Sr.No</th>
+                            <th className="px-4 py-2 border border-gray-300 text-left">Name</th>
+                            <th className="px-4 py-2 border border-gray-300 text-left">Email</th>
+                            <th className="px-4 py-2 border border-gray-300 text-left">Phone</th>
+                            <th className="px-4 py-2 border border-gray-300 text-left">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map((user, index) => (
                             <React.Fragment key={user._id}>
                                 <tr className="hover:bg-blue-50/50 transition duration-200 ease-in-out border-b">
-                                    <td className="p-4 align-middle">{index + 1}</td>
-                                    <td className="p-4 align-middle">
+                                    <td className="px-4 py-2 border border-gray-300">{index + 1}</td>
+                                    <td className="px-4 py-2 border border-gray-300">
                                         <div className="flex items-center gap-2">
                                             <UserIcon className="w-4 h-4 text-gray-500" />
                                             {safeValue(user.fullName)}
                                         </div>
                                     </td>
-                                    <td className="p-4 align-middle">{safeValue(user.email)}</td>
-                                    <td className="p-4 align-middle">
+                                    <td className="px-4 py-2 border border-gray-300">{safeValue(user.email)}</td>
+                                    <td className="px-4 py-2 border border-gray-300">
                                         <div className="flex items-center gap-2">
                                             <Phone className="w-4 h-4 text-gray-500" />
                                             {safeValue(user.phoneNumber)}
                                         </div>
                                     </td>
-                                    <td className="p-4 text-center align-middle">
+                                    <td className="px-4 py-2 border border-gray-300">
                                         <button
-                                            className="px-4 py-1 flex items-center justify-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow hover:scale-105 transform transition"
+                                            className="px-4 py-1 flex items-center justify-center gap-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-sm shadow hover:scale-105 transform transition"
                                             onClick={() => toggleRow(user._id)}
                                         >
                                             <Eye className="w-4 h-4" />
@@ -104,31 +104,31 @@ const AllGrievance = () => {
                                 {expandedRow === user._id && user.grievances.length > 0 && (
                                     <tr>
                                         <td colSpan={5} className="p-4 bg-gray-50">
-                                            <div className="h-[250px] overflow-y-auto overflow-x-auto border border-gray-200 shadow-inner bg-white">
-                                                <table className="min-w-[800px]">
-                                                    <thead className="bg-gray-100">
+                                            <div className=" overflow-y-auto overflow-x-auto border border-gray-200 shadow-inner bg-white">
+                                                <table className="min-w-full text-sm text-gray-700 border border-gray-300">
+                                                    <thead className="bg-gray-100 border-b border-gray-300">
                                                         <tr>
-                                                            <th className="p-3 border-b text-left font-medium w-1/12">Sr.No</th>
-                                                            <th className="p-3 border-b text-left font-medium w-1/4">Title</th>
-                                                            <th className="p-3 border-b text-left font-medium w-1/4">Category</th>
-                                                            <th className="p-3 border-b text-left font-medium w-1/4">Status</th>
-                                                            <th className="p-3 border-b text-center font-medium w-1/4">Action</th>
+                                                            <th className="px-4 py-2 border border-gray-300 text-left">Sr.No</th>
+                                                            <th className="px-4 py-2 border border-gray-300 text-left">Title</th>
+                                                            <th className="px-4 py-2 border border-gray-300 text-left">Category</th>
+                                                            <th className="px-4 py-2 border border-gray-300 text-left">Status</th>
+                                                            <th className="px-4 py-2 border border-gray-300 text-left">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {user.grievances.map((g, idx) => (
                                                             <tr key={g._id} className="hover:bg-gray-50 transition duration-200">
-                                                                <td className="p-3 border-b">{idx + 1}</td>
-                                                                <td className="p-3 border-b">{safeValue(g.title)}</td>
-                                                                <td className="p-3 border-b">{safeValue(g.category)}</td>
-                                                                <td className="p-3 border-b">
-                                                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyles[g.status] || "bg-gray-100 text-gray-600 border"}`}>
+                                                                <td className="px-4 py-2 border border-gray-300">{idx + 1}</td>
+                                                                <td className="px-4 py-2 border border-gray-300">{safeValue(g.title)}</td>
+                                                                <td className="px-4 py-2 border border-gray-300">{safeValue(g.category)}</td>
+                                                                <td className="px-4 py-2 border border-gray-300">
+                                                                    <span className={`px-3 py-1 rounded-sm text-sm font-medium ${statusStyles[g.status] || "bg-gray-100 text-gray-600 border"}`}>
                                                                         {safeValue(g.status)}
                                                                     </span>
                                                                 </td>
-                                                                <td className="p-3 border-b text-center">
+                                                                <td className="p-3 border-bpx-4 py-2 border border-gray-300">
                                                                     <button
-                                                                        className="px-3 py-1 flex items-center gap-1 bg-green-500 text-white rounded-full shadow hover:scale-105 transform transition"
+                                                                        className="px-3 py-1 flex items-center gap-1 bg-green-500 text-white rounded-sm shadow hover:scale-105 transform transition"
                                                                         onClick={() => setPopoverComplaint(g)}
                                                                     >
                                                                         <Info className="w-4 h-4" /> View Complaint
