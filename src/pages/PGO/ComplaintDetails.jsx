@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import {
   ArrowLeft,
   FileText,
@@ -165,7 +164,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
 
       const grievance = res?.data?.grievance;
       if (!grievance) {
-        alert("No grievance object in response");
+        showToast("Grievance not found in server response.", "error");
         return;
       }
 
@@ -178,12 +177,11 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
 
       setNewStatus("");
       setFinalMessage("");
+      showToast("Status updated successfully.", "success");
     } catch (error) {
       console.error("Error updating status:", error);
-      alert(
-        error?.response?.data?.message ||
-        "Failed to update grievance status. Try again later."
-      );
+      showToast(error?.response?.data?.message || "Failed to update grievance status.", "error");
+     
     }finally{
       setIsLoadingUpdate(false)
     }
@@ -210,7 +208,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     const grievance = res?.data?.grievance;
 
     if (!grievance) {
-      alert("No grievance object in response");
+      showToast("Grievance not found in server response.", "error");
       return;
     }
 
@@ -224,7 +222,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     showToast("Progress update deleted successfully.","success");
   } catch (err) {
     console.error("Error deleting progress update:", err);
-    showToast("err?.response?.data?.message || Failed to delete progress update.","error");
+    showToast(err?.response?.data?.message || "Failed to delete progress update.","error");
   }
 };
 
@@ -243,10 +241,10 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         }
       );
       await fetchGrievanceByUniqueID();
-      toast.success("Last status update deleted successfully.");
+      showToast("Last status update deleted successfully.","success");
     } catch (err) {
       console.error("Error deleting status update:", err);
-      showToast("err?.response?.data?.message || Failed to delete status update.","error");
+      showToast(err?.response?.data?.message || "Failed to delete status update.","error");
     }finally{
       setIsLoadingUpdateDeleteStatus(false)
     }
@@ -292,16 +290,20 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
         }
       );
 
-      alert("Progress update added!");
+      showToast("Progress update added successfully.","success");
       setUpdateMessage("");
       fetchGrievanceByUniqueID();
     } catch (error) {
       console.error("Failed to add progress update:", error);
-      alert(error?.response?.data?.error || "Error adding progress update.");
+      showToast(error?.response?.data?.error || "Error adding progress update.","error");
     }finally{
       setIsLoadingUpdateProgress(false);
     }
   };
+
+  // const isAssignedToAnotherOfficer =
+  // selectedComplaint?.assignedOfficer &&
+  // selectedComplaint?.assignedOfficer?._id !== currentOfficerId;
 
   if (!selectedComplaint) return <div className="p-6">Loading complaint...</div>;
 

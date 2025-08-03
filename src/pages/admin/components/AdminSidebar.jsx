@@ -151,9 +151,9 @@ const StaticSidebar = () => {
                                 <button className="hover:text-blue-600">
                                     My Profile
                                 </button>
-                                <span className="">
+                                {/* <span className="">
                                     Setting
-                                </span>
+                                </span> */}
                                 <button onClick={handleLogout} className="cursor-pointer hover:text-red-800">
                                     Logout
                                 </button>
@@ -180,9 +180,9 @@ const StaticSidebar = () => {
                                 <button className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100">
                                     Profile
                                 </button>
-                                <button className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100">
+                                {/* <button className="block w-full text-left px-4 py-2 rounded-md hover:bg-gray-100">
                                     Settings
-                                </button>
+                                </button> */}
                                 <button
                                     onClick={handleLogout}
                                     className="block w-full text-left px-4 py-2 rounded-md text-red-500 hover:bg-gray-100"
@@ -278,7 +278,7 @@ const StaticSidebar = () => {
                             </button>
 
                         </Link>
-                        <Link to=''>
+                        {/* <Link to=''>
                             <button
                                 onClick={() => handleNavClick('Settings')}
                                 className={`w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 relative 
@@ -290,7 +290,7 @@ const StaticSidebar = () => {
                                 <Settings className="w-5 h-5 mr-3 flex-shrink-0" />
                                 <span className="truncate">Settings</span>
                             </button>
-                        </Link>
+                        </Link> */}
                     </nav>
                 </div>
             </div>

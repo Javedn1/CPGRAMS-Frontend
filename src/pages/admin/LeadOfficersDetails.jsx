@@ -63,7 +63,7 @@ const LeadOfficersDetails = () => {
         </div>
 
         <select
-          className="px-4 py-2 rounded-xl w-full sm:w-1/4 outline-none ring-2 ring-blue-400 border-blue-400 transition"
+          className="px-4 py-2 rounded-sm w-full sm:w-1/4 outline-none ring-2 ring-blue-400 border-blue-400 transition"
           value={locationFilter}
           onChange={(e) => {
             setLocationFilter(e.target.value);
@@ -79,7 +79,7 @@ const LeadOfficersDetails = () => {
         </select>
 
         <select
-          className="px-4 py-2 rounded-xl w-full sm:w-1/4 outline-none ring-2 ring-blue-400 border-blue-400 transition"
+          className="px-4 py-2 rounded-sm w-full sm:w-1/4 outline-none ring-2 ring-blue-400 border-blue-400 transition"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
         >
@@ -88,29 +88,29 @@ const LeadOfficersDetails = () => {
         </select>
       </div>
 
-      <table className="min-w-full shadow-[0px_0px_10px_2px_rgba(59,_130,_246,_0.5)] rounded-lg border-2 border-white overflow-hidden">
-        <thead className="bg-gradient-to-r from-blue-50 to-blue-100">
+      <table className="min-w-full text-sm text-gray-700 border border-gray-300">
+        <thead className="bg-gray-100 border-b border-gray-300">
           <tr>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Name</th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Email</th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Number</th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Gender</th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Department</th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">Location</th>
-            <th className="px-6 py-4 border-b text-center text-gray-700 font-medium w-1/7">Actions</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Name</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Email</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Number</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Gender</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Department</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Location</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentEmployees.length > 0 ? (
             currentEmployees.map((emp, index) => (
               <tr key={index} className="odd:bg-white even:bg-gray-50 cursor-default hover:bg-blue-50 transition">
-                <td className="px-3 py-2 border-b">{emp.name}</td>
-                <td className="px-3 py-2 border-b">{emp.email}</td>
-                <td className="px-3 py-2 border-b">{emp.number}</td>
-                <td className="px-3 py-2 border-b">{emp.gender}</td>
-                <td className="px-3 py-2 border-b">{emp.department}</td>
-                <td className="px-3 py-2 border-b">{emp.location}</td>
-                <td className="px-3 py-2 border-b">
+                <td className="px-4 py-2 border border-gray-300">{emp.name}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.email}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.number}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.gender}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.department}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.location}</td>
+                <td className="px-4 py-2 border border-gray-300">
                   <div className="flex items-center justify-center gap-3">
                     <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
                       <Eye size={16} /> View
