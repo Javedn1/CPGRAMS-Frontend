@@ -184,25 +184,25 @@ const OfficersDetails = () => {
       <table className="min-w-full text-sm text-gray-700 border border-gray-300">
         <thead className="bg-gray-100 border-b border-gray-300">
           <tr>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Name
             </th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Email
             </th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Number
             </th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Gender
             </th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Department
             </th>
-            <th className="px-6 py-4 border-b text-left text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Location
             </th>
-            <th className="px-6 py-4 border-b text-center text-gray-700 font-medium w-1/7">
+            <th className="px-4 py-2 border border-gray-300 text-left">
               Actions
             </th>
           </tr>
@@ -214,13 +214,13 @@ const OfficersDetails = () => {
                 key={index}
                 className="odd:bg-white even:bg-gray-50 cursor-default hover:bg-blue-50 transition"
               >
-                <td className="px-3 py-2 border-b">{emp.name}</td>
-                <td className="px-3 py-2 border-b">{emp.email}</td>
-                <td className="px-3 py-2 border-b">{emp.number}</td>
-                <td className="px-3 py-2 border-b">{emp.gender}</td>
-                <td className="px-3 py-2 border-b">{emp.department}</td>
-                <td className="px-3 py-2 border-b">{emp.location}</td>
-                <td className="px-3 py-2 border-b">
+                <td className="px-4 py-2 border border-gray-300">{emp.name}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.email}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.number}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.gender}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.department}</td>
+                <td className="px-4 py-2 border border-gray-300">{emp.location}</td>
+                <td className="px-4 py-2 border border-gray-300">
                   <div className="flex items-center justify-center gap-3">
                     <button className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-sm shadow hover:bg-green-600 transition">
                       <ArrowUp size={16} /> Promote
