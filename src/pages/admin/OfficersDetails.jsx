@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Eye, ArrowUp, Search } from "lucide-react";
+import { Eye, ArrowUp, Search, Info } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Pagination from "../../components/Pagination";
 
@@ -227,6 +227,9 @@ const OfficersDetails = () => {
                     </button>
                     <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-sm shadow hover:bg-blue-600 transition">
                       <Eye size={16} /> View
+                    </button>
+                    <button className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition">
+                      <Info size={16} /> Delete
                     </button>
                   </div>
                 </td>

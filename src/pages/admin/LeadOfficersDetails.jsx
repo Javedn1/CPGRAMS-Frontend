@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Eye, ArrowUp, Search } from "lucide-react";
+import { Eye, ArrowUp, Search, Info } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Pagination from "../../components/Pagination";
 
 
 const LeadOfficersDetails = () => {
@@ -23,8 +24,7 @@ const LeadOfficersDetails = () => {
   const [locationFilter, setLocationFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("new");
   const [currentPage, setCurrentPage] = useState(1);
-  const entriesPerPage = 5;
-
+ const [itemsPerPage] = useState(5);
   const locations = [...new Set(employeesData.map((emp) => emp.location))];
 
   const filteredEmployees = employeesData
@@ -40,10 +40,18 @@ const LeadOfficersDetails = () => {
         : employeesData.indexOf(b) - employeesData.indexOf(a);
     });
 
-  const indexOfLastEntry = currentPage * entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEmployees = filteredEmployees.slice(indexOfFirstEntry, indexOfLastEntry);
-  const totalPages = Math.ceil(filteredEmployees.length / entriesPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentEmployees = filteredEmployees.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+
+
+   const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        // Scroll to top when page changes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
 
   return (
     <div className="overflow-x-auto py-6 px-3">
@@ -112,8 +120,11 @@ const LeadOfficersDetails = () => {
                 <td className="px-4 py-2 border border-gray-300">{emp.location}</td>
                 <td className="px-4 py-2 border border-gray-300">
                   <div className="flex items-center justify-center gap-3">
-                    <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+                    <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-sm shadow hover:bg-blue-600 transition">
                       <Eye size={16} /> View
+                    </button>
+                    <button className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition">
+                      <Info size={16} /> Delete
                     </button>
                   </div>
                 </td>
@@ -129,7 +140,16 @@ const LeadOfficersDetails = () => {
         </tbody>
       </table>
 
-      {filteredEmployees.length > entriesPerPage && (
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        itemsPerPage={itemsPerPage}
+        totalItems={filteredEmployees.length}
+        showItemsPerPage={true}
+      />
+
+      {/* {filteredEmployees.length > entriesPerPage && (
 
         <div className="flex justify-center items-center mt-6 space-x-6">
           <button
@@ -154,7 +174,7 @@ const LeadOfficersDetails = () => {
         </div>
 
 
-      )}
+      )} */}
     </div>
   );
 };
