@@ -1,113 +1,96 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Eye, ArrowUp, Search, Info } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "react-toastify";
 import Pagination from "../../components/Pagination";
 
 const OfficersDetails = () => {
-  const employeesData = [
-    {
-      name: "John Doe",
-      email: "john@example.com",
-      number: "9876543210",
-      gender: "Male",
-      department: "Development",
-      location: "Mumbai",
-    },
-    {
-      name: "Jane Smith",
-      email: "jane@example.com",
-      number: "9876501234",
-      gender: "Female",
-      department: "Design",
-      location: "Delhi",
-    },
-    {
-      name: "Amit Verma",
-      email: "amit.verma@example.com",
-      number: "9123456780",
-      gender: "Male",
-      department: "HR",
-      location: "Bangalore",
-    },
-    {
-      name: "Priya Kapoor",
-      email: "priya.k@example.com",
-      number: "9823456710",
-      gender: "Female",
-      department: "Finance",
-      location: "Pune",
-    },
-    {
-      name: "Rahul Mehta",
-      email: "rahul.mehta@example.com",
-      number: "9987654321",
-      gender: "Male",
-      department: "Development",
-      location: "Chennai",
-    },
-    {
-      name: "Sneha Rani",
-      email: "sneha.r@example.com",
-      number: "9912345678",
-      gender: "Female",
-      department: "Support",
-      location: "Hyderabad",
-    },
-    {
-      name: "Vikram Chauhan",
-      email: "vikram.c@example.com",
-      number: "9876123450",
-      gender: "Male",
-      department: "Marketing",
-      location: "Kolkata",
-    },
-    {
-      name: "Anjali Sharma",
-      email: "anjali.sharma@example.com",
-      number: "9765432109",
-      gender: "Female",
-      department: "Design",
-      location: "Ahmedabad",
-    },
-    {
-      name: "Rohit Singh",
-      email: "rohit.singh@example.com",
-      number: "9654321098",
-      gender: "Male",
-      department: "Operations",
-      location: "Jaipur",
-    },
-    {
-      name: "Kavya Iyer",
-      email: "kavya.iyer@example.com",
-      number: "9543210987",
-      gender: "Female",
-      department: "Admin",
-      location: "Lucknow",
-    },
-    {
-      name: "Suresh Patil",
-      email: "suresh.p@example.com",
-      number: "9898989898",
-      gender: "Male",
-      department: "Support",
-      location: "Nagpur",
-    },
-    {
-      name: "Neha Kaur",
-      email: "neha.kaur@example.com",
-      number: "9797979797",
-      gender: "Female",
-      department: "HR",
-      location: "Indore",
-    },
-  ];
-
+  const [employeesData, setEmployeesData] = useState([]);
   const [search, setSearch] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
-  const [sortOrder, setSortOrder] = useState("new");  
+  const [sortOrder, setSortOrder] = useState("new");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+
+  useEffect(() => {
+    const fetchOfficers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/getAllOfficers");
+        const officers = response.data?.data || [];
+
+        const mapped = officers.map((officer) => ({
+          _id: officer._id,
+          name: officer.fullName || "-",
+          email: officer.email || "-",
+          number: officer.phoneNumber || "_",
+          gender: officer.gender || "_",
+          department: officer.department || "_",
+          location: officer.location || "_",
+          role: officer.role || "officer",
+        }));
+
+        setEmployeesData(mapped);
+      } catch (err) {
+        console.error("Failed to fetch officers:", err);
+      }
+    };
+
+    fetchOfficers();
+  }, []);
+
+
+  const handlePromote = async (officerId) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/admin/officers/${officerId}/promote`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        alert("✅ Officer promoted successfully!");
+
+        // Refresh officer data locally
+        setEmployeesData((prev) =>
+          prev.map((emp) =>
+            emp._id === officerId ? { ...emp, role: "lead_officer" } : emp
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error promoting officer:", error);
+      alert("❌ Failed to promote officer.");
+    }
+  };
+
+
+  const handleDelete = async (officerId) => {
+    if (!window.confirm("Are you sure you want to delete this officer?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.delete(`http://localhost:5000/api/admin/delete/${officerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success(res.data.message || "Officer deleted successfully");
+
+      setEmployeesData((prev) => prev.filter((emp) => emp._id !== officerId));
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to delete officer");
+    }
+  };
+
+
 
   const locations = [...new Set(employeesData.map((emp) => emp.location))];
 
@@ -126,17 +109,13 @@ const OfficersDetails = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentEmployees = filteredEmployees.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentEmployees = filteredEmployees.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
-   const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-        // Scroll to top when page changes
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="overflow-x-auto py-6 px-3">
@@ -199,9 +178,9 @@ const OfficersDetails = () => {
             <th className="px-4 py-2 border border-gray-300 text-left">
               Department
             </th>
-            <th className="px-4 py-2 border border-gray-300 text-left">
+            {/* <th className="px-4 py-2 border border-gray-300 text-left">
               Location
-            </th>
+            </th> */}
             <th className="px-4 py-2 border border-gray-300 text-left">
               Actions
             </th>
@@ -219,18 +198,32 @@ const OfficersDetails = () => {
                 <td className="px-4 py-2 border border-gray-300">{emp.number}</td>
                 <td className="px-4 py-2 border border-gray-300">{emp.gender}</td>
                 <td className="px-4 py-2 border border-gray-300">{emp.department}</td>
-                <td className="px-4 py-2 border border-gray-300">{emp.location}</td>
+                {/* <td className="px-4 py-2 border border-gray-300">{emp.location}</td> */}
                 <td className="px-4 py-2 border border-gray-300">
                   <div className="flex items-center justify-center gap-3">
-                    <button className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-sm shadow hover:bg-green-600 transition">
-                      <ArrowUp size={16} /> Promote
-                    </button>
+
+                    {emp.role === "lead_officer" ? (
+                      <span className="text-green-600 font-semibold">Promoted</span>
+                    ) : (
+                      <button
+                        className="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded-sm shadow hover:bg-green-600 transition"
+                        onClick={() => handlePromote(emp._id)}
+                      >
+                        <ArrowUp size={16} /> Promote
+                      </button>
+                    )}
+
                     <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-sm shadow hover:bg-blue-600 transition">
                       <Eye size={16} /> View
                     </button>
-                    <button className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition">
+
+                    <button
+                      className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition"
+                      onClick={() => handleDelete(emp._id)}
+                    >
                       <Info size={16} /> Delete
                     </button>
+
                   </div>
                 </td>
               </tr>
