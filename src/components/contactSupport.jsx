@@ -1,7 +1,7 @@
 import React from 'react';
 import contactImage from '../../src/assets/contact.png';
 import Header from './header/MainHeader';
-import Footer from './footer/footer';
+import Footer from './footer/Footer';
 
 export default function ContactSupportPage() {
   return (

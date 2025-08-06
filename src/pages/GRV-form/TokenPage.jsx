@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/header/MainHeader";
-import Footer from "../../components/footer/footer";
+import Footer from "../../components/footer/Footer";
 
 export default function TokenPage() {
     const location = useLocation();

@@ -6,7 +6,7 @@ import {
     CheckCircle,
     AlertTriangle,
 } from "lucide-react";
-import Footer from "../../components/footer/footer";
+import Footer from "../../components/footer/Footer";
 import Register from "../../components/auth/Register";
 import Login from "../../components/auth/login";
 //import Header from "../../components/header/MainHeader";

@@ -6,7 +6,7 @@ import FeedbackForm from '../../components/FeedbackForm';
 import GrievanceDetails from '../../components/GrievanceDetails';
 import MainNavbar from '../../components/header/MainHeader';
 import HeaderLayout from '../../components/header/Header-Layout/HeaderLayout';
-import Footer from '../../components/footer/footer';
+import Footer from '../../components/footer/Footer';
 import Header from '../../components/header/MainHeader';
 import Pagination from '../../components/Pagination';
 import axios from 'axios';

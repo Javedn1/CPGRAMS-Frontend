@@ -13,7 +13,7 @@ import {
   Shield,
 } from "lucide-react";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
-import Footer from "../../components/footer/footer";
+import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/MainHeader";
 import ProgressTimeline from "../../components/ProgressTimeline";
 

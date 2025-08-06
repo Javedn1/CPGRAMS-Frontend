@@ -11,7 +11,7 @@ import {
 // import Header from "../../components/header/header";
 //import Header from "../../components/header/MainHeader";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
-import Footer from "../../components/footer/footer";
+import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/MainHeader";
 import { useNavigate } from "react-router-dom";
 

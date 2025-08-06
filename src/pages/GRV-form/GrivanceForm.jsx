@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
-import Footer from "../../components/footer/footer";
+import Footer from "../../components/footer/Footer";
 import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/header/MainHeader";
