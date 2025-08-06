@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Footer from "../../components/footer/Footer";
 import Register from "../../components/auth/Register";
-import Login from "../../components/auth/login";
+import Login from "../../components/auth/Login";
 //import Header from "../../components/header/MainHeader";
 import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import ForgotPassword from "../../components/auth/ForgotPassword";
