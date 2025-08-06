@@ -33,7 +33,7 @@ const Login = () => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", loginForm);
+      const res = await axios.post("https://cpgram-backend.vercel.app/api/auth/login", loginForm);
       const data = res.data;
 
       localStorage.setItem("token", data.token);
