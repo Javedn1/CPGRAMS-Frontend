@@ -1,18 +1,22 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-const Pagination = ({ 
-  currentPage, 
-  totalPages, 
-  onPageChange, 
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
   itemsPerPage = 10,
   totalItems = 0,
-  showItemsPerPage = true 
+  showItemsPerPage = true
 }) => {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   const getVisiblePages = () => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
     const delta = 2;
     const range = [];
     const rangeWithDots = [];
@@ -24,7 +28,9 @@ const Pagination = ({
     if (currentPage - delta > 2) {
       rangeWithDots.push(1, '...');
     } else {
-      rangeWithDots.push(1);
+      for (let i = 1; i < Math.max(2, currentPage - delta); i++) {
+        rangeWithDots.push(i);
+      }
     }
 
     rangeWithDots.push(...range);
@@ -32,11 +38,14 @@ const Pagination = ({
     if (currentPage + delta < totalPages - 1) {
       rangeWithDots.push('...', totalPages);
     } else {
-      rangeWithDots.push(totalPages);
+      for (let i = currentPage + delta + 1; i <= totalPages; i++) {
+        rangeWithDots.push(i);
+      }
     }
 
-    return rangeWithDots;
+    return [...new Set(rangeWithDots)];
   };
+
 
   const visiblePages = getVisiblePages();
 
@@ -75,11 +84,10 @@ const Pagination = ({
             ) : (
               <button
                 onClick={() => onPageChange(page)}
-                className={`relative inline-flex items-center px-3 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  currentPage === page
+                className={`relative inline-flex items-center px-3 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${currentPage === page
                     ? 'z-10 bg-blue-600 border-blue-600 text-white shadow-lg'
                     : 'bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-                }`}
+                  }`}
               >
                 {page}
               </button>

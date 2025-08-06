@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Eye, ArrowUp, Search, Info } from "lucide-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import Pagination from "../../components/Pagination";
+import { showToast } from "../../utils/customToast";
 
 const OfficersDetails = () => {
   const [employeesData, setEmployeesData] = useState([]);
@@ -12,6 +12,7 @@ const OfficersDetails = () => {
   const [sortOrder, setSortOrder] = useState("new");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const fetchOfficers = async () => {
@@ -39,7 +40,6 @@ const OfficersDetails = () => {
     fetchOfficers();
   }, []);
 
-
   const handlePromote = async (officerId) => {
     try {
       const response = await axios.put(
@@ -53,43 +53,44 @@ const OfficersDetails = () => {
       );
 
       if (response.data.success) {
-        alert("✅ Officer promoted successfully!");
+        showToast("⬇️ Officer promoted successfully!", "success");
 
-        // Refresh officer data locally
-        setEmployeesData((prev) =>
-          prev.map((emp) =>
-            emp._id === officerId ? { ...emp, role: "lead_officer" } : emp
-          )
-        );
+        // Immediately remove promoted officer from the list (if only officers are shown)
+        setEmployeesData((prev) => prev.filter(emp => emp._id !== officerId));
       }
     } catch (error) {
-      console.error("Error promoting officer:", error);
+      console.error("❌ Error promoting officer:", error);
       alert("❌ Failed to promote officer.");
     }
   };
 
 
   const handleDelete = async (officerId) => {
-    if (!window.confirm("Are you sure you want to delete this officer?")) return;
+    setDeleteLoading(true);
 
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.delete(`http://localhost:5000/api/admin/delete/${officerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.delete(
+        `http://localhost:5000/api/admin/delete/${officerId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      toast.success(res.data.message || "Officer deleted successfully");
-
-      setEmployeesData((prev) => prev.filter((emp) => emp._id !== officerId));
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Failed to delete officer");
+      if (res.status === 200) {
+        showToast(res.data.message || "Officer deleted successfully", "success");
+        setEmployeesData((prev) => prev.filter((emp) => emp._id !== officerId));
+      }
+    } catch (error) {
+      console.error("Error deleting officer:", error);
+      showToast(error.response?.data?.message || "Failed to delete officer", "error");
+    } finally {
+      setDeleteLoading(false);
     }
   };
-
 
 
   const locations = [...new Set(employeesData.map((emp) => emp.location))];
@@ -163,34 +164,19 @@ const OfficersDetails = () => {
       <table className="min-w-full text-sm text-gray-700 border border-gray-300">
         <thead className="bg-gray-100 border-b border-gray-300">
           <tr>
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Name
-            </th>
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Email
-            </th>
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Number
-            </th>
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Gender
-            </th>
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Department
-            </th>
-            {/* <th className="px-4 py-2 border border-gray-300 text-left">
-              Location
-            </th> */}
-            <th className="px-4 py-2 border border-gray-300 text-left">
-              Actions
-            </th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Name</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Email</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Number</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Gender</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Department</th>
+            <th className="px-4 py-2 border border-gray-300 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentEmployees.length > 0 ? (
-            currentEmployees.map((emp, index) => (
+            currentEmployees.map((emp) => (
               <tr
-                key={index}
+                key={emp._id}
                 className="odd:bg-white even:bg-gray-50 cursor-default hover:bg-blue-50 transition"
               >
                 <td className="px-4 py-2 border border-gray-300">{emp.name}</td>
@@ -198,10 +184,8 @@ const OfficersDetails = () => {
                 <td className="px-4 py-2 border border-gray-300">{emp.number}</td>
                 <td className="px-4 py-2 border border-gray-300">{emp.gender}</td>
                 <td className="px-4 py-2 border border-gray-300">{emp.department}</td>
-                {/* <td className="px-4 py-2 border border-gray-300">{emp.location}</td> */}
                 <td className="px-4 py-2 border border-gray-300">
                   <div className="flex items-center justify-center gap-3">
-
                     {emp.role === "lead_officer" ? (
                       <span className="text-green-600 font-semibold">Promoted</span>
                     ) : (
@@ -213,15 +197,18 @@ const OfficersDetails = () => {
                       </button>
                     )}
 
-                    <button className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-sm shadow hover:bg-blue-600 transition">
-                      <Eye size={16} /> View
-                    </button>
-
                     <button
-                      className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition"
+                      className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-sm shadow hover:bg-red-600 transition disabled:opacity-50"
                       onClick={() => handleDelete(emp._id)}
+                      disabled={deleteLoading}
                     >
-                      <Info size={16} /> Delete
+                      {deleteLoading ? (
+                        <span className="animate-spin h-4 w-4 border-t-2 border-white rounded-full"></span>
+                      ) : (
+                        <>
+                          <Info size={16} /> Delete
+                        </>
+                      )}
                     </button>
 
                   </div>
@@ -237,6 +224,7 @@ const OfficersDetails = () => {
           )}
         </tbody>
       </table>
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -245,32 +233,6 @@ const OfficersDetails = () => {
         totalItems={filteredEmployees.length}
         showItemsPerPage={true}
       />
-      {/* {filteredEmployees.length > entriesPerPage && (
-
-        <div className="flex justify-center items-center mt-6 space-x-6">
-          <button
-            className="w-[100px] py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm"
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-
-          <span className="px-5 py-2 bg-gray-100 text-gray-800 rounded-lg shadow-sm font-medium">
-            Page <span className="text-blue-600 font-semibold">{currentPage}</span> / {totalPages}
-          </span>
-
-          <button
-            className="w-[100px] py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm"
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-
-
-      )} */}
     </div>
   );
 };
