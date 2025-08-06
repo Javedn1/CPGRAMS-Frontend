@@ -1,15 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
+import { HashLoader } from "react-spinners";
 
 const Reminder = () => {
   const [reminders, setReminders] = useState([]);
   const [selectedReminder, setSelectedReminder] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
+  const [loading, setLoading] = useState(false);
   
 
   useEffect(() => {
     const fetchReminders = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:5000/api/grievances/get-reminders", {
@@ -44,6 +47,8 @@ const Reminder = () => {
         }
       } catch (error) {
         console.error("Error fetching reminders:", error);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -67,6 +72,19 @@ const Reminder = () => {
     return sorted;
   }, [searchTerm, sortOrder, reminders]);
 
+
+  if(loading){
+      return(
+        <div className="flex items-center justify-center h-[70vh] w-full">
+          <div className="text-center">
+            {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+            <HashLoader size={100} color={"#151ad1"}/>
+          </div>
+  
+        </div>
+       
+      )
+    }
   return (
     <div className="px-6 py-4 min-h-screen">
       {/* Search + Sort Bar */}

@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/customToast";
+import { HashLoader } from "react-spinners";
+
 
 // Default color functions
 const getStatusColor = (status) => {
@@ -305,7 +307,13 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
   // selectedComplaint?.assignedOfficer &&
   // selectedComplaint?.assignedOfficer?._id !== currentOfficerId;
 
-  if (!selectedComplaint) return <div className="p-6">Loading complaint...</div>;
+  if (!selectedComplaint) return  <div className="flex items-center justify-center h-[70vh] w-full">
+          <div className="text-center">
+            {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+            <HashLoader size={100} color={"#151ad1"}/>
+          </div>
+  
+        </div>;
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -23,8 +23,10 @@ const StaticSidebar = () => {
         setIsOpen(false);
     };
 
-    const handleLogout = () => {
-        console.log('Logout clicked');
+    const handleLogout = async () => {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        navigate("/")
     };
 
 

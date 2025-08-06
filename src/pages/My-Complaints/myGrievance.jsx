@@ -11,6 +11,7 @@ import Header from '../../components/header/MainHeader';
 import Pagination from '../../components/Pagination';
 import axios from 'axios';
 import { showToast } from "../../utils/customToast";
+import { HashLoader } from "react-spinners";
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -34,9 +35,11 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
     const [myGrievance, setMyGrievance] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchMyComplaints = async () => {
+            setLoading(true)
             try {
                 const token = localStorage.getItem("token");
 
@@ -50,6 +53,8 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
                 setMyGrievance(res.data)
             } catch (error) {
                 console.log(error);
+            }finally{
+                setLoading(false)
             }
         };
 
@@ -168,6 +173,18 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
         doc.save('my-grievances.pdf');
     };
 
+     if(loading){
+    return(
+      <div className="flex items-center justify-center h-[70vh] w-full">
+        <div className="text-center">
+          {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+          <HashLoader size={100} color={"#151ad1"}/>
+        </div>
+
+      </div>
+     
+    )
+  }
     return (
         <>
             <Header />

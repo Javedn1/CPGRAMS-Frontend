@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell, Legend,
@@ -8,10 +8,40 @@ import {
   ResponsiveContainer
 } from "recharts";
 import { FileText, User, Calendar, MapPin } from "lucide-react";
+import { HashLoader } from "react-spinners";
+import axios from 'axios';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#9ca3af'];
 
 const AdminDashboard = () => {
+  const [stats, setStats] = useState("");
+  const [loading, setLoading] = useState(false);
+
+useEffect(()=>{
+  hardStats()
+},[])
+
+  const hardStats = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://localhost:5000/api/admin/getDashboardCounts')
+      if (response.status === 200){
+        setStats(response.data.data)
+        console.log("data is here",response.data.data);
+        
+      }else{
+        console.log("some error Occured");
+        
+      }
+    } catch (error) {
+      console.error("Something went wrong ",error)
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  
+  
   const grievances = [
     { id: 101, title: "Hostel Water Issue", status: "Pending", date: "2025-07-28", location: "Patna" },
     { id: 102, title: "Mess Food Quality", status: "Resolved", date: "2025-07-26", location: "Delhi" },
@@ -35,12 +65,12 @@ const AdminDashboard = () => {
     { name: "Pending", value: grievances.filter(g => g.status === "Pending").length },
     { name: "Resolved", value: grievances.filter(g => g.status === "Resolved").length },
     { name: "In Progress", value: grievances.filter(g => g.status === "In Progress").length },
-    { name: "Rejected", value: grievances.filter(g => g.status === "Rejected").length },
+    // { name: "Rejected", value: grievances.filter(g => g.status === "Rejected").length },
   ];
 
   const officerStats = [
-    { name: "PG Officers", value: officers.filter(o => o.role === "PG Officer").length },
-    { name: "Lead Officers", value: officers.filter(o => o.role === "PG Lead Officer").length },
+    { name: "Lead Officers", value: stats.leadOfficerCount },
+    { name: "Officers", value: stats.officerCount },
   ];
 
   const grievanceByDate = grievances.reduce((acc, curr) => {
@@ -58,12 +88,25 @@ const AdminDashboard = () => {
   }, []);
 
   const summaryCards = [
-    { label: "Total Complaints", count: grievances.length, color: "bg-blue-100 text-blue-800" },
-    { label: "Resolved", count: grievances.filter(g => g.status === "Resolved").length, color: "bg-green-100 text-green-800" },
-    { label: "In Progress", count: grievances.filter(g => g.status === "In Progress").length, color: "bg-yellow-100 text-yellow-800" },
-    { label: "Pending", count: grievances.filter(g => g.status === "Pending").length, color: "bg-red-100 text-red-800" },
-    { label: "Rejected", count: grievances.filter(g => g.status === "Rejected").length, color: "bg-gray-200 text-gray-800" },
+    { label: "Total Complaints", count: stats.totalGrievances, color: "bg-blue-100 text-blue-800" },
+    { label: "Resolved", count: stats.resolved, color: "bg-green-100 text-green-800" },
+    { label: "In Progress", count: stats.inProgress, color: "bg-yellow-100 text-yellow-800" },
+    { label: "Pending", count: stats.pending, color: "bg-red-100 text-red-800" },
+   // { label: "Rejected", count: grievances.filter(g => g.status === "Rejected").length, color: "bg-gray-200 text-gray-800" },
   ];
+
+  if(loading){
+    return(
+      <div className="flex items-center justify-center h-[70vh] w-full">
+        <div className="text-center">
+          {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+          <HashLoader size={100} color={"#151ad1"}/>
+        </div>
+
+      </div>
+     
+    )
+  }
 
   return (
     <section className="px-6 pt-6 pb-12 bg-gray-50 min-h-screen">
@@ -74,9 +117,9 @@ const AdminDashboard = () => {
         </header>
 
         {/* Summary Cards */}
-        <div className="grid md:grid-cols-5 gap-4">
+        <div className="grid md:grid-cols-4 gap-4">
           {summaryCards.map((card, idx) => (
-            <div key={idx} className={`p-5 rounded-xl shadow-sm ${card.color}`}>
+            <div key={idx} className={`p-5 rounded-sm shadow-sm ${card.color}`}>
               <p className="text-2xl font-semibold">{card.count}</p>
               <p>{card.label}</p>
             </div>
@@ -86,7 +129,7 @@ const AdminDashboard = () => {
         {/* All 4 Charts in 2x2 Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Bar Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="bg-white p-6 rounded-sm shadow">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <FileText className="w-5 h-5 text-green-500" /> Grievances by Status
             </h2>
@@ -101,7 +144,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Pie Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="bg-white p-6 rounded-sm shadow">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <User className="w-5 h-5 text-purple-500" /> Officer Role Distribution
             </h2>
@@ -119,7 +162,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Line Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
+          {/* <div className="bg-white p-6 rounded-2xl shadow">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-500" /> Grievance Trends Over Time
             </h2>
@@ -132,10 +175,10 @@ const AdminDashboard = () => {
                 <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </div> */}
 
           {/* Area Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
+          {/* <div className="bg-white p-6 rounded-2xl shadow">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-red-500" /> Complaints by Location
             </h2>
@@ -148,7 +191,7 @@ const AdminDashboard = () => {
                 <Area type="monotone" dataKey="count" stroke="#10b981" fill="#d1fae5" />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

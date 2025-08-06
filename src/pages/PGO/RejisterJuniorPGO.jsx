@@ -69,13 +69,14 @@ const response = await axios.post(
   };
  
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gradient-to-br from-white via-gray-50 to-blue-50 shadow-xl rounded-3xl mt-4 border border-gray-200">
-      <div className="flex items-center justify-center mb-8">
-        <UserPlus className="h-8 w-8 text-blue-600 mr-2" />
-        <h2 className="text-3xl font-bold text-gray-800">Register Junior PG Officer</h2>
+    <div className="min-h-screen bg-gradient-to-r from-blue-50 via-white to-blue-100 py-10 px-4">
+      <div className="max-w-6xl mx-auto bg-white  rounded-lg p-10 border border-gray-200">
+        <div className='flex items-center justify-center mb-10'>
+        <UserPlus className="h-10 w-10 text-blue-600 mr-3" />
+        <h2 className="text-4xl font-bold text-gray-800">Register Junior PG Officer</h2>
       </div>
  
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           { name: "fullName", label: "Full Name", type: "text" },
           { name: "email", label: "Email Address", type: "email" },
@@ -87,14 +88,14 @@ const response = await axios.post(
           { name: "confirmPassword", label: "Confirm Password", type: "password" },
         ].map(({ name, label, type }) => (
           <div key={name}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-1">{label}</label>
             <input
               type={type}
               name={name}
               value={formData[name]}
               onChange={handleChange}
               placeholder={`Enter ${label.toLowerCase()}`}
-              className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -102,12 +103,12 @@ const response = await axios.post(
  
         {/* Gender Dropdown */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+          <label className="text-sm font-semibold text-gray-700 block mb-1">Gender</label>
           <select
             name="gender"
             value={formData.gender}
             onChange={handleChange}
-            className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
             <option value="">Select Gender</option>
@@ -118,15 +119,16 @@ const response = await axios.post(
         </div>
  
         {/* Submit Button */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 lg:col-span-3 mt-4">
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition duration-200 shadow-md"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition duration-300 shadow-lg"
           >
             Register Officer
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

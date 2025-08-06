@@ -16,6 +16,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import moment from "moment";
+import { HashLoader } from "react-spinners";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function Dashboard() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [mainLoading, setMainLoading] = useState(false);
 
 
   const statusColor = {
@@ -36,6 +38,7 @@ function Dashboard() {
   };
 
   const response = async () => {
+    setMainLoading(true);
     try {
       const data = await axios.get(
         "http://localhost:5000/api/officer/all-stats"
@@ -48,10 +51,13 @@ function Dashboard() {
       }
     } catch (error) {
       console.log("Something went wrong", error);
+    }finally{
+      setMainLoading(false)
     }
   };
 
   const fetchRecentActivity = async () => {
+    setMainLoading(true);
     try {
       const res = await axios.get(
         "http://localhost:5000/api/officer/get-Recent-Activities"
@@ -62,11 +68,13 @@ function Dashboard() {
     } catch (err) {
       console.error("Failed to fetch activity:", err);
     } finally {
+      setMainLoading(false);
       setLoading(false);
     }
   };
 
   const fetchRecentFeedbacks = async () => {
+    setMainLoading(true);
     try {
       const token = localStorage.getItem("token"); 
 
@@ -81,6 +89,8 @@ function Dashboard() {
       }
     } catch (err) {
       console.error("Failed to fetch feedbacks:", err);
+    }finally{
+      setMainLoading(false)
     }
   };
 
@@ -137,6 +147,20 @@ function Dashboard() {
   //     complaint: "water issue reported by user",
   //     time: "2 hours ago"
   //   }]
+
+
+  if(mainLoading){
+      return(
+        <div className="flex items-center justify-center h-[70vh] w-full">
+          <div className="text-center">
+            {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+            <HashLoader size={100} color={"#151ad1"}/>
+          </div>
+  
+        </div>
+       
+      )
+    }
   return (
     <>
       <section className="px-4 pt-2 sm:px-6 lg:px-8">

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import Pagination from "../../components/Pagination";
+import { HashLoader } from "react-spinners";
 
 const statusStyles = {
   Rejected: "bg-red-100 text-red-700 border border-red-300",
@@ -29,9 +30,11 @@ const AllGrievance = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
    const [itemsPerPage] = useState(5);
+   const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     const getAllGrievance = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(
           "http://localhost:5000/api/admin/getAllUsersWithGrievances"
@@ -39,10 +42,25 @@ const AllGrievance = () => {
         setUsersData(res.data.data);
       } catch (error) {
         console.log("error", error);
+      }finally{
+        setLoading(false)
       }
     };
     getAllGrievance();
   }, []);
+
+  if(loading){
+    return(
+      <div className="flex items-center justify-center h-[70vh] w-full">
+        <div className="text-center">
+          {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+          <HashLoader size={100} color={"#151ad1"}/>
+        </div>
+
+      </div>
+     
+    )
+  }
 
   const toggleRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);

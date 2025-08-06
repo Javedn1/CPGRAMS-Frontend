@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Clock, Info } from 'lucide-react';
 import axios from 'axios';
 import moment from 'moment';
+import { HashLoader } from "react-spinners";
  
 function RecentActivity() {
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(false);
  
   const iconMap = {
     resolved: <CheckCircle className="text-green-600 w-5 h-5" />,
@@ -16,6 +18,7 @@ function RecentActivity() {
   };
  
   useEffect(() => {
+    setLoading(true);
     const fetchRecentActivities = async () => {
       try {
 const response = await axios.get('http://localhost:5000/api/officer/get-Recent-Activities');
@@ -24,6 +27,8 @@ const response = await axios.get('http://localhost:5000/api/officer/get-Recent-A
         }
       } catch (error) {
         console.error("Error fetching recent activities:", error);
+      }finally{
+        setLoading(false)
       }
     };
  
@@ -38,6 +43,18 @@ const response = await axios.get('http://localhost:5000/api/officer/get-Recent-A
     return iconMap.default;
   };
  
+   if(loading){
+      return(
+        <div className="flex items-center justify-center h-[70vh] w-full">
+          <div className="text-center">
+            {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+            <HashLoader size={100} color={"#151ad1"}/>
+          </div>
+  
+        </div>
+       
+      )
+    }
   return (
     <div className="min-h-screen py-10 px-4 bg-gray-50">
       <div className="max-w-5xl mx-auto">

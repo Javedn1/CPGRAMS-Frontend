@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useRef } from "react";
 import { showToast } from "../../utils/customToast";
 import Pagination from "../../components/Pagination";
+import { HashLoader } from "react-spinners";
 
 const OfficerComplaints = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,7 +16,7 @@ const OfficerComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   // const [error, setError] = useState(null);
   const [assignDropdownOpenId, setAssignDropdownOpenId] = useState(null);
   const [dropdownLoading, setDropdownLoading] = useState(false);
@@ -67,6 +68,7 @@ const OfficerComplaints = () => {
 
 
   const fetchComplaints = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
 
@@ -128,7 +130,7 @@ const OfficerComplaints = () => {
       console.error("Error fetching complaints", err);
       // setError("Failed to load complaints.");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -141,6 +143,7 @@ const OfficerComplaints = () => {
   //   setComplaintToAssign(complaintId);
   //   setAssignModalOpen(true);
   // };
+
 
   const handleAssignOfficer = async (complaintId, officerId) => {
     try {
@@ -395,6 +398,20 @@ const OfficerComplaints = () => {
     );
   }
 
+
+  
+ if(loading){
+    return(
+      <div className="flex items-center justify-center h-[70vh] w-full">
+        <div className="text-center">
+          {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+          <HashLoader size={100} color={"#151ad1"}/>
+        </div>
+
+      </div>
+     
+    )
+  }
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
