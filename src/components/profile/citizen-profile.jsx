@@ -21,6 +21,7 @@ import axios from "axios";
 import { getTabs } from "../profile/ProfileConstants/navtabs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { HashLoader } from "react-spinners";
 import { baseUrl } from "../../utils/ApiConstants";
 
 export default function CitizenProfile() {
@@ -257,8 +258,12 @@ export default function CitizenProfile() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-500 text-lg">Loading profile...</p>
+     <div className="flex items-center justify-center h-[70vh] w-full">
+        <div className="text-center">
+          {/* <div className="w-12 h-12 border-4 border-blue-500  border-t-transparent rounded-full animate-spin mx-auto mb-4"></div> */}
+          <HashLoader size={100} color={"#151ad1"}/>
+        </div>
+
       </div>
     );
   }
