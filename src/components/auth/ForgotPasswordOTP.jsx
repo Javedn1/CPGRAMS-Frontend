@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ChangePassword from "./ChangePassword";
 import { showToast } from "../../utils/customToast";
+import { baseUrl } from "../../utils/ApiConstants";
  
 const ForgotPasswordOTP = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -68,7 +69,7 @@ const ForgotPasswordOTP = () => {
  
     setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/verify-forgot-password", {
+      const response = await axios.post(`${baseUrl}/api/auth/verify-forgot-password`, {
         otp,
       });
  
@@ -91,7 +92,7 @@ const ForgotPasswordOTP = () => {
     setIsResending(true);
     try {
       const email = localStorage.getItem("email");
-      await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      await axios.post(`${baseUrl}/api/auth/forgot-password`, { email });
       showToast("OTP resent successfully!", "success");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to resend OTP. Please try again.";

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ForgotPasswordOTP from "./ForgotPasswordOTP";
 import axios from 'axios'
 import { showToast } from "../../utils/customToast";
+import { baseUrl } from "../../utils/ApiConstants";
 
 export default function ForgotPassword() {
     const [showOTP, setShowOTP] = useState(false);
@@ -12,7 +13,7 @@ export default function ForgotPassword() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/forgot-password',{email});
+            const response = await axios.post(`${baseUrl}/api/auth/forgot-password`,{email});
             console.log("Response-->",response);
             
             if (response.status == 200){

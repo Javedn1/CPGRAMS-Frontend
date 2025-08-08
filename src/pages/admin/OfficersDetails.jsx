@@ -4,6 +4,7 @@ import { Eye, ArrowUp, Search, Info } from "lucide-react";
 // import { toast } from "react-toastify";
 import Pagination from "../../components/Pagination";
 import { showToast } from "../../utils/customToast";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const OfficersDetails = () => {
   const [employeesData, setEmployeesData] = useState([]);
@@ -17,7 +18,7 @@ const OfficersDetails = () => {
   useEffect(() => {
     const fetchOfficers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/getAllOfficers");
+        const response = await axios.get(`${baseUrl}/api/admin/getAllOfficers`);
         const officers = response.data?.data || [];
 
         const mapped = officers.map((officer) => ({
@@ -43,7 +44,7 @@ const OfficersDetails = () => {
   const handlePromote = async (officerId) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/admin/officers/${officerId}/promote`,
+        `${baseUrl}/api/admin/officers/${officerId}/promote`,
         {},
         {
           headers: {
@@ -72,7 +73,7 @@ const OfficersDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.delete(
-        `http://localhost:5000/api/admin/delete/${officerId}`,
+        `${baseUrl}/api/admin/delete/${officerId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -4,6 +4,7 @@ import axios from "axios";
 import Pagination from "../../components/Pagination";
 import { showToast } from "../../utils/customToast";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const LeadOfficersDetails = () => {
   const [employeesData, setEmployeesData] = useState([]);
@@ -22,7 +23,7 @@ const LeadOfficersDetails = () => {
   const getAllLeadOfficer = async () => {
     setLoading(true)
     try {
-      const response = await axios.get("http://localhost:5000/api/admin/getAllLeadOfficers");
+      const response = await axios.get(`${baseUrl}/api/admin/getAllLeadOfficers`);
       if (response.status === 200) {
         setEmployeesData(response.data.data);
       }
@@ -37,7 +38,7 @@ const LeadOfficersDetails = () => {
   const handleDemote = async (officerId) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/admin/demote/${officerId}`,  // <- ✅ fixed URL
+        `${baseUrl}/api/admin/demote/${officerId}`,  // <- ✅ fixed URL
         {},
         {
           headers: {
@@ -76,7 +77,7 @@ const LeadOfficersDetails = () => {
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:5000/api/admin/delete/${id}`)
+      const response = await axios.delete(`${baseUrl}/api/admin/delete/${id}`)
       if (response.status == 200) {
         showToast("Lead Officer Deleted Successfully", "success")
         getAllLeadOfficer()

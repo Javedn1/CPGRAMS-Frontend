@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import Pagination from "../../components/Pagination";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const statusStyles = {
   Rejected: "bg-red-100 text-red-700 border border-red-300",
@@ -37,7 +38,7 @@ const AllGrievance = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/admin/getAllUsersWithGrievances"
+          `${baseUrl}/api/admin/getAllUsersWithGrievances`
         );
         setUsersData(res.data.data);
       } catch (error) {

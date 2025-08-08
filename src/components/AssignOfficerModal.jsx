@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { baseUrl } from "../utils/ApiConstants";
 
 const AssignOfficerModal = ({ isOpen, onClose, complaintId, onAssign, position }) => {
   const [officers, setOfficers] = useState([]);
@@ -11,7 +12,7 @@ const AssignOfficerModal = ({ isOpen, onClose, complaintId, onAssign, position }
       setIsLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/officer/all-officers", {
+        const res = await axios.get(`${baseUrl}/api/officer/all-officers`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { showToast } from "../../utils/customToast"; // 💡 import the custom toast
+import { baseUrl } from "../../utils/ApiConstants";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +34,7 @@ const Login = () => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post("https://cpgram-backend.onrender.com/api/auth/login", loginForm,{
+      const res = await axios.post(`${baseUrl}/api/auth/login`, loginForm,{
         withCredentials:true,
       });
       const data = res.data;

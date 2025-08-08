@@ -16,6 +16,7 @@ import HeaderLayout from "../../components/header/Header-Layout/HeaderLayout";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/header/MainHeader";
 import ProgressTimeline from "../../components/ProgressTimeline";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const TrackGrievancePage = () => {
   const [activeTab, setActiveTab] = useState("grievance");
@@ -41,7 +42,7 @@ const TrackGrievancePage = () => {
       const token = localStorage.getItem('token');
 
       const response = await axios.post(
-        'http://localhost:5000/api/grievances/track',
+        `${baseUrl}/api/grievances/track`,
         {
           email: trackingData.email,
           uniqueID: trackingData.token

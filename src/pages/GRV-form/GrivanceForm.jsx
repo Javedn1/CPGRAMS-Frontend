@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/header/MainHeader";
 import axios from "axios";
+import { baseUrl } from "../../utils/ApiConstants";
 
 
 export default function GrievanceForm() {
@@ -88,7 +89,7 @@ export default function GrievanceForm() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/grievances/create",
+        `${baseUrl}/api/grievances/create`,
         form,
         {
           headers: {

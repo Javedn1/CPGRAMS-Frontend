@@ -21,6 +21,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/customToast";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from "../../utils/ApiConstants";
 
 
 // Default color functions
@@ -68,7 +69,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:5000/api/grievances/grievance/${uniqueID}`,
+        `${baseUrl}/api/grievances/grievance/${uniqueID}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -155,7 +156,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        `http://localhost:5000/api/grievances/status/${selectedComplaint._mongoId}`,
+        `${baseUrl}/api/grievances/status/${selectedComplaint._mongoId}`,
         { status, comment },
         {
           headers: {
@@ -197,7 +198,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.delete(
-      `http://localhost:5000/api/grievances/progress-delete/${selectedComplaint._mongoId}/${progressId}`,
+      `${baseUrl}/api/grievances/progress-delete/${selectedComplaint._mongoId}/${progressId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -235,7 +236,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:5000/api/grievances/status-delete/${selectedComplaint._mongoId}`,
+        `${baseUrl}/api/grievances/status-delete/${selectedComplaint._mongoId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -283,7 +284,7 @@ const ComplaintDetails = ({ handleCloseComplaint, uniqueID: propUniqueID }) => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:5000/api/grievances/progress/${selectedComplaint._mongoId}`,
+        `${baseUrl}/api/grievances/progress/${selectedComplaint._mongoId}`,
         { message },
         {
           headers: {

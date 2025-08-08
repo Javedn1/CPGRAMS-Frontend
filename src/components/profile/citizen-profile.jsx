@@ -21,6 +21,7 @@ import axios from "axios";
 import { getTabs } from "../profile/ProfileConstants/navtabs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { baseUrl } from "../../utils/ApiConstants";
 
 export default function CitizenProfile() {
   const [profile, setProfile] = useState(null),
@@ -61,7 +62,7 @@ export default function CitizenProfile() {
         //Try fetching from backend
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/userProfile/getUser?userId=${loggedInUser._id}`,
+            `${baseUrl}/api/userProfile/getUser?userId=${loggedInUser._id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -187,7 +188,7 @@ export default function CitizenProfile() {
 
       try {
         response = await axios.put(
-          `http://localhost:5000/api/userProfile/${profile._id}`, //updating userProfile
+          `${baseUrl}/api/userProfile/${profile._id}`, //updating userProfile
           formData,
           {
             headers: {
@@ -203,7 +204,7 @@ export default function CitizenProfile() {
           formData.append("userId", loggedInUser._id);
 
           //creating  new userProfile
-          response = await axios.post(`http://localhost:5000/api/userProfile`, formData, {
+          response = await axios.post(`${baseUrl}/api/userProfile`, formData, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",

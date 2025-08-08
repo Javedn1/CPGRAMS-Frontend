@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/customToast";
+import { baseUrl } from "../../utils/ApiConstants";
 
 export default function MultiStepRegister({ onRegisterSuccess }) {
   const [step, setStep] = useState(1);
@@ -49,7 +50,7 @@ export default function MultiStepRegister({ onRegisterSuccess }) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(`${baseUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

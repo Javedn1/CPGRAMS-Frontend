@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { baseUrl } from '../../utils/ApiConstants';
  
 const RegisterJuniorPGO = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ const RegisterJuniorPGO = () => {
       const token = localStorage.getItem("token");
  
 const response = await axios.post(
-"http://localhost:5000/api/admin/officers",
+`${baseUrl}/api/admin/officers`,
         { ...rest, password },
         {
           headers: {

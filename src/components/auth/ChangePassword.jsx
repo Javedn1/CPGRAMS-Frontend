@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { showToast } from "../../utils/customToast";
+import { baseUrl } from "../../utils/ApiConstants";
  
 const ChangePassword = () => {
   const [password, setPassword] = useState("");
@@ -29,7 +30,7 @@ const ChangePassword = () => {
  
     setIsLoading(true);
     try {
-const response = await axios.post("http://localhost:5000/api/auth/reset-password", {
+const response = await axios.post(`${baseUrl}/api/auth/reset-password`, {
         email,
         newPassword: password,
       });

@@ -10,6 +10,7 @@ import {
 import { FileText, User, Calendar, MapPin } from "lucide-react";
 import { HashLoader } from "react-spinners";
 import axios from 'axios';
+import { baseUrl } from "../../utils/ApiConstants";
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#9ca3af'];
 
@@ -24,7 +25,7 @@ useEffect(()=>{
   const hardStats = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/getDashboardCounts')
+      const response = await axios.get(`${baseUrl}/api/admin/getDashboardCounts`)
       if (response.status === 200){
         setStats(response.data.data)
         console.log("data is here",response.data.data);

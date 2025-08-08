@@ -3,6 +3,7 @@ import axios from "axios";
 import moment from "moment";
 import GrievanceCard from "./GrievanceCard";
 import { FileText, ChevronLeft, ChevronRight } from "lucide-react";
+import { baseUrl } from "../../../utils/ApiConstants";
  
 const statusDot = {
   Pending: "bg-yellow-500",
@@ -18,7 +19,7 @@ const GrievanceList = () => {
   const scrollTimeout = useRef(null);
  
   useEffect(() => {
-axios.get("http://localhost:5000/api/officer/get-recent-grievances")
+axios.get(`${baseUrl}/api/officer/get-recent-grievances`)
       .then(res => {
         if (res.data.success) setGrievances(res.data.grievances);
       })

@@ -4,6 +4,7 @@ import { CheckCircle, Clock, Info } from 'lucide-react';
 import axios from 'axios';
 import moment from 'moment';
 import { HashLoader } from "react-spinners";
+import { baseUrl } from '../../../utils/ApiConstants';
  
 function RecentActivity() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function RecentActivity() {
     setLoading(true);
     const fetchRecentActivities = async () => {
       try {
-const response = await axios.get('http://localhost:5000/api/officer/get-Recent-Activities');
+const response = await axios.get(`${baseUrl}/api/officer/get-Recent-Activities`);
         if (response.data.success) {
           setActivities(response.data.data);
         }

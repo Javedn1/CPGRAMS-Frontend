@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import { HashLoader } from "react-spinners";
+import { baseUrl } from '../../utils/ApiConstants';
 
 const Reminder = () => {
   const [reminders, setReminders] = useState([]);
@@ -15,7 +16,7 @@ const Reminder = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/grievances/get-reminders", {
+        const res = await axios.get(`${baseUrl}/api/grievances/get-reminders`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

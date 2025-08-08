@@ -12,6 +12,7 @@ import Pagination from '../../components/Pagination';
 import axios from 'axios';
 import { showToast } from "../../utils/customToast";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from '../../utils/ApiConstants';
 
 const statusColorMap = {
     resolved: 'bg-green-100 text-green-800',
@@ -43,7 +44,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
             try {
                 const token = localStorage.getItem("token");
 
-                const res = await axios.get("http://localhost:5000/api/grievances/my-grievances", {
+                const res = await axios.get(`${baseUrl}/api/grievances/my-grievances`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -97,7 +98,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
             const token = localStorage.getItem("token");
 
             const res = await axios.post(
-                `http://localhost:5000/api/grievances/reminder/${grievanceId}`,
+                `${baseUrl}/api/grievances/reminder/${grievanceId}`,
                 {},
                 {
                     headers: {
@@ -122,7 +123,7 @@ const MyGrievances = ({ complaints = [], setShowForm }) => {
             const token = localStorage.getItem("token");
 
             const res = await axios.post(
-                `http://localhost:5000/api/grievances/submit/${grievanceId}`,
+                `${baseUrl}/api/grievances/submit/${grievanceId}`,
                 {
                     rating,
                     message: feedback,

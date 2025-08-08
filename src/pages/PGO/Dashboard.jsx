@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import moment from "moment";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from "../../utils/ApiConstants";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ function Dashboard() {
     setMainLoading(true);
     try {
       const data = await axios.get(
-        "http://localhost:5000/api/officer/all-stats"
+        `${baseUrl}/api/officer/all-stats`
       );
       if (data.status == 200) {
         setStatsData(data.data);
@@ -60,7 +61,7 @@ function Dashboard() {
     setMainLoading(true);
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/officer/get-Recent-Activities"
+        `${baseUrl}/api/officer/get-Recent-Activities`
       );
       if (res.data.success) {
         setActivities(res.data.data);
@@ -78,7 +79,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token"); 
 
-      const res = await axios.get("http://localhost:5000/api/grievances/feedbacks", {
+      const res = await axios.get(`${baseUrl}/api/grievances/feedbacks`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

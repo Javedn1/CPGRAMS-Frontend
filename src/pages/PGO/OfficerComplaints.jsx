@@ -8,6 +8,7 @@ import { useRef } from "react";
 import { showToast } from "../../utils/customToast";
 import Pagination from "../../components/Pagination";
 import { HashLoader } from "react-spinners";
+import { baseUrl } from "../../utils/ApiConstants";
 
 const OfficerComplaints = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,7 +48,7 @@ const OfficerComplaints = () => {
     });
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/officer/all-officers", {
+      const res = await axios.get(`${baseUrl}/api/officer/all-officers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDropdownOfficers(res.data.officers || []);
@@ -73,8 +74,8 @@ const OfficerComplaints = () => {
       const token = localStorage.getItem("token");
 
       const endpoint = isOfficer
-        ? "http://localhost:5000/api/officer/assigned-grv"
-        : "http://localhost:5000/api/grievances/getallgrv";
+        ? `${baseUrl}/api/officer/assigned-grv`
+        : `${baseUrl}/api/grievances/getallgrv`;
 
       const response = await axios.get(endpoint, {
         headers: {
@@ -149,7 +150,7 @@ const OfficerComplaints = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:5000/api/officer/assign`,
+        `${baseUrl}/api/officer/assign`,
         { grievanceId: complaintId, officerId },
         {
           headers: {
@@ -329,7 +330,7 @@ const OfficerComplaints = () => {
   const fetchOfficerNames = async (grievanceId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:5000/api/officer/grievance/${grievanceId}`, {
+      const res = await axios.get(`${baseUrl}/api/officer/grievance/${grievanceId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -356,7 +357,7 @@ const OfficerComplaints = () => {
     setUnassignBtnLoadingId(complaintId);
     try {
       await axios.put(
-        "http://localhost:5000/api/officer/unassign",
+        `${baseUrl}/api/officer/unassign`,
         { grievanceId: complaintId },
         {
           headers: {
