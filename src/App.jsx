@@ -34,8 +34,15 @@ import RejisterOfficer from "./pages/admin/RejisterOfficer";
 import LeadOfficersDetails from "./pages/admin/LeadOfficersDetails";
 import OfficersDetails from "./pages/admin/OfficersDetails";
 import AllGrievance from "./pages/admin/AllGrievance";
+import { useState } from "react";
+import LoadingScreen from "./components/Loading_screen/LoadingScreen";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  if (isLoading){
+    return<LoadingScreen onLoadingComplete={()=>setIsLoading(false)}/>
+  }
   return (
     <>
       <Toaster position="top-right"/>
