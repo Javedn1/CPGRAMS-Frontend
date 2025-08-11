@@ -12,7 +12,8 @@ export default function GrievanceForm() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const [declarationChecked, setDeclarationChecked] = useState(false);
-
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -44,6 +45,7 @@ export default function GrievanceForm() {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const userData = JSON.parse(storedUser).user;
+      console.log("userData-->",userData);
       setFormData((prev) => ({
         ...prev,
         fullName: userData.fullName || "",
@@ -60,7 +62,12 @@ export default function GrievanceForm() {
     }
   }, []);
 
+
+  console.log("error", errors);
+  
+
   const handleSubmit = async () => {
+    setLoading(true);
     const token = localStorage.getItem("token");
     const form = new FormData();
     form.append("fullName", formData.fullName);
@@ -108,6 +115,8 @@ export default function GrievanceForm() {
     } catch (error) {
       console.error("Error submitting grievance:", error);
       alert("Something went wrong. Please try again.");
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -123,7 +132,12 @@ export default function GrievanceForm() {
   };
 
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
+  const nextStep = () => {
+    if (validateStep()){
+      setStep((prev)=>Math.min(prev + 1,5))
+      
+    }
+  };
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   //generate pdf
@@ -151,6 +165,34 @@ export default function GrievanceForm() {
 
     doc.save("grievance-summary.pdf");
   };
+
+  const validateStep = () => {
+  let newErrors = {};
+ 
+  if (step === 2) {
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
+  }
+ 
+  if (step === 3) {
+    if (!formData.ministryName) newErrors.ministryName = "Ministry name is required";
+    if (!formData.ministryDepartment) newErrors.ministryDepartment = "Department is required";
+    if (!formData.publicAuthority) newErrors.publicAuthority = "Public authority is required";
+  }
+ 
+  if (step === 4) {
+    if (!formData.grievanceTitle) newErrors.grievanceTitle = "Grievance title is required";
+    if (!formData.grievanceCategory) newErrors.grievanceCategory = "Category is required";
+    if (!formData.grievanceLocation) newErrors.grievanceLocation = "Location of issue is required";
+    if (!formData.grievanceDate) newErrors.grievanceDate = "Date of incident is required";
+    if (!formData.grievanceDescription) newErrors.grievanceDescription = "Description is required";
+  }
+ 
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+  
+
 
   return (
     <>
@@ -225,30 +267,23 @@ export default function GrievanceForm() {
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Personal Details</h2>
               <div className="space-y-4">
-                <InputField label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} />
-                <InputField label="Email" name="email" value={formData.email} onChange={handleChange} />
-                <InputField label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} />
+                <InputField label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} readOnly />
+                <InputField label="Email" name="email" value={formData.email} onChange={handleChange} readOnly />
+                <InputField label="Phone Number" name="phone" value={formData.phone} onChange={handleChange} readOnly />
                 <div className="flex flex-col md:flex-row md:space-x-4">
-                  <div className="flex-1 mb-4">
-                    <label className="block text-sm font-medium mb-1">Gender</label>
-                    <select name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
-                      <option value="">Select</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <InputField label="Date of Birth"  name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" />
+                <InputField label="Gender" name="gender" value={formData.gender} onChange={handleChange} readOnly />
+                  
+                  <InputField label="Date of Birth"  name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" errors={errors} />
                 </div>
-                <InputField label="Address Line 1" name="addressLine1" value={formData.addressLine1} onChange={handleChange} />
+                <InputField label="Address Line 1" name="addressLine1" value={formData.addressLine1} onChange={handleChange} readOnly/>
                 <InputField label="Address Line 2" name="addressLine2" type="text" value={formData.addressLine2} onChange={handleChange} />
                 <div className="flex flex-col md:flex-row md:space-x-4">
-                  <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
-                  <InputField label="Postal Code" name="postalCode" value={formData.postalCode} onChange={handleChange} />
+                  <InputField label="City" name="city" value={formData.city} onChange={handleChange} readOnly />
+                  <InputField label="Postal Code" name="postalCode" value={formData.postalCode} onChange={handleChange} readOnly />
                 </div>
                 <div className="flex flex-col md:flex-row md:space-x-4">
-                  <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
-                  <InputField label="District" name="district" value={formData.district} onChange={handleChange} />
+                  <InputField label="State" name="state" value={formData.state} onChange={handleChange} readOnly />
+                  <InputField label="District" name="district" value={formData.district} onChange={handleChange} readOnly/>
                 </div>
               </div>
               <div className="mt-6 flex justify-end">
@@ -266,31 +301,34 @@ export default function GrievanceForm() {
                 <div className="flex flex-col md:flex-row md:space-x-4">
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Ministry Name</label>
-                    <select name="ministryName" value={formData.ministryName} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                    <select name="ministryName" value={formData.ministryName} onChange={handleChange} className={`w-full border rounded-md p-2 text-sm ${errors.ministryName?"border-red-500":"border-gray-300"} `}>
                       <option value="">Select Ministry</option>
                       <option value="Ministry of Education">Ministry of Education</option>
                       <option value="Ministry of Health">Ministry of Health</option>
                       <option value="Ministry of Home Affairs">Ministry of Home Affairs</option>
                     </select>
+                    {errors.ministryName && <p className="text-red-500 text-xs mt-1">{errors.ministryName}</p>}
                   </div>
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Department</label>
-                    <select name="ministryDepartment" value={formData.ministryDepartment} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                    <select name="ministryDepartment" value={formData.ministryDepartment} onChange={handleChange} className={`w-full border rounded-md p-2 text-sm ${errors.ministryDepartment?"border-red-500":"border-gray-300"} `}>
                       <option value="">Select Department</option>
                       <option value="Higher Education">Higher Education</option>
                       <option value="Public Health">Public Health</option>
                       <option value="Internal Security">Internal Security</option>
                     </select>
+                    {errors.ministryDepartment && <p className="text-red-500 text-xs mt-1">{errors.ministryDepartment}</p>}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Public Authority</label>
-                  <select name="publicAuthority" value={formData.publicAuthority} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
+                  <select name="publicAuthority" value={formData.publicAuthority} onChange={handleChange} className={`w-full border rounded-md p-2 text-sm ${errors.publicAuthority?"border-red-500":"border-gray-300"} `}>
                     <option value="">Select Authority</option>
                     <option value="CBSE">CBSE</option>
                     <option value="AIIMS">AIIMS</option>
                     <option value="NCRB">NCRB</option>
                   </select>
+                  {errors.publicAuthority && <p className="text-red-500 text-xs mt-1">{errors.publicAuthority}</p>}
                 </div>
               </div>
 
@@ -310,10 +348,27 @@ export default function GrievanceForm() {
             <div className="border-2 border-dashed shadow-lg rounded-md border-gray-300 p-4">
               <h2 className="text-2xl font-bold mb-6">Grievance Details</h2>
               <div className="space-y-4">
-                <InputField label="Grievance Title" name="grievanceTitle" value={formData.grievanceTitle} onChange={handleChange} />
+                <InputField label="Grievance Title" name="grievanceTitle" value={formData.grievanceTitle} onChange={handleChange} errors={errors}/>
                 <div className="flex flex-col md:flex-row md:space-x-4">
-                  <InputField label="Category" name="grievanceCategory" value={formData.grievanceCategory} onChange={handleChange} />
-                  <InputField label="Department" name="grievanceDepartment" value={formData.grievanceDepartment} onChange={handleChange} />
+                   <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">Category</label>
+                  <select name="grievanceCategory" value={formData.grievanceCategory} onChange={handleChange} className={`w-full border rounded-md p-2 text-sm ${errors.grievanceCategory?"border-red-500":"border-gray-300"} `}>
+                    <option value="">Select Category</option>
+                    <option value="Workplace Harrasment">Workplace Harrasment</option>
+                    <option value="Discrimination">Discrimination</option>
+                    <option value="Leave and Attandance Issue">Leave and Attandance Issue</option>
+                    <option value="Health and Safety">Health and Safety</option>
+                    <option value="Facilities and infrastructure">Facilities and infrastructure</option>
+                    <option value="IT & Technical Issue">IT & Technical Issue</option>
+                    <option value="Policy Violation">Policy Violation</option>
+                    <option value="Performance Evaluation Dispute">Performance Evaluation Dispute</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {errors.grievanceCategory && <p className="text-red-500 text-xs mt-1">{errors.grievanceCategory}</p>}
+                </div>
+                  {/* <InputField label="Category" name="grievanceCategory" value={formData.grievanceCategory} onChange={handleChange} /> */}
+                  {/* <InputField label="Department" name="grievanceDepartment" value={formData.grievanceDepartment} onChange={handleChange} /> */}
+                  <InputField label="Date of Incident" name="grievanceDate" value={formData.grievanceDate} onChange={handleChange} type="date" errors={errors}/>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Attach Supporting Document</label>
@@ -323,6 +378,7 @@ export default function GrievanceForm() {
                     accept=".pdf,.jpg,.png,.jpeg,.docx"
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-md p-2 text-sm"
+      
                   />
                   {formData.grievanceAttachment && (
                     <p className="text-sm text-gray-600 mt-1">
@@ -331,10 +387,10 @@ export default function GrievanceForm() {
                   )}
                 </div>
 
-                <InputField label="Location of Issue" name="grievanceLocation" value={formData.grievanceLocation} onChange={handleChange} />
+                <InputField label="Location of Issue" name="grievanceLocation" value={formData.grievanceLocation} onChange={handleChange} errors={errors} />
                 <div className="flex flex-col md:flex-row md:space-x-4">
-                  <InputField label="Date of Incident" name="grievanceDate" value={formData.grievanceDate} onChange={handleChange} type="date" />
-                  <div className="flex-1 mb-4">
+                  
+                  {/* <div className="flex-1 mb-4">
                     <label className="block text-sm font-medium mb-1">Priority</label>
                     <select name="grievancePriority" value={formData.grievancePriority} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2">
                       <option value="">Select</option>
@@ -342,12 +398,13 @@ export default function GrievanceForm() {
                       <option value="Medium">Medium</option>
                       <option value="High">High</option>
                     </select>
-                  </div>
+                  </div> */}
                 </div>
-                <InputField label="Relief Expected" name="grievanceRelief" value={formData.grievanceRelief} onChange={handleChange} />
+                {/* <InputField label="Relief Expected" name="grievanceRelief" value={formData.grievanceRelief} onChange={handleChange} /> */}
                 <div>
                   <label className="block text-sm font-medium mb-1">Grievance Description</label>
-                  <textarea name="grievanceDescription" value={formData.grievanceDescription} onChange={handleChange} className="w-full border border-gray-300 rounded-md p-2 text-sm md:text-base" />
+                  <textarea name="grievanceDescription" value={formData.grievanceDescription} onChange={handleChange} className={`w-full border rounded-md p-2 text-sm md:text-base ${errors.grievanceCategory?"border-red-500":"border-gray-300"}`} />
+                   {errors.grievanceDescription && <p className="text-red-500 text-xs mt-1">{errors.grievanceDescription}</p>}
                 </div>
               </div>
               <div className="mt-6 flex justify-between">
@@ -373,9 +430,9 @@ export default function GrievanceForm() {
                   <ReviewItem label="Email" value={formData.email} />
                   <ReviewItem label="Phone Number" value={formData.phone} />
                   <ReviewItem label="Gender" value={formData.gender} />
-                  <ReviewItem label="Date of Birth" value={formData.dob} />
-                  <ReviewItem label="Address Line 1" value={formData.address1} />
-                  <ReviewItem label="Address Line 2" value={formData.address2} />
+                  <ReviewItem label="Date of Birth" value={formData.dateOfBirth} />
+                  <ReviewItem label="Address Line 1" value={formData.addressLine1} />
+                  <ReviewItem label="Address Line 2" value={formData.addressLine2} />
                   <ReviewItem label="City" value={formData.city} />
                   <ReviewItem label="State" value={formData.state} />
                   <ReviewItem label="District" value={formData.district} />
@@ -399,15 +456,15 @@ export default function GrievanceForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
                   <ReviewItem label="Title" value={formData.grievanceTitle} />
                   <ReviewItem label="Category" value={formData.grievanceCategory} />
-                  <ReviewItem label="Department" value={formData.grievanceDepartment} />
+                  {/* <ReviewItem label="Department" value={formData.grievanceDepartment} /> */}
                   <ReviewItem
                     label="Attached File"
                     value={formData.grievanceAttachment ? formData.grievanceAttachment.name : "No file attached"}
                   />
                   <ReviewItem label="Location" value={formData.grievanceLocation} />
                   <ReviewItem label="Incident Date" value={formData.grievanceDate} />
-                  <ReviewItem label="Priority" value={formData.grievancePriority} />
-                  <ReviewItem label="Expected Relief" value={formData.grievanceRelief} />
+                  {/* <ReviewItem label="Priority" value={formData.grievancePriority} /> */}
+                  {/* <ReviewItem label="Expected Relief" value={formData.grievanceRelief} /> */}
                   <ReviewItem label="Description" value={formData.grievanceDescription} />
                 </div>
               </div>
@@ -437,12 +494,19 @@ export default function GrievanceForm() {
                 <button
                   disabled={!formData.declaration}
                   onClick={handleSubmit}
-                  className={`${formData.declaration
+                  className={`${formData.declaration && !loading
                       ? "bg-green-600 hover:bg-green-700"
                       : "bg-green-300 cursor-not-allowed"
                     } text-white px-6 py-2 rounded transition w-full md:w-auto`}
+                    
                 >
-                  Submit
+                  {loading && (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          )}
+          {loading ? 'Submitting...' : 'Submit'}
                 </button>
 
               </div>
@@ -471,10 +535,11 @@ const StepCircle = ({ label, active, number, completed }) => (
 );
 
 // Input Field
-const InputField = ({ label, name, value, onChange, type = "text" }) => (
+const InputField = ({ label, name, value, onChange, type = "text", readOnly, errors }) => (
   <div className="flex-1 mb-4">
     <label className="block text-sm font-medium mb-1">{label}</label>
-    <input type={type} name={name} value={value} onChange={onChange} className="w-full border border-gray-300 rounded-md p-2" />
+    <input type={type} name={name} value={value} onChange={onChange} readOnly={readOnly} className={`w-full border rounded-md p-2 text-sm ${errors && errors[name]?"border-red-500":"border-gray-300"} `} />
+    {errors && errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
   </div>
 );
 

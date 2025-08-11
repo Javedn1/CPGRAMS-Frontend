@@ -197,7 +197,7 @@ export default function Header() {
                     <button
                       className="border border-gray-300 px-4 py-3 rounded hover:bg-gray-50 mt-2"
                       onClick={() => {
-                        handleAuthAction("login");
+                        navigate("/auth");
                         setMenuOpen(false);
                       }}
                     >
@@ -206,7 +206,7 @@ export default function Header() {
                     <button
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded mt-2"
                       onClick={() => {
-                        handleAuthAction("register");
+                        navigate("/auth");
                         setMenuOpen(false);
                       }}
                     >
